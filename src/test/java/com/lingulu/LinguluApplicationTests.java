@@ -8,6 +8,7 @@ class LinguluApplicationTests {
 
 	@Test
 	void contextLoads() {
+		
 	}
 
 }

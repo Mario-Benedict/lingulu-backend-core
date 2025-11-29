@@ -1,0 +1,57 @@
+package com.lingulu.config;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.lingulu.security.OAuth2SuccessHandler;
+import java.util.Arrays;
+
+
+@Configuration
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    //  private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/account/register", "/api/account/login", "/login/oauth2/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth -> oauth
+                .successHandler(oAuth2SuccessHandler)
+            )
+            .formLogin(form -> form.disable());
+
+        return http.build();
+    }
+
+    @Bean
+     public CorsConfigurationSource corsConfigurationSource() {
+         CorsConfiguration configuration = new CorsConfiguration();
+         // Gunakan URL frontend yang sama dengan yang ada di CorsConfig.java
+         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); 
+         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+         configuration.setAllowedHeaders(Arrays.asList("*"));
+         configuration.setAllowCredentials(true);
+         configuration.setMaxAge(3600L);
+         
+         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+         source.registerCorsConfiguration("/**", configuration); // Terapkan pada semua endpoint
+         return source;
+     }
+
+    
+}
