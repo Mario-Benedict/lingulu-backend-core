@@ -53,13 +53,14 @@ public class AccountController {
             User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-            UserResponse userResponse = UserResponse.builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .accessToken(token)
-                .build();
+            // UserResponse userResponse = UserResponse.builder()
+            //     .userId(user.getUserId())
+            //     .email(user.getEmail())
+            //     .accessToken(token)
+            //     .build();
 
-            return ResponseEntity.ok(new ApiResponse<>(true, "Login berhasil", userResponse));
+            // return ResponseEntity.ok(new ApiResponse<>(true, "Login berhasil", userResponse));
+            return authService.response(user);
         } catch (Exception e) {
             return ResponseEntity.status(401)
                 .body(new ApiResponse<>(false, "Invalid token", null));

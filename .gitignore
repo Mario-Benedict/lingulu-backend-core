@@ -1,3 +1,4 @@
+### Maven ###
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -31,3 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Google OAuth2 Credentials ###
+client_secret_3750469206-upkc0m2kg6f3bkstskrn5fa765jf9dne.apps.googleusercontent.com.json
