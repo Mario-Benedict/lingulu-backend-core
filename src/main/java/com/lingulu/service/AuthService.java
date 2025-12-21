@@ -153,4 +153,12 @@ public class AuthService {
 
         return ResponseEntity.ok(new ApiResponse<>(true, "Login berhasil", userResponse));
     }
+
+    public void setEmailVerified(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setEmailVerified(true);
+        userRepository.save(user);
+    }
 }
