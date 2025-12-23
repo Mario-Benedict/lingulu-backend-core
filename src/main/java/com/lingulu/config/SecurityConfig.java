@@ -27,7 +27,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/account/register", "/api/account/login", "/login/oauth2/**").permitAll()
+                .requestMatchers("/api/account/register", "/api/account/login", "/login/oauth2/**", "/api/conversation").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth -> oauth
@@ -42,7 +42,7 @@ public class SecurityConfig {
      public CorsConfigurationSource corsConfigurationSource() {
          CorsConfiguration configuration = new CorsConfiguration();
          // Gunakan URL frontend yang sama dengan yang ada di CorsConfig.java
-         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); 
+         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://127.0.0.1:5500")); 
          configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
          configuration.setAllowedHeaders(Arrays.asList("*"));
          configuration.setAllowCredentials(true);

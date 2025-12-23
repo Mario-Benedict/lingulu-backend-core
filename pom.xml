@@ -40,6 +40,11 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- Untuk HTTP client -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
 		<!-- Dependency For Test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

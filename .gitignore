@@ -3,6 +3,7 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.env
 
 ### STS ###
 .apt_generated
@@ -34,3 +35,6 @@ build/
 
 ### Google OAuth2 Credentials ###
 client_secret_3750469206-upkc0m2kg6f3bkstskrn5fa765jf9dne.apps.googleusercontent.com.json
+
+## groq API Key ###
+groq_key.txt
