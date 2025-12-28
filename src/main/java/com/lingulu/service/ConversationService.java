@@ -27,7 +27,8 @@ public class ConversationService {
 
     public AIConversationResponse process(
             MultipartFile audio,
-            String conversationId
+            String conversationId,
+            String userId
     ) throws Exception {
 
         // 1. STT
@@ -36,13 +37,13 @@ public class ConversationService {
         // 2. Save user audio + text
         s3StorageService.uploadMultipartFile(
                 audio,
-                "conversations/" + conversationId + "/user/input-audio.wav"
+                "conversations/" + userId + conversationId + "/user/input-audio.wav"
         );
 
         s3StorageService.uploadBytes(
                 userText.getBytes(),
                 "text/plain",
-                "conversations/" + conversationId + "/user/transcript.txt"
+                "conversations/" + userId + conversationId + "/user/transcript.txt"
         );
 
         // 3. Gemini
@@ -52,7 +53,7 @@ public class ConversationService {
         byte[] aiAudioBytes = pollyService.synthesize(aiText);
 
         String aiAudioKey =
-                "conversations/" + conversationId + "/ai/response-audio.mp3";
+                "conversations/" + userId + conversationId + "/ai/response-audio.mp3";
 
         // 5. Save AI result
         s3StorageService.uploadBytes(
@@ -64,7 +65,7 @@ public class ConversationService {
         s3StorageService.uploadBytes(
                 aiText.getBytes(),
                 "text/plain",
-                "conversations/" + conversationId + "/ai/transcript.txt"
+                "conversations/" + userId + conversationId + "/ai/transcript.txt"
         );
 
         // 6. Pre-signed URL
