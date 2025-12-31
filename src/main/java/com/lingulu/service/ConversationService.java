@@ -9,18 +9,21 @@ import com.lingulu.dto.AIConversationResponse;
 public class ConversationService {
 
     private final WhisperService whisperService;
-    private final GeminiService geminiService;
+//     private final GeminiService geminiService;
+        private final GroqService groqService;
     private final PollyService pollyService;
     private final S3StorageService s3StorageService;
 
     public ConversationService(
             WhisperService whisperService,
-            GeminiService geminiService,
+        //     GeminiService geminiService,
+                GroqService groqService,
             PollyService pollyService,
             S3StorageService s3StorageService
     ) {
         this.whisperService = whisperService;
-        this.geminiService = geminiService;
+        // this.geminiService = geminiService;
+        this.groqService = groqService;
         this.pollyService = pollyService;
         this.s3StorageService = s3StorageService;
     }
@@ -47,7 +50,9 @@ public class ConversationService {
         );
 
         // 3. Gemini
-        String aiText = geminiService.generateResponse(userText);
+        // String aiText = geminiService.generateResponse(userText);
+        // 3. Groq
+        String aiText = groqService.chat(userText);
 
         // 4. Polly
         byte[] aiAudioBytes = pollyService.synthesize(aiText);
@@ -76,6 +81,7 @@ public class ConversationService {
                 userText,
                 aiText,
                 audioUrl
+                // "ini urlnya"
         );
     }
 }
