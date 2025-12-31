@@ -1,8 +1,10 @@
 package com.lingulu.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,11 +27,12 @@ public class LeaderBoardController {
 
     @PostMapping("/leaderboard")
     public ResponseEntity<ApiResponse<?>> leaderboard() {
+        String userId = (String)SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
 
-
-        // List<Leaderboard> leaderboards = leaderboardService.getTop10Leaderboards(userId);
+        List<Leaderboard> leaderboards = leaderboardService.getTop10Leaderboards(UUID.fromString(userId));
         
-        return leaderboardService.response(null);
+        return leaderboardService.response(leaderboards);
     }
     
 }
