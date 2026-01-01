@@ -2,6 +2,7 @@ package com.lingulu.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -54,5 +55,5 @@ public class User {
     private UserProfile userProfile;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private LearningProgress learningProgress;
+    private List<LearningProgress> learningProgress;
 }

@@ -10,7 +10,7 @@ import com.lingulu.entity.LearningProgress;
 public interface LearningProgressRepository extends JpaRepository<LearningProgress, UUID> {
 
     // Take learning progress by user id and difficulty level
-    List<LearningProgress> findByUser_UserIdAndLesson_difficultyLevel(UUID userId, String difficultyLevel);
+    List<LearningProgress> findByUser_UserIdAndLesson_dificultyLevel(UUID userId, String difficultyLevel);
 
     // Take all learning progress by userId
     List<LearningProgress> findByUser_UserId(UUID userId);
@@ -22,6 +22,6 @@ public interface LearningProgressRepository extends JpaRepository<LearningProgre
     LearningProgress findByUser_UserIdAndLesson_LessonId(UUID userId, UUID lessonId);
 
     // count by difficulty level (aka level test)
-    Integer countByLesson_difficultyLevelAndUser_userIdAndStatus(String difficultyLevel, UUID userId, String status);
+    Integer countByLesson_dificultyLevelAndUser_userIdAndStatus(String difficultyLevel, UUID userId, String status);
 
 }

@@ -1,5 +1,6 @@
 package com.lingulu.entity;
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
@@ -36,5 +37,5 @@ public class Lesson {
     private String lessonType;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    private LearningProgress learningProgress;
+    private List<LearningProgress> learningProgress;
 }
