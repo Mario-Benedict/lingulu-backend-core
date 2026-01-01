@@ -12,6 +12,9 @@ public interface LearningProgressRepository extends JpaRepository<LearningProgre
     // Take learning progress by user id and difficulty level
     List<LearningProgress> findByUser_UserIdAndLesson_difficultyLevel(UUID userId, String difficultyLevel);
 
+    // Take all learning progress by userId
+    List<LearningProgress> findByUser_UserId(UUID userId);
+
     // Take completed course count
     Integer countByUser_UserIdAndStatus(UUID userId, String status);
 
