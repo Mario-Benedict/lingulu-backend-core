@@ -14,6 +14,8 @@ import com.lingulu.entity.Leaderboard;
 import com.lingulu.service.LeaderboardService;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -25,7 +27,7 @@ public class LeaderBoardController {
     
     private final LeaderboardService leaderboardService;
 
-    @PostMapping("/leaderboard")
+    @GetMapping("/leaderboard")
     public ResponseEntity<ApiResponse<?>> leaderboard() {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
