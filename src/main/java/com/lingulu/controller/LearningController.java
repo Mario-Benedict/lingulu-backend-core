@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,7 @@ public class LearningController {
         return userId;
     }
     
-    @PostMapping("/progress")
+    @GetMapping("/progress")
     public ResponseEntity<ApiResponse<?>> progress() {
         UUID userId = UUID.fromString(getUserId());
 
@@ -40,7 +41,7 @@ public class LearningController {
         return ResponseEntity.ok(new ApiResponse<>(true, "Progress accepted successfully", progress));
     }
 
-    @PostMapping("/complete")
+    @GetMapping("/complete")
     public ResponseEntity<ApiResponse<?>> complete() {
         UUID userId = UUID.fromString(getUserId());
         
