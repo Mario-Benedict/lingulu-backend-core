@@ -58,6 +58,7 @@ public class AuthService {
 
         OAuthAccount oAuthAccount = OAuthAccount.builder()
                                     .user(user)
+                                    .accessToken(jwtUtil.generateAccessToken(user.getUserId()))
                                     .provider("Local")
                                     .build();
         
@@ -74,10 +75,16 @@ public class AuthService {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        if(user.getOauthAccounts().getProvider().equals("Google")){
+            throw new RuntimeException("Please login with Google OAuth");
+        }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())){
             throw new RuntimeException("Invalid Password");
         }
+
+        updateAccessToken(jwtUtil.generateAccessToken(user.getUserId()), user.getUserId());
 
         return user;
     }
@@ -150,5 +157,13 @@ public class AuthService {
                             .build();
 
         return ResponseEntity.ok(new ApiResponse<>(true, "Login berhasil", userResponse));
+    }
+
+    public void setEmailVerified(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setEmailVerified(true);
+        userRepository.save(user);
     }
 }
