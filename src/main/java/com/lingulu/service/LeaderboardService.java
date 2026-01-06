@@ -44,6 +44,18 @@ public class LeaderboardService {
                                     .build();
         leaderboardRepository.save(leaderboard);
     }
+
+    public void updateTotalPoints(UUID userId) {
+        Leaderboard leaderboard = leaderboardRepository.findByUser_UserId(userId);
+
+        if (leaderboard != null) {
+            leaderboard.setTotalPoints(leaderboard.getTotalPoints() + 100);
+            leaderboardRepository.save(leaderboard);
+        }
+        else {
+            throw new RuntimeException("Leaderboard entry not found for the given user.");
+        }
+    }
         
     public ResponseEntity<ApiResponse<?>> response(List<Leaderboard> leaderboards) {
         return ResponseEntity.ok(

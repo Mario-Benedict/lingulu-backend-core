@@ -14,10 +14,14 @@ import com.lingulu.entity.LearningProgress;
 import com.lingulu.repository.LearningProgressRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Service
 @RequiredArgsConstructor
+@Setter
 public class LearningService {
+
+    private final LeaderboardService leaderboardService;
     
     private final LearningProgressRepository learningProgressRepository;
 
@@ -41,6 +45,8 @@ public class LearningService {
         if (progress != null) {
             progress.setStatus("COMPLETED");
             learningProgressRepository.save(progress);
+
+            leaderboardService.updateTotalPoints(userId);
         } else {
             throw new RuntimeException("Learning progress not found for the given user and lesson.");
         }
