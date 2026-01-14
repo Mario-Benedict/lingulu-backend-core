@@ -19,7 +19,7 @@ public class S3StorageService {
     private final S3Client s3Client;
     private final S3Presigner presigner;
 
-    @Value("${aws.s3.bucket-name}")
+    @Value("${aws.s3.bucket.name}")
     private String bucketName;
 
     public S3StorageService(S3Client s3Client, S3Presigner presigner) {
@@ -28,7 +28,6 @@ public class S3StorageService {
     }
 
     public String generatePresignedUrl(String s3Key) {
-
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(s3Key)

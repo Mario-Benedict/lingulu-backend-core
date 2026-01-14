@@ -10,14 +10,14 @@ public class ConversationService {
 
     private final WhisperService whisperService;
 //     private final GeminiService geminiService;
-        private final GroqService groqService;
+    private final GroqService groqService;
     private final PollyService pollyService;
     private final S3StorageService s3StorageService;
 
     public ConversationService(
             WhisperService whisperService,
         //     GeminiService geminiService,
-                GroqService groqService,
+            GroqService groqService,
             PollyService pollyService,
             S3StorageService s3StorageService
     ) {
