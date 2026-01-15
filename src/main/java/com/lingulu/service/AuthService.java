@@ -49,23 +49,24 @@ public class AuthService {
         User user = User.builder()
                     .email(request.getEmail())
                     .passwordHash(passwordEncoder.encode(request.getPassword()))
-                    .build();        
+                    .build();
+
+        userRepository.save(user);
 
         UserProfile userProfile = UserProfile.builder()
                                 .username(request.getUsername())
                                 .user(user)
                                 .build();
 
+        userProfileRepository.save(userProfile);
+
         OAuthAccount oAuthAccount = OAuthAccount.builder()
                                     .user(user)
                                     .accessToken(jwtUtil.generateAccessToken(user.getUserId()))
                                     .provider("Local")
                                     .build();
-        
-        userRepository.save(user);
-        userProfileRepository.save(userProfile);
-        oAuthAccountRepository.save(oAuthAccount);
 
+        oAuthAccountRepository.save(oAuthAccount);
         leaderboardService.addLeaderBoard(user);
 
         return user;

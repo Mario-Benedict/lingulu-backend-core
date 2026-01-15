@@ -9,20 +9,17 @@ import com.lingulu.dto.AIConversationResponse;
 public class ConversationService {
 
     private final WhisperService whisperService;
-//     private final GeminiService geminiService;
     private final GroqService groqService;
     private final PollyService pollyService;
     private final S3StorageService s3StorageService;
 
     public ConversationService(
             WhisperService whisperService,
-        //     GeminiService geminiService,
             GroqService groqService,
             PollyService pollyService,
             S3StorageService s3StorageService
     ) {
         this.whisperService = whisperService;
-        // this.geminiService = geminiService;
         this.groqService = groqService;
         this.pollyService = pollyService;
         this.s3StorageService = s3StorageService;
