@@ -37,13 +37,13 @@ public class ConversationService {
         // 2. Save user audio + text
         s3StorageService.uploadMultipartFile(
                 audio,
-                "conversations/" + userId + conversationId + "/user/input-audio.wav"
+                "conversations/" + userId + "/" + conversationId + "/user/input-audio.wav"
         );
 
         s3StorageService.uploadBytes(
                 userText.getBytes(),
                 "text/plain",
-                "conversations/" + userId + conversationId + "/user/transcript.txt"
+                "conversations/" + userId + "/" +conversationId + "/user/transcript.txt"
         );
 
         // 3. Gemini
@@ -55,7 +55,7 @@ public class ConversationService {
         byte[] aiAudioBytes = pollyService.synthesize(aiText);
 
         String aiAudioKey =
-                "conversations/" + userId + conversationId + "/ai/response-audio.mp3";
+                "conversations/" + userId + "/" + conversationId + "/ai/response-audio.mp3";
 
         // 5. Save AI result
         s3StorageService.uploadBytes(

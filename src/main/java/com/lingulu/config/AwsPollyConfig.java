@@ -20,10 +20,10 @@ public class AwsPollyConfig {
     @Value("${aws.s3.bucket.name}")
     private String bucketName;
 
-    @Value("{aws.access.key}")
+    @Value("${aws.access.key}")
     private String accessKey;
 
-    @Value("{aws.secret.key}")
+    @Value("${aws.secret.key}")
     private String secretKey;
 
     @Bean
