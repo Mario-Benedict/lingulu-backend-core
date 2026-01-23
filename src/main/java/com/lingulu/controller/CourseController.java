@@ -12,9 +12,9 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    @GetMapping
-    public ApiResponse<?> getCourses() {
-        return new ApiResponse<>(true, "Course list",
-                courseService.getAllCourses());
-    }
+    // @GetMapping
+    // public ApiResponse<?> getCourses() {
+    //     return new ApiResponse<>(true, "Course list",
+    //             courseService.getAllCourses());
+    // }
 }

@@ -27,9 +27,6 @@ public class Lesson {
     @Column(name = "lesson_id")
     private UUID lessonId;
 
-    @Column(name = "difficulty_level")
-    private String difficultyLevel;
-
     @Column(name = "lesson_type")
     private String lessonType;
 

@@ -15,19 +15,19 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
 
-    public List<CourseResponse> getAllCourses() {
-        return courseRepository.findAll()
-                .stream()
-                .map(course -> builder()
-                        .courseId(course.getCourseId())
-                        .courseTitle(course.getCourseTitle())
-                        .description(course.getDescription())
-                        .difficultyLevel(course.getDifficultyLevel())
-                        .languageFrom(course.getLanguageFrom())
-                        .languageTo(course.getLanguageTo())
-                        .published(course.isPublished())
-                        .build()
-                )
-                .toList();
-    }
+    // public List<CourseResponse> getAllCourses() {
+    //     return courseRepository.findAll()
+    //             .stream()
+    //             .map(course -> builder()
+    //                     .courseId(course.getCourseId())
+    //                     .courseTitle(course.getCourseTitle())
+    //                     .description(course.getDescription())
+    //                     .difficultyLevel(course.getDifficultyLevel())
+    //                     .languageFrom(course.getLanguageFrom())
+    //                     .languageTo(course.getLanguageTo())
+    //                     .published(course.isPublished())
+    //                     .build()
+    //             )
+    //             .toList();
+    // }
 }
