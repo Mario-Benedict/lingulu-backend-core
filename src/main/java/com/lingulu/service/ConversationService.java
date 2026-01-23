@@ -67,7 +67,7 @@ public class ConversationService {
         s3StorageService.uploadBytes(
                 aiText.getBytes(),
                 "text/plain",
-                "conversations/" + userId + conversationId + "/ai/transcript.txt"
+                "conversations/" + userId + "/" + conversationId + "/ai/transcript.txt"
         );
 
         // 6. Pre-signed URL
