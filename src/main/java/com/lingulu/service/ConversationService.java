@@ -1,9 +1,15 @@
 package com.lingulu.service;
 
+import java.time.Instant;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lingulu.dto.AIConversationResponse;
+import com.lingulu.entity.Conversation;
+import com.lingulu.entity.ConversationMessage;
+import com.lingulu.repository.ConversationRepository;
 
 @Service
 public class ConversationService {
@@ -12,17 +18,20 @@ public class ConversationService {
     private final GroqService groqService;
     private final PollyService pollyService;
     private final S3StorageService s3StorageService;
+    private final ConversationRepository conversationRepository;
 
     public ConversationService(
             WhisperService whisperService,
             GroqService groqService,
             PollyService pollyService,
-            S3StorageService s3StorageService
+            S3StorageService s3StorageService,
+            ConversationRepository conversationRepository
     ) {
         this.whisperService = whisperService;
         this.groqService = groqService;
         this.pollyService = pollyService;
         this.s3StorageService = s3StorageService;
+        this.conversationRepository = conversationRepository;
     }
 
     public AIConversationResponse process(
@@ -30,21 +39,32 @@ public class ConversationService {
             String conversationId,
             String userId
     ) throws Exception {
+        Conversation conversation =
+                conversationRepository.findById(conversationId)
+                        .orElseGet(() -> {
+                            Conversation c = new Conversation();
+                            c.setId(conversationId);
+                            c.setUserId(userId);
+                            c.setCreatedAt(Instant.now());
+                            return c;
+                        });
+
+        String chatId = UUID.randomUUID().toString();
 
         // 1. STT
         String userText = whisperService.transcribe(audio);
 
-        // 2. Save user audio + text
+        // 2. Save user audio
+        String userAudioKey =
+                "conversations/" + userId + "/" + conversationId + "/user/" + chatId + "/input-audio.wav";
+
         s3StorageService.uploadMultipartFile(
                 audio,
-                "conversations/" + userId + "/" + conversationId + "/user/input-audio.wav"
+                userAudioKey
         );
 
-        s3StorageService.uploadBytes(
-                userText.getBytes(),
-                "text/plain",
-                "conversations/" + userId + "/" +conversationId + "/user/transcript.txt"
-        );
+        String userAudioUrl =
+                s3StorageService.generatePresignedUrl(userAudioKey);
 
         // 3. Gemini
         // String aiText = geminiService.generateResponse(userText);
@@ -55,7 +75,7 @@ public class ConversationService {
         byte[] aiAudioBytes = pollyService.synthesize(aiText);
 
         String aiAudioKey =
-                "conversations/" + userId + "/" + conversationId + "/ai/response-audio.mp3";
+                "conversations/" + userId + "/" + conversationId + "/ai/" + chatId + "/response-audio.mp3";
 
         // 5. Save AI result
         s3StorageService.uploadBytes(
@@ -64,21 +84,38 @@ public class ConversationService {
                 aiAudioKey
         );
 
-        s3StorageService.uploadBytes(
-                aiText.getBytes(),
-                "text/plain",
-                "conversations/" + userId + "/" + conversationId + "/ai/transcript.txt"
+        // 6. Pre-signed URL
+        String aiAudioUrl =
+                s3StorageService.generatePresignedUrl(aiAudioKey);
+
+        conversation.getMessages().add(
+                new ConversationMessage(
+                        "USER",
+                        userAudioUrl,
+                        userText,
+                        Instant.now()
+                )
         );
 
-        // 6. Pre-signed URL
-        String audioUrl =
-                s3StorageService.generatePresignedUrl(aiAudioKey);
+
+        // AI bubble
+        conversation.getMessages().add(
+                new ConversationMessage(
+                        "AI",
+                        aiAudioUrl,
+                        aiText,
+                        Instant.now()
+                )
+        );
+
+        conversation.setUpdatedAt(Instant.now());
+        conversationRepository.save(conversation);
 
         return new AIConversationResponse(
                 userText,
                 aiText,
-                audioUrl
-                // "ini urlnya"
+                userAudioUrl,
+                aiAudioUrl
         );
     }
 }
