@@ -14,8 +14,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-    private UUID userId;
-    private String email;
     private String accessToken;
-    // private String refreshToken;
 }
