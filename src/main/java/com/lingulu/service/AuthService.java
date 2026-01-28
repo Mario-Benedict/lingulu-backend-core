@@ -30,6 +30,7 @@ public class AuthService {
     private final OAuthAccountRepository oAuthAccountRepository;
     private final JwtUtil jwtUtil;
     private final LeaderboardService leaderboardService;
+    private final LearningService learningService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -68,6 +69,8 @@ public class AuthService {
 
         oAuthAccountRepository.save(oAuthAccount);
         leaderboardService.addLeaderBoard(user);
+
+        learningService.addUserLessons(user.getUserId());
 
         return user;
     }
@@ -121,6 +124,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         leaderboardService.addLeaderBoard(user);
+        learningService.addUserLessons(user.getUserId());
 
         return user;
     }

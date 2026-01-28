@@ -1,4 +1,4 @@
-package com.lingulu.exeption;
+package com.lingulu.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
