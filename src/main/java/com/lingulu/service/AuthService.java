@@ -7,7 +7,9 @@ import com.lingulu.dto.UserResponse;
 import com.lingulu.entity.OAuthAccount;
 import com.lingulu.entity.User;
 import com.lingulu.entity.UserProfile;
+import com.lingulu.exception.OAuthOnlyLoginException;
 import com.lingulu.exception.RegisterException;
+import com.lingulu.exception.UserNotFoundException;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.security.JwtUtil;
 import com.lingulu.repository.OAuthAccountRepository;
@@ -16,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -54,20 +58,24 @@ public class AuthService {
                     .passwordHash(passwordEncoder.encode(request.getPassword()))
                     .build();
 
-        userRepository.save(user);
 
         UserProfile userProfile = UserProfile.builder()
                                 .username(request.getUsername())
                                 .user(user)
                                 .build();
 
+        user.setUserProfile(userProfile);
+
+        userRepository.save(user);
         userProfileRepository.save(userProfile);
 
         OAuthAccount oAuthAccount = OAuthAccount.builder()
                                     .user(user)
-                                    .accessToken(jwtUtil.generateAccessToken(user.getUserId()))
+                                    .accessToken(jwtUtil.generateAccessToken(user))
                                     .provider("Local")
                                     .build();
+
+        System.out.println(oAuthAccount.getAccessToken());
 
         oAuthAccountRepository.save(oAuthAccount);
         leaderboardService.addLeaderBoard(user);
@@ -77,38 +85,32 @@ public class AuthService {
         return user;
     }
 
-    public User login(LoginRequest request) {
+    public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
+                .orElseThrow(() -> new UserNotFoundException("Invalid email or password", HttpStatus.UNAUTHORIZED));
+
         if(user.getOauthAccounts().getProvider().equals("Google")){
-            throw new RuntimeException("Please login with Google OAuth");
+            throw new OAuthOnlyLoginException("Please login using Google OAuth", HttpStatus.UNAUTHORIZED);
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())){
-            throw new RuntimeException("Invalid Password");
+            throw new UserNotFoundException("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
 
-        updateAccessToken(jwtUtil.generateAccessToken(user.getUserId()), user.getUserId());
-
-        return user;
+        return updateAccessToken(jwtUtil.generateAccessToken(user), user.getUserId());
     }
 
     private User registerViaGoogle(OAuth2User oAuth2User){
-
-        Random random = new Random();
-        int randomNumber = random.nextInt(1000000); // 0-99999
-        String fiveDigit = String.format("%06d", randomNumber); 
-
-        String userEmail = oAuth2User.getAttribute("email");
+        String email = oAuth2User.getAttribute("email");
+        String givenName = oAuth2User.getAttribute("given_name");
 
         User user = User.builder()
-                    .email(userEmail)
+                    .email(email)
                     .isEmailVerified(true)
                     .build();        
 
         UserProfile userProfile = UserProfile.builder()
-                                .username(oAuth2User.getAttribute("given_name") + fiveDigit)
+                                .username(givenName)
                                 .user(user)
                                 .build();
 
@@ -122,8 +124,8 @@ public class AuthService {
         userProfileRepository.save(userProfile);
         oAuthAccountRepository.save(oAuthAccount);
 
-        user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.UNAUTHORIZED));
 
         leaderboardService.addLeaderBoard(user);
         learningService.addUserLessons(user.getUserId());
@@ -137,7 +139,7 @@ public class AuthService {
                 .orElseGet(() -> registerViaGoogle(oAuth2User));
         
         if(oAuthAccountRepository.findByUser_UserId(user.getUserId()).getProvider().equals("Local")){
-            throw new RuntimeException("You already registered. Please login with your email and password");
+            throw new RegisterException("You already registered. Please login with your email and password", HttpStatus.BAD_REQUEST);
         }
 
         return user;
@@ -154,17 +156,9 @@ public class AuthService {
         return accessToken;
     }
 
-    public ResponseEntity<ApiResponse<UserResponse>> response(User user){
-         UserResponse userResponse = UserResponse.builder()
-                            .accessToken(updateAccessToken(jwtUtil.generateAccessToken(user.getUserId()), user.getUserId()))
-                            .build();
-
-        return ResponseEntity.ok(new ApiResponse<UserResponse>(true, "Login berhasil", userResponse));
-    }
-
     public void setEmailVerified(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND));
 
         user.setEmailVerified(true);
         userRepository.save(user);

@@ -1,5 +1,6 @@
 package com.lingulu.security;
 
+import com.lingulu.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 
@@ -24,15 +25,18 @@ public class JwtUtil {
     @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
+
+
     private SecretKey getSigningKey() {
-        // konversi String ke SecretKey (HMAC-SHA256)
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     // Generate access token
-    public String generateAccessToken(UUID user_id) {
+    public String generateAccessToken(User user) {
         return Jwts.builder()
-                .setSubject(user_id.toString())
+                .setSubject(user.getUserId().toString())
+                .setSubject(user.getEmail())
+                .setSubject(user.getUserProfile().getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
