@@ -1,10 +1,12 @@
 package com.lingulu.controller;
 
+import com.lingulu.dto.OtpRequest;
+import com.lingulu.dto.OtpVerifyRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.lingulu.service.AuthService;
 import com.lingulu.service.OtpService;
@@ -20,18 +22,28 @@ public class OtpController {
     private final AuthService authService;
 
     @PostMapping("/request")
-    public ResponseEntity<?> requestOtp(@RequestParam String email) {
-        otpService.sendOtp(email);
+    public ResponseEntity<?> requestOtp(
+        @Valid
+        @RequestBody
+        OtpRequest otpRequest
+    ) throws Exception {
+        otpService.sendOtp(otpRequest.getEmail());
+
         return ResponseEntity.ok("OTP sent");
     }
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyOtp(
-            @RequestParam String email,
-            @RequestParam String otp
-    ) {
+            @Valid
+            @RequestBody
+            OtpVerifyRequest otpVerifyRequest
+    ) throws Exception {
+        String email = otpVerifyRequest.getEmail();
+        String otp = otpVerifyRequest.getOtp();
+
         otpService.verifyOtp(email, otp);
         authService.setEmailVerified(email);
+
         return ResponseEntity.ok("OTP verified");
     }
 }

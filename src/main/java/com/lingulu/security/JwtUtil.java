@@ -35,20 +35,10 @@ public class JwtUtil {
     public String generateAccessToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getUserId().toString())
-                .setSubject(user.getEmail())
-                .setSubject(user.getUserProfile().getUsername())
+                .claim("email", user.getEmail())
+                .claim("username", user.getUserProfile() != null ? user.getUserProfile().getUsername() : null)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    // Generate refresh token
-    public String generateRefreshToken(UUID user_id) {
-        return Jwts.builder()
-                .setSubject(user_id.toString())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -63,13 +53,13 @@ public class JwtUtil {
         }
     }
 
-    // Ambil username dari token
     public String getUserIdFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+        
         return claims.getSubject();
     }
 }
