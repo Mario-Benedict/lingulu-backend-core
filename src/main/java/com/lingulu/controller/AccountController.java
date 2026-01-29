@@ -3,6 +3,7 @@ package com.lingulu.controller;
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.LoginRequest;
 import com.lingulu.dto.RegisterRequest;
+import com.lingulu.dto.UserResponse;
 import com.lingulu.entity.User;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.security.JwtUtil;
@@ -10,6 +11,7 @@ import com.lingulu.service.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -26,21 +28,21 @@ public class AccountController {
     private final UserRepository userRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<?>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<UserResponse>> register(@Valid @RequestBody RegisterRequest request) {
         User user = authService.register(request);
 
         return authService.response(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<UserResponse>> login(@Valid @RequestBody LoginRequest request) {
         User user = authService.login(request);
 
-       return authService.response(user);
+        return authService.response(user);
     }
 
     @GetMapping("/oauth2/data")
-    public ResponseEntity<ApiResponse<?>> verifyOAuthLogin(@CookieValue(value = "oauth_token", required = false) String token) {
+    public ResponseEntity<ApiResponse<UserResponse>> verifyOAuthLogin(@CookieValue(value = "oauth_token", required = false) String token) {
         if (token == null) {
             return ResponseEntity.status(401)
                 .body(new ApiResponse<>(false, "No OAuth token found", null));
@@ -64,5 +66,12 @@ public class AccountController {
             return ResponseEntity.status(401)
                 .body(new ApiResponse<>(false, "Invalid token", null));
         }
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Object>> handleEmptyRequestBody(HttpMessageNotReadableException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiResponse<>(false, "Request body tidak boleh kosong", null));
     }
 }

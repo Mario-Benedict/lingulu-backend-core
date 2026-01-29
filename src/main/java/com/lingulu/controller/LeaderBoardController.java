@@ -32,6 +32,12 @@ public class LeaderBoardController {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
 
+        System.out.println("userId: " + userId);
+        if (userId == null) {
+            return ResponseEntity.status(401)
+                .body(new ApiResponse<>(false, "Unauthorized", null));
+        }
+
         List<Leaderboard> leaderboards = leaderboardService.getTop10Leaderboards(UUID.fromString(userId));
         
         return leaderboardService.response(leaderboards);

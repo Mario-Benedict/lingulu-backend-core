@@ -7,14 +7,14 @@ import com.lingulu.dto.UserResponse;
 import com.lingulu.entity.OAuthAccount;
 import com.lingulu.entity.User;
 import com.lingulu.entity.UserProfile;
+import com.lingulu.exception.RegisterException;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.security.JwtUtil;
 import com.lingulu.repository.OAuthAccountRepository;
 import com.lingulu.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,16 +35,18 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public User register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already registered");
-        }
+        Map<String, List<String>> errors = new HashMap<>();
 
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new RuntimeException("Passwords do not match");
+        if (userRepository.existsByEmail(request.getEmail())) {
+            errors.computeIfAbsent("email", k -> new ArrayList<>()).add("Email already in use");
         }
 
         if (userProfileRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already registered");
+            errors.computeIfAbsent("username", k -> new ArrayList<>()).add("Username already in use");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new RegisterException("Failed to register", errors);
         }
 
         User user = User.builder()
@@ -152,15 +154,12 @@ public class AuthService {
         return accessToken;
     }
 
-    public ResponseEntity<ApiResponse<?>> response(User user){
+    public ResponseEntity<ApiResponse<UserResponse>> response(User user){
          UserResponse userResponse = UserResponse.builder()
-                            .userId(user.getUserId())
-                            .email(user.getEmail())
                             .accessToken(updateAccessToken(jwtUtil.generateAccessToken(user.getUserId()), user.getUserId()))
-                            // .refreshToken(jwtUtil.generateRefreshToken(user.getUserId()))
                             .build();
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "Login berhasil", userResponse));
+        return ResponseEntity.ok(new ApiResponse<UserResponse>(true, "Login berhasil", userResponse));
     }
 
     public void setEmailVerified(String email) {
