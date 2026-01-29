@@ -3,6 +3,7 @@ package com.lingulu.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -16,13 +17,31 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMethodNotAllowed(
+            HttpRequestMethodNotSupportedException ex) {
+
+        String method = ex.getMethod();
+
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(new ApiResponse<>(
+                        false,
+                        "Method " + method + " not allowed.",
+                        null
+                ));
+    }
+
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ApiResponse<Object>> handleAppExceptions(AppException ex) {
         if (ex.getErrors() != null) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(false, ex.getMessage(), ex.getErrors()));
+            return ResponseEntity
+                .status(ex.getStatus() != null ? ex.getStatus() : HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(false, ex.getMessage(), ex.getErrors()));
         }
 
-        return ResponseEntity.badRequest().body(new ApiResponse<>(false, ex.getMessage(), null));
+        return ResponseEntity
+            .status(ex.getStatus() != null ? ex.getStatus() : HttpStatus.BAD_REQUEST)
+            .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

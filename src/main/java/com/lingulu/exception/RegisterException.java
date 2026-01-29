@@ -1,14 +1,15 @@
 package com.lingulu.exception;
 
+import org.springframework.http.HttpStatusCode;
+
 import java.util.List;
 import java.util.Map;
 
 public class RegisterException extends AppException {
-    public RegisterException(String message) {
-        super(message);
+    public RegisterException(String message, HttpStatusCode status) {
+        super(message, status);
     }
 
-    // message + errors per field
     public RegisterException(String message, Map<String, List<String>> errors) {
         super(message, errors);
     }

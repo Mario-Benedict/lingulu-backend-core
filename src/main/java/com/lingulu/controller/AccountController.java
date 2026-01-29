@@ -11,6 +11,9 @@ import com.lingulu.service.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,51 +30,51 @@ public class AccountController {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+    @Value("${spring.application.dev}")
+    private Boolean isDev;
+
+    private String generateCookie(String token) {
+        return ResponseCookie.from("token", token)
+                .httpOnly(true)
+                .secure(!isDev)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(7*24*60*60)
+                .build()
+                .toString();
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserResponse>> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<UserResponse>> register(
+        @Valid @RequestBody RegisterRequest request
+    ) throws Exception {
         User user = authService.register(request);
 
-        return authService.response(user);
+        String token = jwtUtil.generateAccessToken(user);
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, generateCookie(token))
+            .body(new ApiResponse<>(true, "Registration successful",
+                    UserResponse
+                        .builder()
+                        .accessToken(token)
+                        .build()
+            ));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserResponse>> login(@Valid @RequestBody LoginRequest request) {
-        User user = authService.login(request);
+    public ResponseEntity<ApiResponse<UserResponse>> login(
+        @Valid @RequestBody LoginRequest request
+    ) throws Exception {
+        String token = authService.login(request);
 
-        return authService.response(user);
-    }
-
-    @GetMapping("/oauth2/data")
-    public ResponseEntity<ApiResponse<UserResponse>> verifyOAuthLogin(@CookieValue(value = "oauth_token", required = false) String token) {
-        if (token == null) {
-            return ResponseEntity.status(401)
-                .body(new ApiResponse<>(false, "No OAuth token found", null));
-        }
-
-        try {
-            // Verify token dan get user data
-            UUID userId = UUID.fromString(jwtUtil.getUserIdFromToken(token));
-            User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-            // UserResponse userResponse = UserResponse.builder()
-            //     .userId(user.getUserId())
-            //     .email(user.getEmail())
-            //     .accessToken(token)
-            //     .build();
-
-            // return ResponseEntity.ok(new ApiResponse<>(true, "Login berhasil", userResponse));
-            return authService.response(user);
-        } catch (Exception e) {
-            return ResponseEntity.status(401)
-                .body(new ApiResponse<>(false, "Invalid token", null));
-        }
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiResponse<Object>> handleEmptyRequestBody(HttpMessageNotReadableException ex) {
-        return ResponseEntity
-                .badRequest()
-                .body(new ApiResponse<>(false, "Request body tidak boleh kosong", null));
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, generateCookie(token))
+            .body(new ApiResponse<>(true, "Login successful",
+                    UserResponse
+                            .builder()
+                            .accessToken(token)
+                            .build()
+            ));
     }
 }
