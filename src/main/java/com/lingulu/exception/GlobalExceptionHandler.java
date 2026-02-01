@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.lingulu.dto.ApiResponse;
 
+import jakarta.validation.ConstraintViolationException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,4 +76,39 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ApiResponse<>(false, "Internal Server Error", null));
     }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponse<Map<String, List<String>>>> handleConstraintViolation(
+            ConstraintViolationException ex
+    ) {
+        Map<String, List<String>> errors = new HashMap<>();
+
+        ex.getConstraintViolations().forEach(v -> {
+            String fullPath = v.getPropertyPath().toString();
+
+            // ambil nama parameter terakhir (setelah titik)
+            String field = fullPath.contains(".")
+                    ? fullPath.substring(fullPath.lastIndexOf('.') + 1)
+                    : fullPath;
+
+            String message = v.getMessage();
+
+            errors.computeIfAbsent(field, k -> new ArrayList<>()).add(message);
+        });
+
+        return ResponseEntity.badRequest()
+                .body(new ApiResponse<>(false, "Validation Error", errors));
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("success", false);
+        body.put("message", ex.getMessage()); // "Unexpected null list"
+        body.put("data", null);
+        
+        // tetap pakai status 500
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+
 }
