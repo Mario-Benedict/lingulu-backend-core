@@ -1,8 +1,13 @@
 package com.lingulu.controller;
 
+import com.lingulu.dto.ApiResponse;
+import com.lingulu.dto.CompleteLessonsRequest;
 import com.lingulu.service.LearningService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -16,10 +21,15 @@ public class LearningController {
 
     private final LearningService learningService;
 
-    @PostMapping("/lessons/{lessonId}/complete")
-    public ResponseEntity<Void> completeLesson(@PathVariable UUID lessonId) {
-        UUID userId = getCurrentUserId();
-        learningService.markLessonCompleted(userId, lessonId);
-        return ResponseEntity.ok().build();
+    @PostMapping("/lessons/complete")
+    public ResponseEntity<ApiResponse<?>> completeLesson(@RequestBody @Valid CompleteLessonsRequest completeLessonsRequest) {
+        String userId = (String) SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
+
+        UUID lessonId = UUID.fromString(completeLessonsRequest.getLessonid());
+        learningService.markLessonCompleted(UUID.fromString(userId),lessonId);
+        
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(true, "Lesson mark as completed", null));
     }
 }

@@ -36,7 +36,7 @@ public class CourseProgress {
     private Course course;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status")
     private ProgressStatus status;
 
     private int totalSections;

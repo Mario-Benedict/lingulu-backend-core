@@ -2,8 +2,11 @@ package com.lingulu.service;
 
 import com.lingulu.entity.*;
 import com.lingulu.enums.ProgressStatus;
+import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.*;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +29,8 @@ public class LearningService {
 
     public void markLessonCompleted(UUID userId, UUID lessonId) {
 
-        LessonProgress lp = lessonProgressRepository
-                .findByUser_UserIdAndLesson_LessonId(userId, lessonId)
-                .orElseThrow(() -> new RuntimeException("Lesson progress not found"));
+        LessonProgress lp = lessonProgressRepository.findByUser_UserIdAndLesson_LessonId(userId, lessonId)
+                                .orElseThrow(() -> new DataNotFoundException("Lesson progress not found", HttpStatus.BAD_REQUEST));
 
         if (lp.getStatus() == ProgressStatus.COMPLETED) return;
 
@@ -42,26 +44,24 @@ public class LearningService {
 
     private void recalcSectionProgress(UUID userId, Section section) {
 
-        int totalLessons =
-                lessonRepository.countBySection_SectionId(section.getSectionId());
+        // int totalLessons =
+        //         lessonRepository.countBySection_SectionId(section.getSectionId());
 
-        int completedLessons =
-                lessonProgressRepository.countByUser_UserIdAndLesson_Section_SectionIdAndStatus(
-                        userId,
-                        section.getSectionId(),
-                        ProgressStatus.COMPLETED
-                );
+        // int completedLessons =
+        //         lessonProgressRepository.countByUser_UserIdAndLesson_Section_SectionIdAndStatus(
+        //                 userId,
+        //                 section.getSectionId(),
+        //                 ProgressStatus.COMPLETED
+        //         );
 
         SectionProgress sp = sectionProgressRepository
                 .findByUser_UserIdAndSection_SectionId(userId, section.getSectionId())
-                .orElseGet(() -> {
-                    SectionProgress s = new SectionProgress();
-                    s.setUser(userRepository.getReferenceById(userId));
-                    s.setSection(section);
-                    return s;
-                });
+                .orElseThrow(() -> new DataNotFoundException("Section progress not found", HttpStatus.NOT_FOUND));
 
-        sp.setTotalLessons(totalLessons);
+        int totalLessons = sp.getTotalLessons();
+        int completedLessons = sp.getCompletedLessons() + 1;
+
+        // sp.setTotalLessons(totalLessons);
         sp.setCompletedLessons(completedLessons);
         sp.setStatus(
                 completedLessons == totalLessons ? ProgressStatus.COMPLETED :

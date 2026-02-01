@@ -36,7 +36,7 @@ public class SectionProgress {
     private Section section;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status")
     private ProgressStatus status;
 
     private int totalLessons;
