@@ -1,33 +1,23 @@
 package com.lingulu.service;
 
 import com.lingulu.dto.CourseResponse;
-import com.lingulu.repository.CourseRepository;
+import com.lingulu.repository.CourseProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static com.lingulu.dto.CourseResponse.*;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CourseService {
 
-    private final CourseRepository courseRepository;
+    private final CourseProgressRepository courseProgressRepository;
 
-    // public List<CourseResponse> getAllCourses() {
-    //     return courseRepository.findAll()
-    //             .stream()
-    //             .map(course -> builder()
-    //                     .courseId(course.getCourseId())
-    //                     .courseTitle(course.getCourseTitle())
-    //                     .description(course.getDescription())
-    //                     .difficultyLevel(course.getDifficultyLevel())
-    //                     .languageFrom(course.getLanguageFrom())
-    //                     .languageTo(course.getLanguageTo())
-    //                     .published(course.isPublished())
-    //                     .build()
-    //             )
-    //             .toList();
-    // }
+    public List<CourseResponse> getMyCourses(UUID userId) {
+        return courseProgressRepository.findByUser_UserId(userId)
+                .stream()
+                .map(CourseResponse::from)
+                .toList();
+    }
 }

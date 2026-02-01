@@ -1,229 +1,112 @@
 package com.lingulu.service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-
-import com.lingulu.dto.CompleteCourseResponse;
-import com.lingulu.dto.CourseResponse;
-import com.lingulu.dto.ProgressResponse;
-import com.lingulu.dto.SectionResponse;
-import com.lingulu.entity.Course;
-import com.lingulu.entity.LearningProgress;
-import com.lingulu.entity.Lesson;
-import com.lingulu.entity.Section;
-import com.lingulu.entity.User;
-import com.lingulu.repository.CourseRepository;
-import com.lingulu.repository.LearningProgressRepository;
-import com.lingulu.repository.LessonRepository;
-import com.lingulu.repository.SectionRepository;
-import com.lingulu.repository.UserRepository;
-
-import jakarta.annotation.PostConstruct;
+import com.lingulu.entity.*;
+import com.lingulu.enums.ProgressStatus;
+import com.lingulu.repository.*;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Setter
+@Transactional
 public class LearningService {
 
-    private final LeaderboardService leaderboardService;
-    
-    private final LearningProgressRepository learningProgressRepository;
-    private final UserRepository userRepository;
+    private final LessonProgressRepository lessonProgressRepository;
+    private final SectionProgressRepository sectionProgressRepository;
+    private final CourseProgressRepository courseProgressRepository;
+
     private final LessonRepository lessonRepository;
-    
+    private final SectionRepository sectionRepository;
+    private final UserRepository userRepository;
+    private final LeaderboardService leaderboardService;
 
-    // public ProgressResponse getLearningProgress(UUID userId) {
-    //     // Update jadi return progress semua courses (beginner, inter, advanced)
-    //     Integer completedLessons = learningProgressRepository.countByUser_UserIdAndStatus(userId, "COMPLETED");
-    //     Integer totalLessons = 12;
-    //     Float progressPercentage = (completedLessons.floatValue() / totalLessons) * 100;
+    public void markLessonCompleted(UUID userId, UUID lessonId) {
 
-    //     ProgressResponse response = ProgressResponse.builder()
-    //                                     .completedLessons(completedLessons)
-    //                                     .totalLessons(totalLessons)
-    //                                     .progressPercentage(progressPercentage)
-    //                                     .build();
+        LessonProgress lp = lessonProgressRepository
+                .findByUser_UserIdAndLesson_LessonId(userId, lessonId)
+                .orElseThrow(() -> new RuntimeException("Lesson progress not found"));
 
-    //     return response;
-    // }
+        if (lp.getStatus() == ProgressStatus.COMPLETED) return;
 
-    public void markAsComplete(UUID userId, UUID lessonId) {
-        LearningProgress progress = learningProgressRepository.findByUser_UserIdAndLesson_LessonId(userId, lessonId);
+        lp.setStatus(ProgressStatus.COMPLETED);
+        lp.setCompletedAt(LocalDateTime.now());
+        lessonProgressRepository.save(lp);
 
-        if (progress != null) {
-            progress.setStatus("COMPLETED");
-            progress.setCompletedAt(LocalDateTime.now());
-            learningProgressRepository.save(progress);
-
-            leaderboardService.updateTotalPoints(userId);
-        } else {
-            throw new RuntimeException("Learning progress not found for the given user and lesson.");
-        }
+        recalcSectionProgress(userId, lp.getLesson().getSection());
+        leaderboardService.updateTotalPoints(userId);
     }
 
-    public Map<String, CourseResponse> getCompletedCourses(UUID userId) {
-        List<LearningProgress> learningProgresses = learningProgressRepository.findByUser_UserId(userId);
+    private void recalcSectionProgress(UUID userId, Section section) {
 
-        Map<String, CourseResponse> courseResponse = new HashMap<>();
+        int totalLessons =
+                lessonRepository.countBySection_SectionId(section.getSectionId());
 
-        for (LearningProgress learn : learningProgresses) {
-            String courseId = learn.getLesson().getSection().getCourse().getCourseId().toString();
-            String sectionId = learn.getLesson().getSection().getSectionId().toString();
-            String lessonId = learn.getLesson().getLessonId().toString();
-            String status = learn.getStatus();
+        int completedLessons =
+                lessonProgressRepository.countByUser_UserIdAndLesson_Section_SectionIdAndStatus(
+                        userId,
+                        section.getSectionId(),
+                        ProgressStatus.COMPLETED
+                );
 
-            // Pastikan CourseResponse ada
-            courseResponse.putIfAbsent(courseId, CourseResponse.builder()
-                    .sections(new HashMap<>())
-                    .status("In Progress")
-                    .totalSections(0)
-                    .completedSections(0)
-                    .progressPercentage(0)
-                    .build());
+        SectionProgress sp = sectionProgressRepository
+                .findByUser_UserIdAndSection_SectionId(userId, section.getSectionId())
+                .orElseGet(() -> {
+                    SectionProgress s = new SectionProgress();
+                    s.setUser(userRepository.getReferenceById(userId));
+                    s.setSection(section);
+                    return s;
+                });
 
-            CourseResponse course = courseResponse.get(courseId);
+        sp.setTotalLessons(totalLessons);
+        sp.setCompletedLessons(completedLessons);
+        sp.setStatus(
+                completedLessons == totalLessons ? ProgressStatus.COMPLETED :
+                        completedLessons > 0 ? ProgressStatus.IN_PROGRESS :
+                                ProgressStatus.NOT_STARTED
+        );
 
-            // Pastikan SectionResponse ada
-            course.getSections().putIfAbsent(sectionId, SectionResponse.builder()
-                    .lessons(new HashMap<>())
-                    .status("In Progress")
-                    .completedLessons(0)
-                    .totalLessons(0)
-                    .build());
+        sectionProgressRepository.save(sp);
 
-            SectionResponse section = course.getSections().get(sectionId);
-
-            // Jika section baru, update totalSections
-            if (section.getTotalLessons() == 0 && section.getLessons().isEmpty()) {
-                course.setTotalSections(course.getTotalSections() + 1);
-            }
-
-            // Update totalLessons
-            section.setTotalLessons(section.getTotalLessons() + 1);
-
-            // Update completedLessons jika status Completed
-            if ("Completed".equalsIgnoreCase(status)) {
-                section.setCompletedLessons(section.getCompletedLessons() + 1);
-            }
-
-            // Masukkan lesson ke map
-            section.getLessons().put(lessonId, status);
-        }
-
-        // Hitung status section dan course, serta progress
-        for (CourseResponse course : courseResponse.values()) {
-            int completedSectionsCount = 0;
-
-            for (SectionResponse section : course.getSections().values()) {
-                if (section.getCompletedLessons() == section.getTotalLessons()) {
-                    section.setStatus("Completed");
-                    completedSectionsCount++;
-                }
-            }
-
-            course.setCompletedSections(completedSectionsCount);
-
-            if (course.getCompletedSections() == course.getTotalSections()) {
-                course.setStatus("Completed");
-            }
-
-            // Hitung progressPercentage, hindari pembagian integer langsung
-            if (course.getTotalSections() > 0) {
-                course.setProgressPercentage((int) ((double) course.getCompletedSections() / course.getTotalSections() * 100));
-            } else {
-                course.setProgressPercentage(0);
-            }
-        }
-
-        return courseResponse;
+        recalcCourseProgress(userId, section.getCourse());
     }
 
-    public void addUserLessons(UUID userId) {
-        List<Lesson> lessons = lessonRepository.findAll();
+    private void recalcCourseProgress(UUID userId, Course course) {
 
-        for(Lesson lesson : lessons) {
+        int totalSections =
+                sectionRepository.countByCourse_CourseId(course.getCourseId());
 
-            User user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("User not found"));
-            LearningProgress learningProgress = LearningProgress.builder().user(user).lesson(lesson).status("In Progress").completedAt(null).build();
+        int completedSections =
+                sectionProgressRepository.countByUser_UserIdAndSection_Course_CourseIdAndStatus(
+                        userId,
+                        course.getCourseId(),
+                        ProgressStatus.COMPLETED
+                );
 
-            learningProgressRepository.save(learningProgress);
-        }
+        CourseProgress cp = courseProgressRepository
+                .findByUser_UserId(userId)
+                .stream()
+                .filter(p -> p.getCourse().getCourseId().equals(course.getCourseId()))
+                .findFirst()
+                .orElseGet(() -> {
+                    CourseProgress c = new CourseProgress();
+                    c.setUser(userRepository.getReferenceById(userId));
+                    c.setCourse(course);
+                    return c;
+                });
+
+        cp.setTotalSections(totalSections);
+        cp.setCompletedSections(completedSections);
+        cp.setStatus(
+                completedSections == totalSections ? ProgressStatus.COMPLETED :
+                        completedSections > 0 ? ProgressStatus.IN_PROGRESS :
+                                ProgressStatus.NOT_STARTED
+        );
+
+        courseProgressRepository.save(cp);
     }
-
-    // OLD CompletedCourseFUnction, Aku belum delete buat jaga jaga
-    // public Map<String, CourseResponse> getCompletedCourses(UUID userId) {
-    //     // update jadi response terbaru
-
-    //     List<LearningProgress> learningProgresses = learningProgressRepository.findByUser_UserId(userId);
-
-    //     Map<String, CourseResponse> courseResponse = new HashMap<>();
-
-    //     for(LearningProgress learn : learningProgresses){
-    //         String courseId = learn.getLesson().getSection().getCourse().getCourseId().toString();
-    //         String sectionId = learn.getLesson().getSection().getSectionId().toString();
-    //         String lessonId = learn.getLesson().getLessonId().toString();
-    //         String status = learn.getStatus();
-
-    //         if(courseResponse.get(courseId) == null){
-    //             courseResponse.put(courseId, CourseResponse.builder().sections(new HashMap<>()).status("In Progress").totalSections(0).completedSections(0).progressPercentage(0).build());
-
-    //             if(courseResponse.get(courseId).getSections().get(sectionId) == null){
-    //                 courseResponse.get(courseId).getSections().put(sectionId, SectionResponse.builder().lessons(new HashMap<>()).status("In Progress").completedLessons(0).totalLessons(0).build());
-                    
-    //                 int currentTotalSections =  courseResponse.get(courseId).getTotalSections();
-        
-    //                 courseResponse.get(courseId).setTotalSections(currentTotalSections + 1);
-            
-    //             }
-            
-    //         }
-    //         int currentTotalLessons = courseResponse.get(courseId).getSections().get(sectionId).getTotalLessons();
-
-    //         courseResponse.get(courseId).getSections().get(sectionId).setTotalLessons(currentTotalLessons + 1);
-
-    //         if(status.equals("Completed")) {
-    //             int currentCompletedLessons = courseResponse.get(courseId).getSections().get(sectionId).getCompletedLessons();
-
-    //             courseResponse.get(courseId).getSections().get(sectionId).setCompletedLessons(currentCompletedLessons + 1);
-    //         }
-            
-    //         courseResponse.get(courseId).getSections().get(sectionId).getLessons().put(lessonId, status);
-    //     }
-
-    //     for (String courseKey : courseResponse.keySet()) {
-    //         for(String  sectionKey : courseResponse.get(courseKey).getSections().keySet()) {
-    //             int completedLessons = courseResponse.get(courseKey).getSections().get(sectionKey).getCompletedLessons();
-    //             int totalLessons = courseResponse.get(courseKey).getSections().get(sectionKey).getTotalLessons();
-
-    //             if(completedLessons == totalLessons) {
-    //                 courseResponse.get(courseKey).getSections().get(sectionKey).setStatus("Completed");
-
-    //                 int currentCompletedSections = courseResponse.get(courseKey).getCompletedSections();
-
-    //                 courseResponse.get(courseKey).setCompletedSections(currentCompletedSections + 1);
-    //             }
-    //         }
-
-    //         int completedSections = courseResponse.get(courseKey).getCompletedSections();
-    //         int totalSections = courseResponse.get(courseKey).getTotalSections();
-
-    //         if(completedSections == totalSections) {
-    //             courseResponse.get(courseKey).setStatus("Completed");
-    //         }
-
-    //         courseResponse.get(courseKey).setProgressPercentage(completedSections/totalSections * 100);
-    //     }
-
-    //     return courseResponse;
-
-    // }
 
 }
