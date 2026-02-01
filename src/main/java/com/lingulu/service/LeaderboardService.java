@@ -43,7 +43,7 @@ public class LeaderboardService {
         LeaderboardResponse leaderboardUser = leaderboardRepository.findByUserId(userId);
 
         if(leaderboardUser == null){
-            throw new DataNotFoundException("Leaderboard User not found", HttpStatus.BAD_REQUEST);
+            throw new DataNotFoundException("Leaderboard User not found", HttpStatus.NOT_FOUND);
         }
 
         if(leaderboards.contains(leaderboardUser)){
@@ -70,7 +70,7 @@ public class LeaderboardService {
             leaderboardRepository.save(leaderboard);
         }
         else {
-            throw new DataNotFoundException("Leaderboard user not found", HttpStatus.BAD_REQUEST);
+            throw new DataNotFoundException("Leaderboard user not found", HttpStatus.NOT_FOUND);
         }
     }
 }
