@@ -77,4 +77,21 @@ public class AccountController {
                             .build()
             ));
     }
+
+    @GetMapping("/authenticated")
+    public ResponseEntity<ApiResponse<Boolean>> isAuthenticated(
+        @CookieValue(name = "token", required = false) String token
+    ) {
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.ok(
+                    new ApiResponse<Boolean>(true, "Token validation result", false)
+            );
+        }
+
+        boolean isValid = jwtUtil.validateToken(token);
+
+        return ResponseEntity.ok(
+                new ApiResponse<Boolean>(true, "Token validation result", isValid)
+        );
+    }
 }
