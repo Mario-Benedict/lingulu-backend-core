@@ -26,7 +26,7 @@ public class LearningController {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
 
-        UUID lessonId = UUID.fromString(completeLessonsRequest.getLessonid());
+        UUID lessonId = UUID.fromString(completeLessonsRequest.getLessonId());
         learningService.markLessonCompleted(UUID.fromString(userId),lessonId);
         
         return ResponseEntity.ok()
