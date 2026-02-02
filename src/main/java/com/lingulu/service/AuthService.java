@@ -35,6 +35,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final LeaderboardService leaderboardService;
     private final LearningService learningService;
+    private final EnrollmentService enrollmentService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -79,8 +80,7 @@ public class AuthService {
 
         oAuthAccountRepository.save(oAuthAccount);
         leaderboardService.addLeaderBoard(user);
-
-        learningService.addUserLessons(user.getUserId());
+        enrollmentService.enrollUserToAllLessons(user.getUserId());
 
         return user;
     }
@@ -128,7 +128,8 @@ public class AuthService {
                 .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.UNAUTHORIZED));
 
         leaderboardService.addLeaderBoard(user);
-        learningService.addUserLessons(user.getUserId());
+        enrollmentService.enrollUserToAllLessons(user.getUserId());
+
 
         return user;
     }

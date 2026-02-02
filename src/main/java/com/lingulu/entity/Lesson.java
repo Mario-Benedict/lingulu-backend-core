@@ -43,5 +43,5 @@ public class Lesson {
     private Section section;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LearningProgress> learningProgress;
+    private List<LessonProgress> lessonProgresses;
 }

@@ -40,6 +40,6 @@ public class OAuthAccount {
 
     @CreationTimestamp
     @Column(name = "created_at")
-    private LocalDateTime ceatedAt;
+    private LocalDateTime createdAt;
     
 }

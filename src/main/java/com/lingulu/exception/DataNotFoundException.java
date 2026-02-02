@@ -9,5 +9,4 @@ public class DataNotFoundException extends AppException {
     public DataNotFoundException(String message, HttpStatusCode status) {
         super(message, status);
     }
-
 }
