@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lingulu.dto.ApiResponse;
+import com.lingulu.dto.LeaderboardResponse;
 import com.lingulu.entity.Leaderboard;
 import com.lingulu.service.LeaderboardService;
 
@@ -28,19 +29,15 @@ public class LeaderBoardController {
     private final LeaderboardService leaderboardService;
 
     @GetMapping("/leaderboard")
-    public ResponseEntity<ApiResponse<?>> leaderboard() {
+    public ResponseEntity<ApiResponse<List<LeaderboardResponse>>> leaderboard() {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
 
-        System.out.println("userId: " + userId);
-        if (userId == null) {
-            return ResponseEntity.status(401)
-                .body(new ApiResponse<>(false, "Unauthorized", null));
-        }
 
-        List<Leaderboard> leaderboards = leaderboardService.getTop10Leaderboards(UUID.fromString(userId));
+        List<LeaderboardResponse> leaderboardResponse = leaderboardService.getTop10Leaderboards(UUID.fromString(userId));
         
-        return leaderboardService.response(leaderboards);
+        return ResponseEntity.ok()
+            .body(new ApiResponse<>(true, "Top 10 Leaderboard recieved successfully", leaderboardResponse));
     }
     
 }
