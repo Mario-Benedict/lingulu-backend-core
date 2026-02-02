@@ -1,12 +1,11 @@
 package com.lingulu.controller;
 
-import com.lingulu.dto.ApiResponse;
-import com.lingulu.dto.AuthenticationResponse;
-import com.lingulu.dto.LoginRequest;
-import com.lingulu.dto.RegisterRequest;
+import com.lingulu.dto.*;
 import com.lingulu.entity.User;
+import com.lingulu.entity.UserProfile;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.security.JwtUtil;
+import com.lingulu.service.AccountService;
 import com.lingulu.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -15,8 +14,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import org.springframework.http.ResponseEntity;
 public class AccountController {
 
     private final AuthService authService;
+    private final AccountService accountService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
@@ -102,6 +104,26 @@ public class AccountController {
                 AuthenticationResponse
                     .builder()
                     .authenticated(true)
+                    .build()
+            )
+        );
+    }
+
+    @PostMapping("/profile")
+    public ResponseEntity<ApiResponse<UserProfileResponse>> profile() {
+        UUID userId = UUID.fromString((String) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal());
+
+        UserProfileResponse profile = accountService.getUserProfile(userId);
+
+        return ResponseEntity.ok(
+            new ApiResponse<UserProfileResponse>(true, "User profile fetched successfully",
+                UserProfileResponse.builder()
+                    .username(profile.getUsername())
+                    .avatarUrl(profile.getAvatarUrl())
+                    .bio(profile.getBio())
+                    .preferredLanguage(profile.getPreferredLanguage())
+                    .audioPath(profile.getAudioPath())
                     .build()
             )
         );
