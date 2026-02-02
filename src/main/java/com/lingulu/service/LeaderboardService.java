@@ -13,7 +13,7 @@ import com.lingulu.dto.LeaderboardResponse;
 import com.lingulu.entity.Leaderboard;
 import com.lingulu.entity.User;
 import com.lingulu.exception.AppException;
-import com.lingulu.exception.UserNotFoundException;
+import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.LeaderboardRepository;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.exception.AppException;
@@ -42,7 +42,7 @@ public class LeaderboardService {
         LeaderboardResponse leaderboardUser = leaderboardRepository.findByUserId(userId);
 
         if(leaderboardUser == null){
-            throw new UserNotFoundException("User not found", HttpStatus.UNAUTHORIZED);
+            throw new DataNotFoundException("Leaderboard User not found", HttpStatus.NOT_FOUND);
         }
 
         if(leaderboards.contains(leaderboardUser)){
@@ -69,7 +69,7 @@ public class LeaderboardService {
             leaderboardRepository.save(leaderboard);
         }
         else {
-            throw new RuntimeException("Leaderboard entry not found for the given user.");
+            throw new DataNotFoundException("Leaderboard user not found", HttpStatus.NOT_FOUND);
         }
     }
 }
