@@ -3,12 +3,21 @@ package com.lingulu.controller;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lingulu.dto.AIConversationResponse;
+import com.lingulu.dto.ApiResponse;
+import com.lingulu.dto.ConversationRequest;
 import com.lingulu.service.ConversationService;
+import com.lingulu.validator.ValidAudio;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
+@Validated
 @RestController
 @RequestMapping("/api")
 public class AIConversationController {
@@ -25,20 +34,15 @@ public class AIConversationController {
         value = "/conversation",
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
-    public ResponseEntity<AIConversationResponse> conversation(
-            @RequestPart("audio") MultipartFile audio,
-            @RequestParam("conversationId") String conversationId
+    public ResponseEntity<ApiResponse<AIConversationResponse>> conversation(
+            @ModelAttribute @Valid ConversationRequest request
     ) throws Exception {
-
-        if (audio == null || audio.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
 
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
 
-        return ResponseEntity.ok(
-                conversationService.process(audio, conversationId, userId)
+        return ResponseEntity.ok()
+                .body(new ApiResponse<> (true, "Chat reply successfully", conversationService.process(request.getAudio(), request.getConversationId(), userId))
         );
     }
 }

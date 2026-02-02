@@ -14,7 +14,6 @@ import com.lingulu.entity.Leaderboard;
 import com.lingulu.entity.User;
 import com.lingulu.exception.AppException;
 import com.lingulu.exception.DataNotFoundException;
-import com.lingulu.exception.UserNotFoundException;
 import com.lingulu.repository.LeaderboardRepository;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.exception.AppException;
