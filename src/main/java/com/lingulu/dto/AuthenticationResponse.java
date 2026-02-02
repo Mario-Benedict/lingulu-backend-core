@@ -1,7 +1,5 @@
 package com.lingulu.dto;
 
-import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +11,6 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private String accessToken;
+public class AuthenticationResponse {
+    private Boolean authenticated;
 }

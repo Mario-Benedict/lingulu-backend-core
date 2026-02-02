@@ -1,9 +1,9 @@
 package com.lingulu.controller;
 
 import com.lingulu.dto.ApiResponse;
+import com.lingulu.dto.AuthenticationResponse;
 import com.lingulu.dto.LoginRequest;
 import com.lingulu.dto.RegisterRequest;
-import com.lingulu.dto.UserResponse;
 import com.lingulu.entity.User;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.security.JwtUtil;
@@ -33,19 +33,21 @@ public class AccountController {
     @Value("${spring.application.dev}")
     private Boolean isDev;
 
-    private String generateCookie(String token) {
+    private String generateCookie(String token, Boolean isRememberMe) {
+        int days = isRememberMe ? 7 : 1;
+
         return ResponseCookie.from("token", token)
                 .httpOnly(true)
                 .secure(!isDev)
                 .sameSite("Lax")
                 .path("/")
-                .maxAge(7*24*60*60)
+                .maxAge(days * 24 * 60 * 60)
                 .build()
                 .toString();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<UserResponse>> register(
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> register(
         @Valid @RequestBody RegisterRequest request
     ) throws Exception {
         User user = authService.register(request);
@@ -53,45 +55,55 @@ public class AccountController {
         String token = jwtUtil.generateAccessToken(user);
 
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, generateCookie(token))
+            .header(HttpHeaders.SET_COOKIE, generateCookie(token, true))
             .body(new ApiResponse<>(true, "Registration successful",
-                    UserResponse
+                    AuthenticationResponse
                         .builder()
-                        .accessToken(token)
+                        .authenticated(true)
                         .build()
             ));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserResponse>> login(
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> login(
         @Valid @RequestBody LoginRequest request
     ) throws Exception {
         String token = authService.login(request);
 
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, generateCookie(token))
+            .header(HttpHeaders.SET_COOKIE, generateCookie(token, request.getIsRememberMe()))
             .body(new ApiResponse<>(true, "Login successful",
-                    UserResponse
-                            .builder()
-                            .accessToken(token)
-                            .build()
+                    AuthenticationResponse
+                        .builder()
+                        .authenticated(true)
+                        .build()
             ));
     }
 
     @GetMapping("/authenticated")
-    public ResponseEntity<ApiResponse<Boolean>> isAuthenticated(
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> isAuthenticated(
         @CookieValue(name = "token", required = false) String token
     ) {
         if (token == null || token.isEmpty()) {
             return ResponseEntity.ok(
-                    new ApiResponse<Boolean>(true, "Token validation result", false)
+                new ApiResponse<>(true, "Token validation result",
+                    AuthenticationResponse
+                        .builder()
+                        .authenticated(false)
+                        .build()
+                )
             );
         }
 
         boolean isValid = jwtUtil.validateToken(token);
 
         return ResponseEntity.ok(
-                new ApiResponse<Boolean>(true, "Token validation result", isValid)
+            new ApiResponse<>(true, "Token validation result",
+                AuthenticationResponse
+                    .builder()
+                    .authenticated(true)
+                    .build()
+            )
         );
     }
 }

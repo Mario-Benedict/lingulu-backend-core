@@ -14,4 +14,6 @@ public class LoginRequest {
     @Size(min = 8, message = "Password must be at least 8 characters")
     @NotBlank(message = "Password is empty")
     private String password;
+
+    private Boolean isRememberMe;
 }
