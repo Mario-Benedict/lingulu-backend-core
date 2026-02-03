@@ -3,10 +3,12 @@ package com.lingulu.entity;
 import com.lingulu.enums.ProgressStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +22,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 public class SectionProgress {
 
     @Id
@@ -36,8 +38,11 @@ public class SectionProgress {
     private Section section;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status")
     private ProgressStatus status;
+
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
 
     private int totalLessons;
     private int completedLessons;

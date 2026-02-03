@@ -3,7 +3,6 @@ package com.lingulu.service;
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.LoginRequest;
 import com.lingulu.dto.RegisterRequest;
-import com.lingulu.dto.UserResponse;
 import com.lingulu.entity.OAuthAccount;
 import com.lingulu.entity.User;
 import com.lingulu.entity.UserProfile;
