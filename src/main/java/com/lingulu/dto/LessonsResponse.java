@@ -6,6 +6,7 @@ import java.util.UUID;
 import com.lingulu.enums.ProgressStatus;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +15,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SectionResponse {
-    private UUID sectionId;
+public class LessonsResponse {
+    private UUID lessonId;
     private ProgressStatus status;
     private LocalDateTime completedAt;
 }
