@@ -1,21 +1,21 @@
 package com.lingulu.dto;
 
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import com.lingulu.enums.ProgressStatus;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
-@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class SectionResponse {
-    private Map<String, String> lessons;
-    private String status;
-    private int totalLessons;
-    private int completedLessons;
+    private UUID sectionId;
+    private ProgressStatus status;
+    private LocalDateTime completedAt;
 }

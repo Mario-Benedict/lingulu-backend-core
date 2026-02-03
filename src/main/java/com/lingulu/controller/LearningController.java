@@ -1,7 +1,7 @@
 package com.lingulu.controller;
 
 import com.lingulu.dto.ApiResponse;
-import com.lingulu.dto.CompleteLessonRequest;
+import com.lingulu.dto.CompleteLessonsRequest;
 import com.lingulu.service.LearningService;
 
 import jakarta.validation.Valid;
@@ -22,13 +22,15 @@ public class LearningController {
     private final LearningService learningService;
 
     @PostMapping("/lessons/complete")
-    public ResponseEntity<ApiResponse<?>> completeLesson(@RequestBody @Valid CompleteLessonRequest lessonsId) {
-        String userId = (String)SecurityContextHolder.getContext()
+    public ResponseEntity<ApiResponse<?>> completeLesson(@RequestBody @Valid CompleteLessonsRequest completeLessonsRequest) {
+        String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
 
-        learningService.markLessonCompleted(UUID.fromString(userId), UUID.fromString(lessonsId.getLessonId()));
+        UUID lessonId = UUID.fromString(completeLessonsRequest.getLessonId());
+        learningService.markLessonCompleted(UUID.fromString(userId),lessonId);
+        
         return ResponseEntity.ok()
-            .body(new ApiResponse<>(true, "Lesson mark as completed", null));
+                .body(new ApiResponse<>(true, "Lesson mark as completed", null));
     }
 
 

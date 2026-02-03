@@ -36,6 +36,9 @@ public class Course {
     @Column(name = "language_from")
     private String languageFrom;
 
+    @Column(name = "position")
+    private Integer position;
+
     @Column(name = "language_to")
     private String languageTo;
 

@@ -42,7 +42,7 @@ public class LessonProgress {
     private Lesson lesson;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status")
     private ProgressStatus status;
 
     @Column(name = "completed_at")
