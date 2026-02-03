@@ -5,6 +5,7 @@ import com.lingulu.dto.LoginRequest;
 import com.lingulu.dto.RegisterRequest;
 import com.lingulu.entity.OAuthAccount;
 import com.lingulu.entity.User;
+import com.lingulu.entity.UserLearningStats;
 import com.lingulu.entity.UserProfile;
 import com.lingulu.exception.OAuthOnlyLoginException;
 import com.lingulu.exception.RegisterException;
@@ -35,6 +36,7 @@ public class AuthService {
     private final LeaderboardService leaderboardService;
     private final LearningService learningService;
     private final EnrollmentService enrollmentService;
+    private final UserLearningStatsService userLearningStatsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -80,7 +82,8 @@ public class AuthService {
         oAuthAccountRepository.save(oAuthAccount);
         leaderboardService.addLeaderBoard(user);
         enrollmentService.enrollUserToAllLessons(user.getUserId());
-
+        userLearningStatsService.addUserLearningStats(user);
+        
         return user;
     }
 
@@ -129,7 +132,7 @@ public class AuthService {
         leaderboardService.addLeaderBoard(user);
         enrollmentService.enrollUserToAllLessons(user.getUserId());
 
-
+        userLearningStatsService.addUserLearningStats(user);
         return user;
     }
 
