@@ -1,5 +1,6 @@
 package com.lingulu.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +16,6 @@ public class LoginRequest {
     @NotBlank(message = "Password is empty")
     private String password;
 
-    @NotBlank(message = "RememberMe is empty")
+    @NotNull(message = "RememberMe cannot be null")
     private Boolean isRememberMe;
 }
