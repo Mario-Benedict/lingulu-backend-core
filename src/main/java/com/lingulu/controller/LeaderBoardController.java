@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -34,10 +36,11 @@ public class LeaderBoardController {
                        .getAuthentication().getPrincipal();
 
 
-        List<LeaderboardResponse> leaderboardResponse = leaderboardService.getTop10Leaderboards(UUID.fromString(userId));
+        List<LeaderboardResponse> leaderboardResponse = leaderboardService.getTop10Leaderboards();
         
         return ResponseEntity.ok()
             .body(new ApiResponse<>(true, "Top 10 Leaderboard recieved successfully", leaderboardResponse));
     }
+    
     
 }
