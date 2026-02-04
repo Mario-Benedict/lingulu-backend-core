@@ -1,5 +1,6 @@
 package com.lingulu.repository;
 
+import com.lingulu.dto.DashboardResponse;
 import com.lingulu.dto.ProfileResponse;
 import com.lingulu.entity.User;
 
@@ -49,5 +50,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     """)
     ProfileResponse getUserProfile(@Param("userId") UUID userId);
 
-
+    // DashboardResponse getDashboard(@Param("userId") UUID userId);
 }

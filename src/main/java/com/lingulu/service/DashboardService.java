@@ -14,9 +14,9 @@ import lombok.RequiredArgsConstructor;
 public class DashboardService {
     private final UserRepository userRepository;
 
-    public DashboardResponse getDashboard(UUID userid){
-        DashboardResponse dashboardResponse = userRepository.getDashboard(userid);
+    // public DashboardResponse getDashboard(UUID userid){
+    //     DashboardResponse dashboardResponse = userRepository.getDashboard(userid);
 
-        return dashboardResponse;
-    }
+    //     return dashboardResponse;
+    // }
 }

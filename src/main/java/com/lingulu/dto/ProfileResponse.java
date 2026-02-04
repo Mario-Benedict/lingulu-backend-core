@@ -17,6 +17,6 @@ public class ProfileResponse {
     private String avatarUrl;
     private int streak;
     private int totalPoints;
-    private int rank;
+    private long rank;
     private Long completedLessons;
 }

@@ -41,7 +41,7 @@ public class Leaderboard {
     private Integer totalPoints;
 
     @Column(name = "rank")
-    private int rank;
+    private long rank;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
