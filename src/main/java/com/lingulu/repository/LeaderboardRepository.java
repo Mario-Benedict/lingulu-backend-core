@@ -1,18 +1,11 @@
-
-
 package com.lingulu.repository;
 
 import com.lingulu.dto.LeaderboardResponse;
 import com.lingulu.entity.Leaderboard;
 
-import io.lettuce.core.dynamic.annotation.Param;
-
 import java.util.List;
 import java.util.UUID;
-
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> {
     @Query("""

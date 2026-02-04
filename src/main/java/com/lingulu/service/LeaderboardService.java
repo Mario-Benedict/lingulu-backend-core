@@ -53,7 +53,6 @@ public class LeaderboardService {
         Leaderboard leaderboard = Leaderboard.builder()
                                     .user(user)
                                     .totalPoints(0)
-                                    .rank(leaderboardRepository.count()+1)
                                     .build();
         leaderboardRepository.save(leaderboard);
     }
