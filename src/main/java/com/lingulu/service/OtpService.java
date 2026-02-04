@@ -2,12 +2,11 @@ package com.lingulu.service;
 
 import java.time.Duration;
 
-import com.lingulu.exception.OtpServiceException;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.lingulu.exception.OtpServiceException;
 import com.lingulu.security.OtpGenerator;
 
 import lombok.AllArgsConstructor;
@@ -41,7 +40,7 @@ public class OtpService {
 
         String storedHash = redisTemplate.opsForValue().get(redisKey);
 
-        if (storedHash == null || passwordEncoder.matches(inputOtp, storedHash)) {
+        if (storedHash == null || !passwordEncoder.matches(inputOtp, storedHash)) {
             throw new OtpServiceException("OTP expired or invalid OTP");
         }
 
