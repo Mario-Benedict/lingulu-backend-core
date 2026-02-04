@@ -62,7 +62,7 @@ public class LearningProgressController {
         List<CourseResponse> courseResponses = learningProgressService.getCourses(UUID.fromString(userId));
 
         return ResponseEntity.ok()
-            .body(new ApiResponse<>(true, "Sections progress recieved successfully", courseResponses));
+            .body(new ApiResponse<>(true, "Courses progress recieved successfully", courseResponses));
     }
     
 }
