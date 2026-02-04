@@ -35,6 +35,7 @@ public class AuthService {
     private final LeaderboardService leaderboardService;
     private final LearningService learningService;
     private final EnrollmentService enrollmentService;
+    private final UserProfileService userProfileService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -62,6 +63,7 @@ public class AuthService {
         UserProfile userProfile = UserProfile.builder()
                                 .username(request.getUsername())
                                 .user(user)
+                                .avatarUrl("users/" + user.getUserId() + "/" + userProfileService.pickAvatarByUserId(user.getUserId()))
                                 .build();
 
         user.setUserProfile(userProfile);
@@ -111,6 +113,7 @@ public class AuthService {
         UserProfile userProfile = UserProfile.builder()
                                 .username(givenName)
                                 .user(user)
+                                .avatarUrl("users/" + user.getUserId() + "/" + userProfileService.pickAvatarByUserId(user.getUserId()))
                                 .build();
 
         OAuthAccount oAuthAccount = OAuthAccount.builder()

@@ -12,7 +12,7 @@ import java.util.UUID;
 public class AccountService {
     private final UserProfileRepository userProfileRepository;
 
-    public UserProfileResponse getUserProfile(UUID userId) {
-        return userProfileRepository.findActiveProfileByUserId(userId);
-    }
+    // public UserProfileResponse getUserProfile(UUID userId) {
+    //     return userProfileRepository.findActiveProfileByUserId(userId);
+    // }
 }

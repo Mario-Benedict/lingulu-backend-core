@@ -22,6 +22,9 @@ public class S3StorageService {
     @Value("${aws.s3.bucket.name}")
     private String bucketName;
 
+    @Value("${aws.region}")
+    private String region;
+
     public S3StorageService(S3Client s3Client, S3Presigner presigner) {
         this.s3Client = s3Client;
         this.presigner = presigner;
@@ -77,5 +80,9 @@ public class S3StorageService {
                 request,
                 RequestBody.fromBytes(data)
         );
+    }
+
+    public String getAvatarUrl(String s3Key){
+        return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + s3Key;
     }
 }
