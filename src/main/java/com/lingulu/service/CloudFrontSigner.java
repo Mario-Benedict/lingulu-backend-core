@@ -29,36 +29,17 @@ public class CloudFrontSigner {
     private final String cdnDomain;
     private final PrivateKey privateKey;
 
-    private PrivateKey decodePrivateKey(String privateKeyRaw) {
+    private PrivateKey loadPrivateKey(String privateKeyPath) {
         try {
-            // Hapus header/footer PEM jika ada
-            String pem = privateKeyRaw
-                    .replace("-----BEGIN PRIVATE KEY-----", "")
-                    .replace("-----END PRIVATE KEY-----", "")
-                    .replaceAll("\\s", "");
-
-            byte[] decodedKey = Base64.getDecoder().decode(pem);
-
-            PKCS8EncodedKeySpec keySpec =
-                    new PKCS8EncodedKeySpec(decodedKey);
-
+            byte[] keyBytes = Files.readAllBytes(Path.of(privateKeyPath));
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(keySpec);
 
         } catch (Exception e) {
             throw new IllegalStateException(
-                    "Failed to decode CloudFront private key (must be RSA PKCS#8)", e
-            );
-        }
-    }
-
-    private PrivateKey loadAndDecodePrivateKey(String privateKeyPath) {
-        try {
-            String pem = Files.readString(Path.of(privateKeyPath));
-            return decodePrivateKey(pem);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    "Failed to load CloudFront private key from path: " + privateKeyPath, e
+                    "Gagal memuat Private Key dari file .der: " + privateKeyPath + 
+                    ". Pastikan file tersebut adalah format PKCS#8 biner.", e
             );
         }
     }
@@ -70,7 +51,7 @@ public class CloudFrontSigner {
     ) {
         this.keyPairId = keyPairId;
         this.cdnDomain = cdnDomain;
-        this.privateKey = loadAndDecodePrivateKey(privateKeyPath);
+        this.privateKey = loadPrivateKey(privateKeyPath);
     }
 
     /** Generate URL CDN **/

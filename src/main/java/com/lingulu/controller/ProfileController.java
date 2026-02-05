@@ -41,6 +41,65 @@ public class ProfileController {
     private final UserProfileService userProfileService;
     private final CloudFrontSigner cloudFrontSigner;
 
+    private HttpHeaders generateCookie(String cdnUrl){
+        CookiesForCannedPolicy signedCookies = cloudFrontSigner.generateSignedCookies(cdnUrl);
+
+        // Buat objek ResponseCookie untuk Signature
+        ResponseCookie signatureCookie = ResponseCookie.from("CloudFront-Signature", signedCookies.signatureHeaderValue().split("=")[1])
+                .httpOnly(true)
+                .secure(true) // Wajib jika menggunakan CloudFront HTTPS
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("None")
+                .build();
+
+        // Buat objek ResponseCookie untuk Key-Pair-Id
+        ResponseCookie keyPairCookie = ResponseCookie.from("CloudFront-Key-Pair-Id", signedCookies.keyPairIdHeaderValue().split("=")[1])
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("None")
+                .build();
+
+        ResponseCookie expiresCookie = ResponseCookie.from("CloudFront-Expires", signedCookies.expiresHeaderValue().split("=")[1])
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("None")
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, signatureCookie.toString());
+        headers.add(HttpHeaders.SET_COOKIE, keyPairCookie.toString());
+        headers.add(HttpHeaders.SET_COOKIE, expiresCookie.toString());
+
+        return headers;
+    }
+    
+
+    @GetMapping("/profile/avatarUrl")
+    public ResponseEntity<ApiResponse<?>> getAvatarUrl() {
+        String userId = (String)SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
+        
+        String s3Key = userProfileService.getAvatarUrl(UUID.fromString(userId));
+
+        String fullCdnUrl = cloudFrontSigner.generateCdnUrl(s3Key);
+        CookiesForCannedPolicy signedCookies = cloudFrontSigner.generateSignedCookies(fullCdnUrl);
+
+        CdnAccessResponse cdnUrl = CdnAccessResponse.builder()
+                                    .avatarUrl(fullCdnUrl)
+                                    .build();
+
+        return ResponseEntity.ok()
+            .headers(generateCookie(fullCdnUrl))
+            .body(new ApiResponse<>(true, "Avatar updated", cdnUrl));
+
+    }
+    
+
     
     @PostMapping(value = "/profile/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<?>> uploadAvatar(@Valid @ModelAttribute UploadAvatarRequest request) throws IOException {
@@ -53,29 +112,11 @@ public class ProfileController {
                                     .avatarUrl(fullCdnUrl)
                                     .build();
 
-        CookiesForCannedPolicy signedCookies = cloudFrontSigner.generateSignedCookies(fullCdnUrl);
-
-        // Buat objek ResponseCookie untuk Signature
-        ResponseCookie signatureCookie = ResponseCookie.from("CloudFront-Signature", signedCookies.signatureHeaderValue())
-                .httpOnly(true)
-                .secure(true) // Wajib jika menggunakan CloudFront HTTPS
-                .path("/")
-                .sameSite("Lax")
-                .build();
-
-        // Buat objek ResponseCookie untuk Key-Pair-Id
-        ResponseCookie keyPairCookie = ResponseCookie.from("CloudFront-Key-Pair-Id", signedCookies.keyPairIdHeaderValue())
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .sameSite("Lax")
-                .build();
-
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, signatureCookie.toString())
-            .header(HttpHeaders.SET_COOKIE, keyPairCookie.toString())
+            .headers(generateCookie(fullCdnUrl))
             .body(new ApiResponse<>(true, "Avatar updated", cdnUrl));
         
     }
+ 
     
 }

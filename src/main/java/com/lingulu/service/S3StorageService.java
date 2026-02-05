@@ -19,8 +19,11 @@ public class S3StorageService {
     private final S3Client s3Client;
     private final S3Presigner presigner;
 
-    @Value("${aws.s3.bucket.name}")
-    private String bucketName;
+    @Value("${aws.s3.bucket.chat.name}")
+    private String chatBucketName;
+
+    @Value("${aws.s3.bucket.profile.name}")
+    private String profileBucketName;
 
     @Value("${aws.region}")
     private String region;
@@ -32,7 +35,7 @@ public class S3StorageService {
 
     public String generatePresignedUrl(String s3Key) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(chatBucketName)
                 .key(s3Key)
                 .build();
 
@@ -49,11 +52,12 @@ public class S3StorageService {
     
     public void uploadMultipartFile(
             MultipartFile file,
-            String s3Key
+            String s3Key,
+            String bucketName
     ) throws IOException {
 
         PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(bucketName.equals("profile") ? profileBucketName:chatBucketName)
                 .key(s3Key)
                 .contentType(file.getContentType())
                 .build();
@@ -71,7 +75,7 @@ public class S3StorageService {
     ) {
 
         PutObjectRequest request = PutObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(chatBucketName)
                 .key(s3Key)
                 .contentType(contentType)
                 .build();
@@ -82,7 +86,4 @@ public class S3StorageService {
         );
     }
 
-    public String getAvatarUrl(String s3Key){
-        return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + s3Key;
-    }
 }

@@ -26,6 +26,11 @@ public class UserProfileService {
         "avatars/tiger4.webp"
     );
 
+    public String getAvatarUrl(UUID userId) {
+        UserProfile userProfile = userProfileRepository.findByUser_UserId(userId);
+        return userProfile.getAvatarUrl();
+    }
+
     public String pickAvatarByUserId(UUID userId) {
         int index = ThreadLocalRandom.current().nextInt(DEFAULT_AVATARS.size());
         return DEFAULT_AVATARS.get(index);
@@ -39,7 +44,7 @@ public class UserProfileService {
         UserProfile userProfile = userProfileRepository.findByUser_UserId(userId);
         userProfile.setAvatarUrl(s3Key);
 
-        s3StorageService.uploadMultipartFile(file, s3Key);
+        s3StorageService.uploadMultipartFile(file, s3Key, "profile");
 
         userProfileRepository.save(userProfile);
         
