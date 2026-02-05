@@ -1,14 +1,7 @@
 package com.lingulu.controller;
 
-import com.lingulu.dto.ApiResponse;
-import com.lingulu.dto.CompleteLessonsRequest;
-import com.lingulu.dto.CourseResponse;
-import com.lingulu.dto.LessonsRequest;
-import com.lingulu.dto.LessonsResponse;
-import com.lingulu.dto.SectionResponse;
-import com.lingulu.dto.SectionsRequest;
+import com.lingulu.dto.*;
 import com.lingulu.service.LearningProgressService;
-import com.lingulu.service.LearningService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,30 +21,30 @@ public class LearningProgressController {
 
     private final LearningProgressService learningProgressService;
 
-    @GetMapping("/lessons")
-    public ResponseEntity<ApiResponse<?>> getLessons(@Valid LessonsRequest lessonsRequest) {
-        String userId = (String) SecurityContextHolder.getContext()
-                       .getAuthentication().getPrincipal();
-        
-        UUID sectionId = UUID.fromString(lessonsRequest.getSectionId());
-
-        List<LessonsResponse> lessonsResponses = learningProgressService.getLessons(UUID.fromString(userId), sectionId);
-
-        return ResponseEntity.ok()
-            .body(new ApiResponse<>(true, "Lessons progress recieved successfully", lessonsResponses));
-    }
-    
     @GetMapping("/sections")
     public ResponseEntity<ApiResponse<?>> getSections(@Valid SectionsRequest sectionsRequest) {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
         
-        UUID courseId = UUID.fromString(sectionsRequest.getCourseId());
+        UUID lessonId = UUID.fromString(sectionsRequest.getLessonId());
 
-        List<SectionResponse> sectionResponses = learningProgressService.getSections(UUID.fromString(userId), courseId);
+        List<SectionResponse> sectionResponses = learningProgressService.getSections(UUID.fromString(userId), lessonId);
 
         return ResponseEntity.ok()
-            .body(new ApiResponse<>(true, "Sections progress recieved successfully", sectionResponses));
+            .body(new ApiResponse<>(true, "Sections progress received successfully", sectionResponses));
+    }
+    
+    @GetMapping("/lessons")
+    public ResponseEntity<ApiResponse<?>> getLessons(@Valid LessonsRequest lessonsRequest) {
+        String userId = (String) SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
+        
+        UUID courseId = UUID.fromString(lessonsRequest.getCourseId());
+
+        List<LessonsResponse> lessonsResponses = learningProgressService.getLessons(UUID.fromString(userId), courseId);
+
+        return ResponseEntity.ok()
+            .body(new ApiResponse<>(true, "Lessons progress received successfully", lessonsResponses));
     }
 
     @GetMapping("/courses")

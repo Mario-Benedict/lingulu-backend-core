@@ -40,7 +40,7 @@ public class LeaderBoardController {
         List<LeaderboardResponse> leaderboardResponse = leaderboardService.getTop10Leaderboards();
         
         return ResponseEntity.ok()
-            .body(new ApiResponse<>(true, "Top 10 Leaderboard recieved successfully", leaderboardResponse));
+            .body(new ApiResponse<>(true, "Top 10 Leaderboard received successfully", leaderboardResponse));
     }
 
     @GetMapping("/user-rank")

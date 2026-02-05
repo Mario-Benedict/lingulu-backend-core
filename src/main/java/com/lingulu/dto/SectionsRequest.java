@@ -10,5 +10,5 @@ import lombok.Setter;
 public class SectionsRequest {
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z0-9-]+$")
-    private String courseId;
+    private String lessonId;
 }

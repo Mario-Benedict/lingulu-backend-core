@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class CompleteLessonsRequest {
+public class CompleteSectionsRequest {
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z0-9-]+$")
-    private String lessonId;
+    private String sectionId;
 }

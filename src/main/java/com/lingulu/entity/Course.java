@@ -54,6 +54,6 @@ public class Course {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Section> sections;
+    private List<Lesson> lessons;
 
 }

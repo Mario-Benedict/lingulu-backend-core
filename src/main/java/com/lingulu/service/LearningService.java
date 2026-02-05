@@ -18,93 +18,93 @@ import java.util.UUID;
 @Transactional
 public class LearningService {
 
-    private final LessonProgressRepository lessonProgressRepository;
     private final SectionProgressRepository sectionProgressRepository;
+    private final LessonProgressRepository lessonProgressRepository;
     private final CourseProgressRepository courseProgressRepository;
 
-    private final LessonRepository lessonRepository;
     private final SectionRepository sectionRepository;
+    private final LessonRepository lessonRepository;
     private final UserRepository userRepository;
     private final LeaderboardService leaderboardService;
 
     private final CourseRepository courseRepository;
 
-    public void markLessonCompleted(UUID userId, UUID lessonId) {
+    public void markSectionCompleted(UUID userId, UUID sectionId) {
 
-        LessonProgress lp = lessonProgressRepository.findByUser_UserIdAndLesson_LessonId(userId, lessonId)
-                                .orElseThrow(() -> new DataNotFoundException("Lesson progress not found", HttpStatus.BAD_REQUEST));
+        SectionProgress sp = sectionProgressRepository.findByUser_UserIdAndSection_SectionId(userId, sectionId)
+                                .orElseThrow(() -> new DataNotFoundException("Section progress not found", HttpStatus.BAD_REQUEST));
 
-        if (lp.getStatus() == ProgressStatus.COMPLETED) return;
+        if (sp.getStatus() == ProgressStatus.COMPLETED) return;
 
-        lp.setStatus(ProgressStatus.COMPLETED);
-        lp.setCompletedAt(LocalDateTime.now());
-        lessonProgressRepository.save(lp);
+        sp.setStatus(ProgressStatus.COMPLETED);
+        sp.setCompletedAt(LocalDateTime.now());
+        sectionProgressRepository.save(sp);
 
-        recalcSectionProgress(userId, lp.getLesson().getSection());
+        recalcLessonProgress(userId, sp.getSection().getLesson());
         leaderboardService.updateTotalPoints(userId);
     }
 
-    private void recalcSectionProgress(UUID userId, Section section) {
+    private void recalcLessonProgress(UUID userId, Lesson lesson) {
 
         // int totalLessons =
-        //         lessonRepository.countBySection_SectionId(section.getSectionId());
+        //         sectionRepository.countByLesson_LessonId(lesson.getSectionId());
 
         // int completedLessons =
         //         lessonProgressRepository.countByUser_UserIdAndLesson_Section_SectionIdAndStatus(
         //                 userId,
-        //                 section.getSectionId(),
+        //                 lesson.getSectionId(),
         //                 ProgressStatus.COMPLETED
         //         );
 
-        SectionProgress sp = sectionProgressRepository
-                .findByUser_UserIdAndSection_SectionId(userId, section.getSectionId())
-                .orElseThrow(() -> new DataNotFoundException("Section progress not found", HttpStatus.NOT_FOUND));
+        LessonProgress lp = lessonProgressRepository
+                .findByUser_UserIdAndLesson_LessonId(userId, lesson.getLessonId())
+                .orElseThrow(() -> new DataNotFoundException("Lesson progress not found", HttpStatus.NOT_FOUND));
 
-        int totalLessons = sp.getTotalLessons();
-        int completedLessons = sp.getCompletedLessons() + 1;
+        int totalSections = lp.getTotalSections();
+        int completedSections = lp.getCompletedSections() + 1;
 
         // sp.setTotalLessons(totalLessons);
-        sp.setCompletedLessons(completedLessons);
-        sp.setStatus(
-                completedLessons == totalLessons ? ProgressStatus.COMPLETED :
-                        completedLessons > 0 ? ProgressStatus.IN_PROGRESS :
+        lp.setCompletedSections(completedSections);
+        lp.setStatus(
+                completedSections == totalSections ? ProgressStatus.COMPLETED :
+                        completedSections > 0 ? ProgressStatus.IN_PROGRESS :
                                 ProgressStatus.NOT_STARTED
         );
 
-        if(sp.getStatus().equals(ProgressStatus.COMPLETED)) {
-                sp.setCompletedAt(LocalDateTime.now());
+        if(lp.getStatus().equals(ProgressStatus.COMPLETED)) {
+                lp.setCompletedAt(LocalDateTime.now());
         }
 
-        sectionProgressRepository.save(sp);
+        lessonProgressRepository.save(lp);
 
-        if(sp.getStatus().equals(ProgressStatus.COMPLETED)) {
+        if(lp.getStatus().equals(ProgressStatus.COMPLETED)) {
 
-                int jumlahSection = sectionRepository.countByCourse_CourseId(section.getCourse().getCourseId());
-                int currentPositionSection = sp.getSection().getPosition();
+                int totalLessons = lessonRepository.countByCourse_CourseId(lesson.getCourse().getCourseId());
+                int currentPositionSection = lp.getLesson().getPosition();
 
-                if(currentPositionSection < jumlahSection) {
-                        Section nextSection = sectionRepository.findByCourse_CourseIdAndPosition(section.getCourse().getCourseId(), section.getPosition() + 1);
+                if(currentPositionSection < totalLessons) {
+                        Lesson nextLesson = lessonRepository.findByCourse_CourseIdAndPosition(lesson.getCourse().getCourseId(), lesson.getPosition() + 1);
 
-                        SectionProgress nextSp = sectionProgressRepository.findByUser_UserIdAndSection_SectionId(userId, nextSection.getSectionId())
-                                .orElseThrow(() -> new DataNotFoundException("Section progress not found", HttpStatus.NOT_FOUND));
+                        LessonProgress nextLp = lessonProgressRepository.findByUser_UserIdAndLesson_LessonId(userId, nextLesson.getLessonId())
+                                .orElseThrow(() -> new DataNotFoundException("Lesson progress not found", HttpStatus.NOT_FOUND));
                 
-                        if(nextSp != null) {
-                                nextSp.setStatus(ProgressStatus.IN_PROGRESS);
-                                sectionProgressRepository.save(nextSp);
+                        if(nextLp != null) {
+                                nextLp.setStatus(ProgressStatus.IN_PROGRESS);
+                                lessonProgressRepository.save(nextLp);
                         }
                 }
                 
-                recalcCourseProgress(userId, section.getCourse());
+                recalcCourseProgress(userId, lesson.getCourse());
         }
     }
 
     private void recalcCourseProgress(UUID userId, Course course) {
 
         // int totalSections =
-        //         sectionRepository.countByCourse_CourseId(course.getCourseId());
+        //         lessonsRepository.countByCourse_CourseId(course.getCourseId());
 
         // int completedSections =
-        //         sectionProgressRepository.countByUser_UserIdAndSection_Course_CourseIdAndStatus(
+        //         lessonProgressRepository.countByUser_UserIdAndLesson_Course_CourseIdAndStatus(
         //                 userId,
         //                 course.getCourseId(),
         //                 ProgressStatus.COMPLETED
@@ -125,14 +125,14 @@ public class LearningService {
         CourseProgress cp = courseProgressRepository.findByUser_UserIdAndCourse_CourseId(userId, course.getCourseId())
                 .orElseThrow(() -> new DataNotFoundException("Course progress not found", HttpStatus.NOT_FOUND));
 
-        int totalSections = cp.getTotalSections();
-        int completedSections = cp.getCompletedSections() + 1;
+        int totalLessons = cp.getTotalLessons();
+        int completedLessons = cp.getCompletedLessons() + 1;
 
-        cp.setTotalSections(totalSections);
-        cp.setCompletedSections(completedSections);
+        cp.setTotalLessons(totalLessons);
+        cp.setCompletedLessons(completedLessons);
         cp.setStatus(
-                completedSections == totalSections ? ProgressStatus.COMPLETED :
-                        completedSections > 0 ? ProgressStatus.IN_PROGRESS :
+                completedLessons == totalLessons ? ProgressStatus.COMPLETED :
+                        completedLessons > 0 ? ProgressStatus.IN_PROGRESS :
                                 ProgressStatus.NOT_STARTED
         );
 
@@ -143,10 +143,10 @@ public class LearningService {
         courseProgressRepository.save(cp);
 
         if(cp.getStatus().equals(ProgressStatus.COMPLETED)) {
-                long jumlahCourses = courseRepository.count();
+                long totalCourses = courseRepository.count();
                 int currentPositionCourse = cp.getCourse().getPosition();
 
-                if(currentPositionCourse < jumlahCourses) {
+                if(currentPositionCourse < totalCourses) {
                         Course nextCourse = courseRepository.findByPosition(currentPositionCourse + 1);
 
                         CourseProgress nextCp = courseProgressRepository.findByCourse_CourseId(nextCourse.getCourseId())

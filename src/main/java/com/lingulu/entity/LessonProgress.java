@@ -1,17 +1,15 @@
 package com.lingulu.entity;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import com.lingulu.enums.ProgressStatus;
 import jakarta.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(
@@ -25,12 +23,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class LessonProgress {
 
     @Id
     @GeneratedValue
-    @Column(name = "progress_id")
     private UUID progressId;
 
     @ManyToOne
@@ -48,7 +44,7 @@ public class LessonProgress {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private int totalSections;
+    private int completedSections;
+
 }
