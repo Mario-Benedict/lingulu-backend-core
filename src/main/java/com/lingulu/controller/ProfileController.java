@@ -87,7 +87,6 @@ public class ProfileController {
         String s3Key = userProfileService.getAvatarUrl(UUID.fromString(userId));
 
         String fullCdnUrl = cloudFrontSigner.generateCdnUrl(s3Key);
-        CookiesForCannedPolicy signedCookies = cloudFrontSigner.generateSignedCookies(fullCdnUrl);
 
         CdnAccessResponse cdnUrl = CdnAccessResponse.builder()
                                     .avatarUrl(fullCdnUrl)
