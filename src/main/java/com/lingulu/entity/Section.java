@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,12 +14,12 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name = "sections")
+@Table(name = "section")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 public class Section {
 
     @Id
@@ -26,11 +27,8 @@ public class Section {
     @Column(name = "section_id")
     private UUID sectionId;
 
-    @Column(name = "section_title")
-    private String sectionTitle;
-
-    @Column(name = "position")
-    private Integer position;
+    @Column(name = "section_type")
+    private String sectionType;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -41,9 +39,9 @@ public class Section {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
+    @JoinColumn(name = "lesson_id", nullable = false)
+    private Lesson lesson;
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Lesson> lessons;
+    private List<SectionProgress> sectionProgresses;
 }

@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.lingulu.enums.ProgressStatus;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -44,7 +44,7 @@ public class CourseProgress {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
-    private int totalSections;
-    private int completedSections;
+    private int totalLessons;
+    private int completedLessons;
 
 }

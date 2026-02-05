@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public interface SectionRepository extends JpaRepository<Section, UUID> {
 
-    int countByCourse_CourseId(UUID courseId);
-    Section findByCourse_CourseIdAndPosition(UUID courseId, int position);
+    int countByLesson_LessonId(UUID lessonId);
+
 }
+

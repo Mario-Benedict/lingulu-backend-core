@@ -1,21 +1,11 @@
 package com.lingulu.service;
 
-import com.lingulu.entity.Course;
-import com.lingulu.entity.CourseProgress;
+import com.lingulu.entity.*;
 import com.lingulu.entity.Lesson;
-import com.lingulu.entity.LessonProgress;
-import com.lingulu.entity.Section;
-import com.lingulu.entity.SectionProgress;
-import com.lingulu.entity.User;
 import com.lingulu.enums.ProgressStatus;
 import com.lingulu.exception.UserNotFoundException;
-import com.lingulu.repository.CourseProgressRepository;
-import com.lingulu.repository.CourseRepository;
+import com.lingulu.repository.*;
 import com.lingulu.repository.LessonProgressRepository;
-import com.lingulu.repository.LessonRepository;
-import com.lingulu.repository.SectionProgressRepository;
-import com.lingulu.repository.SectionRepository;
-import com.lingulu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -28,10 +18,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EnrollmentService {
 
-    private final LessonRepository lessonRepository;
-    private final LessonProgressRepository lessonProgressRepository;
     private final SectionRepository sectionRepository;
     private final SectionProgressRepository sectionProgressRepository;
+    private final LessonRepository lessonsRepository;
+    private final LessonProgressRepository lessonProgressRepository;
     private final CourseRepository courseRepository;
     private final CourseProgressRepository courseProgressRepository;
     private final UserRepository userRepository;
@@ -40,31 +30,31 @@ public class EnrollmentService {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.UNAUTHORIZED));
 
-        List<Lesson> lessons = lessonRepository.findAll();
-
-        for (Lesson lesson : lessons) {
-            LessonProgress progress = LessonProgress.builder()
-                    .user(user)
-                    .lesson(lesson)
-                    .status(ProgressStatus.valueOf("IN_PROGRESS"))
-                    .build();
-
-            lessonProgressRepository.save(progress);
-        }
-
         List<Section> sections = sectionRepository.findAll();
 
         for (Section section : sections) {
-            int position = section.getPosition();
             SectionProgress progress = SectionProgress.builder()
                     .user(user)
                     .section(section)
+                    .status(ProgressStatus.valueOf("IN_PROGRESS"))
+                    .build();
+
+            sectionProgressRepository.save(progress);
+        }
+
+        List<Lesson> lessons = lessonsRepository.findAll();
+
+        for (Lesson lesson : lessons) {
+            int position = lesson.getPosition();
+            LessonProgress progress = LessonProgress.builder()
+                    .user(user)
+                    .lesson(lesson)
                     .status(position == 1 ? ProgressStatus.IN_PROGRESS : ProgressStatus.NOT_STARTED)
-                    .totalLessons(lessonRepository.countBySection_SectionId(section.getSectionId()))
-                    .completedLessons(0)
+                    .totalSections(sectionRepository.countByLesson_LessonId(lesson.getLessonId()))
+                    .completedSections(0)
                     .build();
             
-            sectionProgressRepository.save(progress);
+            lessonProgressRepository.save(progress);
         }
 
         List<Course> courses = courseRepository.findAll();
@@ -75,8 +65,8 @@ public class EnrollmentService {
                     .user(user)
                     .course(course)
                     .status(position == 1 ? ProgressStatus.IN_PROGRESS : ProgressStatus.NOT_STARTED)
-                    .totalSections(sectionRepository.countByCourse_CourseId(course.getCourseId()))
-                    .completedSections(0)
+                    .totalLessons(lessonsRepository.countByCourse_CourseId(course.getCourseId()))
+                    .completedLessons(0)
                     .build();
 
             courseProgressRepository.save(progress);

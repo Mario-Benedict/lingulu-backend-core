@@ -5,17 +5,17 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.lingulu.entity.LessonProgress;
+import com.lingulu.entity.SectionProgress;
 
-public interface LearningProgressRepository extends JpaRepository<LessonProgress, UUID> {
+public interface LearningProgressRepository extends JpaRepository<SectionProgress, UUID> {
 
     // Take all learning progress by userId
-    List<LessonProgress> findByUser_UserId(UUID userId);
+    List<SectionProgress> findByUser_UserId(UUID userId);
 
     // Take completed course count
     Integer countByUser_UserIdAndStatus(UUID userId, String status);
 
     // take lessonProgresses to mark as completed
-    LessonProgress findByUser_UserIdAndLesson_LessonId(UUID userId, UUID lessonId);
+    SectionProgress findByUser_UserIdAndSection_SectionId(UUID userId, UUID sectionId);
 
 }

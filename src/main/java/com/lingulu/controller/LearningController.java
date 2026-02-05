@@ -1,7 +1,7 @@
 package com.lingulu.controller;
 
 import com.lingulu.dto.ApiResponse;
-import com.lingulu.dto.CompleteLessonsRequest;
+import com.lingulu.dto.CompleteSectionsRequest;
 import com.lingulu.service.LearningService;
 
 import jakarta.validation.Valid;
@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-import static com.lingulu.security.SecurityUtils.getCurrentUserId;
-
 @RestController
 @RequestMapping("/learning")
 @RequiredArgsConstructor
@@ -21,15 +19,15 @@ public class LearningController {
 
     private final LearningService learningService;
 
-    @PostMapping("/lessons/complete")
-    public ResponseEntity<ApiResponse<?>> completeLesson(@RequestBody @Valid CompleteLessonsRequest completeLessonsRequest) {
+    @PostMapping("/lesson/complete")
+    public ResponseEntity<ApiResponse<?>> completeLesson(@RequestBody @Valid CompleteSectionsRequest completeSectionsRequest) {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
 
-        UUID lessonId = UUID.fromString(completeLessonsRequest.getLessonId());
-        learningService.markLessonCompleted(UUID.fromString(userId),lessonId);
+        UUID sectionId = UUID.fromString(completeSectionsRequest.getSectionId());
+        learningService.markSectionCompleted(UUID.fromString(userId),sectionId);
         
         return ResponseEntity.ok()
-                .body(new ApiResponse<>(true, "Lesson mark as completed", null));
+                .body(new ApiResponse<>(true, "Section mark as completed", null));
     }
 }

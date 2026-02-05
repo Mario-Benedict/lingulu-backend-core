@@ -15,22 +15,22 @@ public class CourseResponse {
 
     private String status;
 
-    private int completedSections;
-    private int totalSections;
+    private int completedLessons;
+    private int totalLessons;
     private int progressPercentage;
 
     public static CourseResponse from(CourseProgress cp) {
         int percentage =
-                cp.getTotalSections() == 0
+                cp.getTotalLessons() == 0
                         ? 0
-                        : (cp.getCompletedSections() * 100) / cp.getTotalSections();
+                        : (cp.getCompletedLessons() * 100) / cp.getTotalLessons();
 
         return CourseResponse.builder()
                 .courseId(cp.getCourse().getCourseId())
                 .courseTitle(cp.getCourse().getCourseTitle())
                 .status(String.valueOf(cp.getStatus()))
-                .completedSections(cp.getCompletedSections())
-                .totalSections(cp.getTotalSections())
+                .completedLessons(cp.getCompletedLessons())
+                .totalLessons(cp.getTotalLessons())
                 .progressPercentage(percentage)
                 .build();
     }
