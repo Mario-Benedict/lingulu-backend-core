@@ -36,12 +36,6 @@ public class UserProfile {
     @Column(name = "bio")
     private String bio;
 
-    @Column(name = "preferred_language")
-    private String preferredLanguage;
-
-    @Column(name = "audio_path")
-    private String audioPath;
-
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;

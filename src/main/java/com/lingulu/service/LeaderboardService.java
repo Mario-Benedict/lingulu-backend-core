@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.LeaderboardResponse;
+import com.lingulu.dto.UserRankResponse;
 import com.lingulu.entity.Leaderboard;
 import com.lingulu.entity.User;
 import com.lingulu.exception.AppException;
 import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.LeaderboardRepository;
+import com.lingulu.repository.UserLearningStatsRepository;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.exception.AppException;
 import org.springframework.data.domain.Pageable;
@@ -28,29 +30,10 @@ public class LeaderboardService {
     
     private final LeaderboardRepository leaderboardRepository;
     private final UserRepository userRepository;
+    private final UserLearningStatsRepository userLearningStatsRepository;
 
-    public List<LeaderboardResponse> getTop10Leaderboards(UUID userId) {
-
-        // User user = userRepository.findByUserId(userId).orElse(null);
-
-        List<LeaderboardResponse> leaderboards = leaderboardRepository.findTopLeaderboard(PageRequest.of(0, 10));
-
-        if(leaderboards == null || leaderboards.isEmpty()){
-            throw new IllegalStateException("Unexpected null list");
-        }
-
-        LeaderboardResponse leaderboardUser = leaderboardRepository.findByUserId(userId);
-
-        if(leaderboardUser == null){
-            throw new DataNotFoundException("Leaderboard User not found", HttpStatus.NOT_FOUND);
-        }
-
-        if(leaderboards.contains(leaderboardUser)){
-            return leaderboards;
-        } else {
-            leaderboards.add(leaderboardUser);
-            return leaderboards;
-        }
+    public List<LeaderboardResponse> getTop10Leaderboards() {
+        return leaderboardRepository.findTopLeaderboard(PageRequest.of(0, 10));
     }
 
     public void addLeaderBoard(User user) {
@@ -65,11 +48,20 @@ public class LeaderboardService {
         Leaderboard leaderboard = leaderboardRepository.findByUser_UserId(userId);
 
         if (leaderboard != null) {
-            leaderboard.setTotalPoints(leaderboard.getTotalPoints() + 100);
+            int streak = userLearningStatsRepository.getStreak(userId);
+            leaderboard.setTotalPoints(leaderboard.getTotalPoints() + 100 * ( 1 + streak  / 50));
             leaderboardRepository.save(leaderboard);
         }
         else {
             throw new DataNotFoundException("Leaderboard user not found", HttpStatus.NOT_FOUND);
         }
+    }
+
+    public UserRankResponse getUserRank(UUID userId){
+        UserRankResponse userRank = leaderboardRepository.findUserRank(userId);
+
+        userRank.setRank(leaderboardRepository.getUserRank(userId));
+
+        return userRank;
     }
 }

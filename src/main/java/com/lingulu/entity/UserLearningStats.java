@@ -1,14 +1,13 @@
 package com.lingulu.entity;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.DialectOverride.GeneratedColumns;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -20,28 +19,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "leaderboard")
+@Table(name = "user_learning_stats")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Leaderboard {
+public class UserLearningStats {
 
     @Id
     @GeneratedValue
-    @Column(name = "leaderboard_id")
-    private UUID leaderboardId;
+    @Column(name = "user_learning_stats_id")
+    private UUID userLearningStatsId;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "total_points")
-    private int totalPoints;
+    @Column(name = "current_streak", nullable = false)
+    private int currentStreak;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "longest_streak", nullable = false)
+    private int longestStreak;
 
+    @Column(name = "last_activity_date", nullable = false)
+    private LocalDate lastActivityDate;
 }
+

@@ -5,6 +5,7 @@ import com.lingulu.dto.LoginRequest;
 import com.lingulu.dto.RegisterRequest;
 import com.lingulu.entity.OAuthAccount;
 import com.lingulu.entity.User;
+import com.lingulu.entity.UserLearningStats;
 import com.lingulu.entity.UserProfile;
 import com.lingulu.exception.OAuthOnlyLoginException;
 import com.lingulu.exception.RegisterException;
@@ -35,6 +36,7 @@ public class AuthService {
     private final LeaderboardService leaderboardService;
     private final LearningService learningService;
     private final EnrollmentService enrollmentService;
+    private final UserLearningStatsService userLearningStatsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -62,6 +64,7 @@ public class AuthService {
         UserProfile userProfile = UserProfile.builder()
                                 .username(request.getUsername())
                                 .user(user)
+                                .avatarUrl("users/" + userProfileService.pickAvatarByUserId(user.getUserId()))
                                 .build();
 
         user.setUserProfile(userProfile);
@@ -80,7 +83,8 @@ public class AuthService {
         oAuthAccountRepository.save(oAuthAccount);
         leaderboardService.addLeaderBoard(user);
         enrollmentService.enrollUserToAllLessons(user.getUserId());
-
+        userLearningStatsService.addUserLearningStats(user);
+        
         return user;
     }
 
@@ -111,6 +115,7 @@ public class AuthService {
         UserProfile userProfile = UserProfile.builder()
                                 .username(givenName)
                                 .user(user)
+                                .avatarUrl("users/avatar/" + userProfileService.pickAvatarByUserId(user.getUserId()))
                                 .build();
 
         OAuthAccount oAuthAccount = OAuthAccount.builder()
@@ -129,7 +134,7 @@ public class AuthService {
         leaderboardService.addLeaderBoard(user);
         enrollmentService.enrollUserToAllLessons(user.getUserId());
 
-
+        userLearningStatsService.addUserLearningStats(user);
         return user;
     }
 

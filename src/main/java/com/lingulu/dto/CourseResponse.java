@@ -15,9 +15,9 @@ public class CourseResponse {
 
     private String status;
 
-    private int completedLessons;
-    private int totalLessons;
-    private int progressPercentage;
+    private int completedSections;
+    private int totalSections;
+    private float progressPercentage;
 
     public static CourseResponse from(CourseProgress cp) {
         int percentage =

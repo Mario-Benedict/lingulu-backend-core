@@ -55,7 +55,7 @@ public class LearningProgressController {
         List<CourseResponse> courseResponses = learningProgressService.getCourses(UUID.fromString(userId));
 
         return ResponseEntity.ok()
-            .body(new ApiResponse<>(true, "Lessons progress received successfully", courseResponses));
+            .body(new ApiResponse<>(true, "Courses progress recieved successfully", courseResponses));
     }
     
 }
