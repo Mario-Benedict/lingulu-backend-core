@@ -108,22 +108,4 @@ public class AccountController {
             )
         );
     }
-
-    // @PostMapping("/profile")
-    // public ResponseEntity<ApiResponse<UserProfileResponse>> profile() {
-    //     UUID userId = UUID.fromString((String) SecurityContextHolder.getContext()
-    //             .getAuthentication().getPrincipal());
-
-    //     UserProfileResponse profile = accountService.getUserProfile(userId);
-
-    //     return ResponseEntity.ok(
-    //         new ApiResponse<UserProfileResponse>(true, "User profile fetched successfully",
-    //             UserProfileResponse.builder()
-    //                 .username(profile.getUsername())
-    //                 .avatarUrl(profile.getAvatarUrl())
-    //                 .bio(profile.getBio())
-    //                 .build()
-    //         )
-    //     );
-    // }
 }

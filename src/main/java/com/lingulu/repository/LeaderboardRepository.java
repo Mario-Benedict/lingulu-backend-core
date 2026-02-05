@@ -1,6 +1,7 @@
 package com.lingulu.repository;
 
 import com.lingulu.dto.LeaderboardResponse;
+import com.lingulu.dto.UserRankResponse;
 import com.lingulu.entity.Leaderboard;
 
 import io.lettuce.core.dynamic.annotation.Param;
@@ -17,8 +18,7 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
         SELECT new com.lingulu.dto.LeaderboardResponse(
             u.userId,
             up.username,
-            l.totalPoints,
-            l.rank
+            l.totalPoints
         )
         FROM Leaderboard l
         JOIN l.user u
@@ -28,6 +28,20 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
     List<LeaderboardResponse> findTopLeaderboard(PageRequest pageable);
 
     Leaderboard findByUser_UserId(UUID userId);
+
+    @Query("""
+        SELECT new com.lingulu.dto.UserRankResponse(
+            u.userId,
+            up.username,
+            0,
+            l.totalPoints
+        )
+        FROM Leaderboard l
+        JOIN l.user u
+        JOIN u.userProfile up
+        WHERE u.userId = :userId
+    """)
+    UserRankResponse findUserRank(UUID userId);
 
     @Query(value = """
         SELECT 1 + COUNT(*) AS rank
@@ -39,4 +53,5 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
         )
     """, nativeQuery = true)
     Integer getUserRank(@Param("userId") UUID userId);
+
 }

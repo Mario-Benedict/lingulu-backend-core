@@ -60,7 +60,8 @@ public class ConversationService {
 
         s3StorageService.uploadMultipartFile(
                 audio,
-                userAudioKey
+                userAudioKey,
+                "chat"
         );
 
         String userAudioUrl =

@@ -1,6 +1,8 @@
 package com.lingulu.security;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -31,18 +33,25 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                                       HttpServletResponse response,
                                       Authentication authentication) throws IOException {
         
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        User user = authService.googleOAuth(oAuth2User);
-        String accessToken = jwtUtil.generateAccessToken(user);
-        authService.updateAccessToken(accessToken, user.getUserId());
+        
 
-        Cookie tokenCookie = new Cookie("token", accessToken);
-        tokenCookie.setHttpOnly(true);
-        tokenCookie.setSecure(!isDev);
-        tokenCookie.setPath("/");
-        tokenCookie.setMaxAge(7 * 24 * 60 * 60);
-        response.addCookie(tokenCookie);
+        try {
+            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+            User user = authService.googleOAuth(oAuth2User);
+            String accessToken = jwtUtil.generateAccessToken(user);
+            authService.updateAccessToken(accessToken, user.getUserId());
 
-        response.sendRedirect("http://localhost:5173/oauth2/success");
+            Cookie tokenCookie = new Cookie("token", accessToken);
+            tokenCookie.setHttpOnly(true);
+            tokenCookie.setSecure(!isDev);
+            tokenCookie.setPath("/");
+            tokenCookie.setMaxAge(7 * 24 * 60 * 60);
+            response.addCookie(tokenCookie);
+
+            response.sendRedirect("http://localhost:5173/oauth2/success");
+        } catch (Exception e) {
+            String errorMessage = URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
+            response.sendRedirect("http://localhost:5173/oauth2/success?error=" + errorMessage);
+        }
     }
 }
