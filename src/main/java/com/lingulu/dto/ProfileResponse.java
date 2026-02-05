@@ -19,4 +19,5 @@ public class ProfileResponse {
     private int totalPoints;
     private long rank;
     private Long completedLessons;
+    private String bio;
 }
