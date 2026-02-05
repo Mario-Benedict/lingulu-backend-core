@@ -32,7 +32,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             ul.currentStreak,
             lb.totalPoints,
             lb.rank,
-            COALESCE(SUM(sp.completedLessons), 0)
+            COALESCE(SUM(sp.completedLessons), 0),
+            up.bio
         )
         FROM User u
         JOIN u.userProfile up
@@ -46,7 +47,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             up.avatarUrl,
             ul.currentStreak,
             lb.totalPoints,
-            lb.rank
+            lb.rank,
+            up.bio
     """)
     ProfileResponse getUserProfile(@Param("userId") UUID userId);
 

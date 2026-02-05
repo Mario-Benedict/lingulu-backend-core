@@ -64,6 +64,8 @@ public class AuthService {
         UserProfile userProfile = UserProfile.builder()
                                 .username(request.getUsername())
                                 .user(user)
+                                .bio("iam batman")
+                                .avatarUrl("test aja, tar hapus mar")
                                 .build();
 
         user.setUserProfile(userProfile);
@@ -114,6 +116,8 @@ public class AuthService {
         UserProfile userProfile = UserProfile.builder()
                                 .username(givenName)
                                 .user(user)
+                                .avatarUrl("test aja, tar hapus mar")
+                                .bio("im batman")
                                 .build();
 
         OAuthAccount oAuthAccount = OAuthAccount.builder()
