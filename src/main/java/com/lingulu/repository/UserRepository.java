@@ -50,5 +50,17 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     """)
     ProfileResponse getUserProfile(@Param("userId") UUID userId);
 
-    // DashboardResponse getDashboard(@Param("userId") UUID userId);
+    @Query("""
+        SELECT new com.lingulu.dto.DashboardResponse(
+            null,
+            up.username,
+            ul.currentStreak,
+            0
+        )
+        FROM User u
+        JOIN u.userProfile up
+        JOIN u.userLearningStats ul
+        WHERE u.userId = :userId
+    """)
+    DashboardResponse getDashboardUser(@Param("userId") UUID userId);
 }
