@@ -17,7 +17,7 @@ public class CourseResponse {
 
     private int completedSections;
     private int totalSections;
-    private int progressPercentage;
+    private float progressPercentage;
 
     public static CourseResponse from(CourseProgress cp) {
         int percentage =

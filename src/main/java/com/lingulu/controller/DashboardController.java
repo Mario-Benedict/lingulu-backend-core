@@ -25,15 +25,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class DashboardController {
     private final DashboardService dashboardService;
 
-    // @GetMapping("/dashboard")
-    // public ResponseEntity<ApiResponse<?>> getDashboard() {
-    //     String userId = (String) SecurityContextHolder.getContext()
-    //                    .getAuthentication().getPrincipal();
+    @GetMapping("/dashboard")
+    public ResponseEntity<ApiResponse<?>> getDashboard() {
+        String userId = (String) SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
         
-    //     DashboardResponse dashboardResponse = dashboardService.getDashboard(UUID.fromString(userId));
+        DashboardResponse dashboardResponse = dashboardService.getDashboard(UUID.fromString(userId));
 
-    //     return ResponseEntity.ok()
-    //         .body(new ApiResponse<>(true, "Dashboard data recieved", dashboardResponse));
-    // }
+        return ResponseEntity.ok()
+            .body(new ApiResponse<>(true, "Dashboard data recieved", dashboardResponse));
+    }
     
 }

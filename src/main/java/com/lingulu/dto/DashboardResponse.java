@@ -8,8 +8,8 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class DashboardResponse {
-    private String difficultyLevel;
-    private float progressPercentage;
+    private CourseResponse courseResponse;
+    private String username;
     private int streak;
     private long rank;
 }
