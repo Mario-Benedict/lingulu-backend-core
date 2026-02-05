@@ -53,4 +53,8 @@ public class LeaderboardService {
             throw new DataNotFoundException("Leaderboard user not found", HttpStatus.NOT_FOUND);
         }
     }
+
+    public LeaderboardResponse getUserRank(UUID userId){
+        return leaderboardRepository.findUserRank(userId);
+    }
 }

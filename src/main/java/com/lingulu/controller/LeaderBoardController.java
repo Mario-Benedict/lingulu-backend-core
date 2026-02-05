@@ -24,13 +24,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/leaderboard")
 @RequiredArgsConstructor
 public class LeaderBoardController {
     
     private final LeaderboardService leaderboardService;
 
-    @GetMapping("/leaderboard")
+    @GetMapping("/")
     public ResponseEntity<ApiResponse<List<LeaderboardResponse>>> leaderboard() {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
@@ -40,6 +40,18 @@ public class LeaderBoardController {
         
         return ResponseEntity.ok()
             .body(new ApiResponse<>(true, "Top 10 Leaderboard recieved successfully", leaderboardResponse));
+    }
+
+    @GetMapping("/user-rank")
+    public ResponseEntity<ApiResponse<?>> userRank() {
+        String userId = (String)SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
+
+
+        LeaderboardResponse response = leaderboardService.getUserRank(UUID.fromString(userId));
+        
+        return ResponseEntity.ok()
+            .body(new ApiResponse<>(true, "User Rank recieved", response));
     }
     
     

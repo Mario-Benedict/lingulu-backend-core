@@ -26,4 +26,18 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
     List<LeaderboardResponse> findTopLeaderboard(PageRequest pageable);
 
     Leaderboard findByUser_UserId(UUID userId);
+
+    @Query("""
+        SELECT new com.lingulu.dto.LeaderboardResponse(
+            u.userId,
+            up.username,
+            l.totalPoints,
+            l.rank
+        )
+        FROM Leaderboard l
+        JOIN l.user u
+        JOIN u.userProfile up
+        WHERE u.userId = :userId
+    """)
+    LeaderboardResponse findUserRank(UUID userId);
 }

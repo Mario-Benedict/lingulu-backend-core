@@ -38,7 +38,7 @@ public class Leaderboard {
     private User user;
 
     @Column(name = "total_points")
-    private Integer totalPoints;
+    private int totalPoints;
 
     @Column(name = "rank")
     private long rank;
