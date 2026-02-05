@@ -1,28 +1,53 @@
 package com.lingulu.service;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.lingulu.dto.ProfileResponse;
-import com.lingulu.repository.CourseProgressRepository;
-import com.lingulu.repository.LeaderboardRepository;
-import com.lingulu.repository.UserLearningStatsRepository;
+import com.lingulu.entity.UserProfile;
 import com.lingulu.repository.UserProfileRepository;
-import com.lingulu.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserProfileService {
-    private final UserRepository userRepository;
-    private final LeaderboardRepository leaderboardRepository;
+    private final UserProfileRepository userProfileRepository;
+    private final S3StorageService s3StorageService;
 
-    public ProfileResponse getUserProfile(UUID userId){
-        ProfileResponse profileResponse = userRepository.getUserProfile(userId);
-        profileResponse.setRank(leaderboardRepository.getUserRank(userId));
+    private static final List<String> DEFAULT_AVATARS = List.of(
+        "avatars/tiger1.webp",
+        "avatars/tiger2.webp",
+        "avatars/tiger3.webp",
+        "avatars/tiger4.webp"
+    );
+
+    public String getAvatarUrl(UUID userId) {
+        UserProfile userProfile = userProfileRepository.findByUser_UserId(userId);
+        return userProfile.getAvatarUrl();
+    }
+
+    public String pickAvatarByUserId(UUID userId) {
+        int index = ThreadLocalRandom.current().nextInt(DEFAULT_AVATARS.size());
+        return DEFAULT_AVATARS.get(index);
+    }    
+
+    public String updateAvatar(MultipartFile file, UUID userId) throws IOException {
+        String filename = file.getOriginalFilename();
+        String ext = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        String s3Key = "users/" + userId + "/avatar." + ext;
+
+        UserProfile userProfile = userProfileRepository.findByUser_UserId(userId);
+        userProfile.setAvatarUrl(s3Key);
+
+        s3StorageService.uploadMultipartFile(file, s3Key, "profile");
+
+        userProfileRepository.save(userProfile);
         
-        return profileResponse;
+        return s3Key;
     }
 }

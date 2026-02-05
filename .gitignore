@@ -31,8 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
-src/main/resources/secret.properties
 
-*env
-*pem
-*der
+### Secret ###
+src/main/resources/secret.properties
+*.env
+*.key
+*.pem
+*.der
