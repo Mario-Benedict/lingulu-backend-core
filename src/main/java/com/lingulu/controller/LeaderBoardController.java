@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.LeaderboardResponse;
+import com.lingulu.dto.UserRankResponse;
 import com.lingulu.entity.Leaderboard;
 import com.lingulu.service.LeaderboardService;
 
@@ -48,7 +49,7 @@ public class LeaderBoardController {
                        .getAuthentication().getPrincipal();
 
 
-        LeaderboardResponse response = leaderboardService.getUserRank(UUID.fromString(userId));
+        UserRankResponse response = leaderboardService.getUserRank(UUID.fromString(userId));
         
         return ResponseEntity.ok()
             .body(new ApiResponse<>(true, "User Rank recieved", response));

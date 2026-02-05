@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LeaderboardResponse {
+public class UserRankResponse {
     private UUID userId;
     private String username;
     private int totalPoints;
+    private long rank;
 }

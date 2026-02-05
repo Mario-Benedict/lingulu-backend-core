@@ -17,10 +17,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserProfileService {
     private final UserRepository userRepository;
+    private final LeaderboardRepository leaderboardRepository;
 
     public ProfileResponse getUserProfile(UUID userId){
         ProfileResponse profileResponse = userRepository.getUserProfile(userId);
-
+        profileResponse.setRank(leaderboardRepository.getUserRank(userId));
+        
         return profileResponse;
     }
 }

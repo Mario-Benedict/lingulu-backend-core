@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.LeaderboardResponse;
+import com.lingulu.dto.UserRankResponse;
 import com.lingulu.entity.Leaderboard;
 import com.lingulu.entity.User;
 import com.lingulu.exception.AppException;
 import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.LeaderboardRepository;
+import com.lingulu.repository.UserLearningStatsRepository;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.exception.AppException;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,7 @@ public class LeaderboardService {
     
     private final LeaderboardRepository leaderboardRepository;
     private final UserRepository userRepository;
+    private final UserLearningStatsRepository userLearningStatsRepository;
 
     public List<LeaderboardResponse> getTop10Leaderboards() {
         return leaderboardRepository.findTopLeaderboard(PageRequest.of(0, 10));
@@ -37,7 +40,6 @@ public class LeaderboardService {
         Leaderboard leaderboard = Leaderboard.builder()
                                     .user(user)
                                     .totalPoints(0)
-                                    .rank(leaderboardRepository.count() + 1)
                                     .build();
         leaderboardRepository.save(leaderboard);
     }
@@ -46,7 +48,8 @@ public class LeaderboardService {
         Leaderboard leaderboard = leaderboardRepository.findByUser_UserId(userId);
 
         if (leaderboard != null) {
-            leaderboard.setTotalPoints(leaderboard.getTotalPoints() + 100);
+            int streak = userLearningStatsRepository.getStreak(userId);
+            leaderboard.setTotalPoints(leaderboard.getTotalPoints() + 100 * ( 1 + streak  / 50));
             leaderboardRepository.save(leaderboard);
         }
         else {
@@ -54,7 +57,11 @@ public class LeaderboardService {
         }
     }
 
-    public LeaderboardResponse getUserRank(UUID userId){
-        return leaderboardRepository.findUserRank(userId);
+    public UserRankResponse getUserRank(UUID userId){
+        UserRankResponse userRank = leaderboardRepository.findUserRank(userId);
+
+        userRank.setRank(leaderboardRepository.getUserRank(userId));
+
+        return userRank;
     }
 }

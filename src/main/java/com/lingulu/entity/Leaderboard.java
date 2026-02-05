@@ -40,9 +40,6 @@ public class Leaderboard {
     @Column(name = "total_points")
     private int totalPoints;
 
-    @Column(name = "rank")
-    private long rank;
-
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
