@@ -4,6 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.lingulu.entity.sectionType.Grammar;
+import com.lingulu.entity.sectionType.MCQQuestion;
+import com.lingulu.entity.sectionType.Speaking;
+import com.lingulu.entity.sectionType.Vocabulary;
+import com.lingulu.enums.SectionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +33,8 @@ public class Section {
     private UUID sectionId;
 
     @Column(name = "section_type")
-    private String sectionType;
+    @Enumerated(EnumType.STRING)
+    private SectionType sectionType;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -44,4 +50,17 @@ public class Section {
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SectionProgress> sectionProgresses;
+
+    @OneToOne(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Grammar grammar;
+
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vocabulary> vocabularies;
+
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Speaking> speakings;
+
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MCQQuestion> mcqQuestions;
+
 }
