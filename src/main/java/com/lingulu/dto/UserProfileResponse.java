@@ -11,6 +11,4 @@ public class UserProfileResponse {
     private String username;
     private String avatarUrl;
     private String bio;
-    private String preferredLanguage;
-    private String audioPath;
 }

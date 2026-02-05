@@ -29,34 +29,15 @@ public class LeaderboardService {
     private final LeaderboardRepository leaderboardRepository;
     private final UserRepository userRepository;
 
-    public List<LeaderboardResponse> getTop10Leaderboards(UUID userId) {
-
-        // User user = userRepository.findByUserId(userId).orElse(null);
-
-        List<LeaderboardResponse> leaderboards = leaderboardRepository.findTopLeaderboard(PageRequest.of(0, 10));
-
-        if(leaderboards == null || leaderboards.isEmpty()){
-            throw new IllegalStateException("Unexpected null list");
-        }
-
-        LeaderboardResponse leaderboardUser = leaderboardRepository.findByUserId(userId);
-
-        if(leaderboardUser == null){
-            throw new DataNotFoundException("Leaderboard User not found", HttpStatus.NOT_FOUND);
-        }
-
-        if(leaderboards.contains(leaderboardUser)){
-            return leaderboards;
-        } else {
-            leaderboards.add(leaderboardUser);
-            return leaderboards;
-        }
+    public List<LeaderboardResponse> getTop10Leaderboards() {
+        return leaderboardRepository.findTopLeaderboard(PageRequest.of(0, 10));
     }
 
     public void addLeaderBoard(User user) {
         Leaderboard leaderboard = Leaderboard.builder()
                                     .user(user)
                                     .totalPoints(0)
+                                    .rank(leaderboardRepository.count() + 1)
                                     .build();
         leaderboardRepository.save(leaderboard);
     }
