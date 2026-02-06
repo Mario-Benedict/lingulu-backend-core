@@ -40,7 +40,7 @@ public class UserProfileService {
         return userProfile.getAvatarUrl();
     }
 
-    public String pickAvatarByUserId(UUID userId) {
+    public String pickAvatarByUserId() {
         int index = ThreadLocalRandom.current().nextInt(DEFAULT_AVATARS.size());
         return DEFAULT_AVATARS.get(index);
     }    

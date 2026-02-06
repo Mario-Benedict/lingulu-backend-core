@@ -65,7 +65,8 @@ public class AuthService {
         UserProfile userProfile = UserProfile.builder()
                                 .username(request.getUsername())
                                 .user(user)
-                                .avatarUrl("users/" + userProfileService.pickAvatarByUserId(user.getUserId()))
+                                .avatarUrl("users/" + userProfileService.pickAvatarByUserId())
+                                .bio("Interested in learning English")
                                 .build();
 
         user.setUserProfile(userProfile);
@@ -116,7 +117,8 @@ public class AuthService {
         UserProfile userProfile = UserProfile.builder()
                                 .username(givenName)
                                 .user(user)
-                                .avatarUrl("users/avatar/" + userProfileService.pickAvatarByUserId(user.getUserId()))
+                                .avatarUrl("users/" + userProfileService.pickAvatarByUserId())
+                                .bio("Interested in learning English")
                                 .build();
 
         OAuthAccount oAuthAccount = OAuthAccount.builder()
