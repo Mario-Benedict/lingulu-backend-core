@@ -2,7 +2,6 @@ package com.lingulu.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.apache.tomcat.util.http.parser.MediaType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +25,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 import java.util.UUID;
+import org.springframework.http.MediaType;
 
 
 @RestController

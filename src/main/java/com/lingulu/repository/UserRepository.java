@@ -46,7 +46,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             up.username,
             up.avatarUrl,
             ul.currentStreak,
-            lb.totalPoints
+            lb.totalPoints,
+            up.bio
     """)
     ProfileResponse getUserProfile(@Param("userId") UUID userId);
 
