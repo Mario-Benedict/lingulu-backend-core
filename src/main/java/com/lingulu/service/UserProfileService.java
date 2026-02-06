@@ -8,8 +8,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.lingulu.dto.ProfileResponse;
 import com.lingulu.entity.UserProfile;
 import com.lingulu.repository.UserProfileRepository;
+import com.lingulu.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -18,6 +20,13 @@ import lombok.AllArgsConstructor;
 public class UserProfileService {
     private final UserProfileRepository userProfileRepository;
     private final S3StorageService s3StorageService;
+    private final UserRepository userRepository;
+
+    public ProfileResponse getUserProfile(UUID userId){
+        ProfileResponse profileResponse = userRepository.getUserProfile(userId);
+
+        return profileResponse;
+    }
 
     private static final List<String> DEFAULT_AVATARS = List.of(
         "avatars/tiger1.webp",
