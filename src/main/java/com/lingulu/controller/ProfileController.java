@@ -121,8 +121,11 @@ public class ProfileController {
                        .getAuthentication().getPrincipal();
         
         ProfileResponse profileResponse = userProfileService.getUserProfile(UUID.fromString(userId));
+        String fullCdnUrl = cloudFrontSigner.generateCdnUrl(profileResponse.getAvatarUrl());
+        profileResponse.setAvatarUrl(fullCdnUrl);
 
         return ResponseEntity.ok()
+            .headers(generateCookie(fullCdnUrl))
             .body(new ApiResponse<>(true, "User profile recieved successfully", profileResponse));
     }
 }

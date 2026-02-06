@@ -31,7 +31,8 @@ public class LeaderBoardController {
     
     private final LeaderboardService leaderboardService;
 
-    @GetMapping("/")
+    // Need /all to avoid conflict with /user-rank. If not, will cause internal server eror
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<LeaderboardResponse>>> leaderboard() {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
