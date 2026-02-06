@@ -25,13 +25,13 @@ public class DashboardService {
 
     public DashboardResponse getDashboard(UUID userId){
         CourseProgress courseProgress = courseProgressRepository.findActiveCourse(userId, ProgressStatus.IN_PROGRESS);
-        float progressPercentage = courseProgress.getCompletedSections() * 100 / courseProgress.getTotalSections();
+        float progressPercentage = courseProgress.getCompletedLessons() * 100 / courseProgress.getTotalLessons();
         CourseResponse courseResponse = CourseResponse.builder()
                                         .courseId(courseProgress.getCourse().getCourseId())
                                         .courseTitle(courseProgress.getCourse().getCourseTitle())
                                         .status(String.valueOf(courseProgress.getStatus()))
-                                        .completedSections(courseProgress.getCompletedSections())
-                                        .totalSections(courseProgress.getTotalSections())
+                                        .completedSections(courseProgress.getCompletedLessons())
+                                        .totalSections(courseProgress.getTotalLessons())
                                         .progressPercentage(progressPercentage)
                                         .build();
         

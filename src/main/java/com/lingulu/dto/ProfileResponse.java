@@ -18,6 +18,6 @@ public class ProfileResponse {
     private int streak;
     private int totalPoints;
     private long rank;
-    private Long completedLessons;
+    private Long completedSections;
     private String bio;
 }

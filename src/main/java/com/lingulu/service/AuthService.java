@@ -37,6 +37,7 @@ public class AuthService {
     private final LearningService learningService;
     private final EnrollmentService enrollmentService;
     private final UserLearningStatsService userLearningStatsService;
+    private final UserProfileService userProfileService;
 
     private final PasswordEncoder passwordEncoder;
 
