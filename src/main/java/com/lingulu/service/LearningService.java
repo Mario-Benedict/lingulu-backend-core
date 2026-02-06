@@ -26,6 +26,7 @@ public class LearningService {
     private final LessonRepository lessonRepository;
     private final UserRepository userRepository;
     private final LeaderboardService leaderboardService;
+    private final UserLearningStatsService userLearningStatsService;
 
     private final CourseRepository courseRepository;
 
@@ -42,6 +43,7 @@ public class LearningService {
 
         recalcLessonProgress(userId, sp.getSection().getLesson());
         leaderboardService.updateTotalPoints(userId);
+        userLearningStatsService.updateStreak(userId);
     }
 
     private void recalcLessonProgress(UUID userId, Lesson lesson) {
