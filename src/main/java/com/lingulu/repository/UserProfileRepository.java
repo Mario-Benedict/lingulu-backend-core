@@ -18,4 +18,6 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID>{
             "FROM UserProfile p WHERE p.user.userId = :userId")
     UserProfileResponse findActiveProfileByUserId(@Param("userId") UUID userId);
 
+    UserProfile findByUser_UserId(UUID userId);
+
 }

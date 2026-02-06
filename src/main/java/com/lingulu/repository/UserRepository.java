@@ -32,20 +32,22 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             ul.currentStreak,
             lb.totalPoints,
             0,
-            COALESCE(SUM(sp.completedLessons), 0)
+            COALESCE(SUM(lp.completedSections), 0),
+            up.bio
         )
         FROM User u
         JOIN u.userProfile up
         JOIN u.userLearningStats ul
         JOIN u.leaderboard lb
-        LEFT JOIN u.sectionProgress sp
+        LEFT JOIN u.lessonProgress lp
         WHERE u.userId = :userId
         GROUP BY
             u.email,
             up.username,
             up.avatarUrl,
             ul.currentStreak,
-            lb.totalPoints
+            lb.totalPoints,
+            up.bio
     """)
     ProfileResponse getUserProfile(@Param("userId") UUID userId);
 

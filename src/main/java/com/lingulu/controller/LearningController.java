@@ -19,7 +19,7 @@ public class LearningController {
 
     private final LearningService learningService;
 
-    @PostMapping("/lesson/complete")
+    @PostMapping("/section/complete")
     public ResponseEntity<ApiResponse<?>> completeLesson(@RequestBody @Valid CompleteSectionsRequest completeSectionsRequest) {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();

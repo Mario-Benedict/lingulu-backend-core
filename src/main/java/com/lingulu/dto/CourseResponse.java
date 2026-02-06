@@ -29,8 +29,8 @@ public class CourseResponse {
                 .courseId(cp.getCourse().getCourseId())
                 .courseTitle(cp.getCourse().getCourseTitle())
                 .status(String.valueOf(cp.getStatus()))
-                .completedLessons(cp.getCompletedLessons())
-                .totalLessons(cp.getTotalLessons())
+                .completedSections(cp.getCompletedLessons())
+                .totalSections(cp.getTotalLessons())
                 .progressPercentage(percentage)
                 .build();
     }
