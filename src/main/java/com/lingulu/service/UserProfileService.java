@@ -59,4 +59,10 @@ public class UserProfileService {
         
         return s3Key;
     }
+
+    public void updateBio(String bio, UUID userId) {
+        UserProfile userProfile = userProfileRepository.findByUser_UserId(userId);
+        userProfile.setBio(bio);
+        userProfileRepository.save(userProfile);
+    }
 }

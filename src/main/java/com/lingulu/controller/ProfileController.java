@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.CdnAccessResponse;
 import com.lingulu.dto.ProfileResponse;
+import com.lingulu.dto.UpdateBioRequest;
 import com.lingulu.dto.UploadAvatarRequest;
 import com.lingulu.service.CloudFrontSigner;
 import com.lingulu.service.UserProfileService;
@@ -26,6 +27,8 @@ import org.springframework.http.HttpHeaders;
 import java.io.IOException;
 import java.util.UUID;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -128,4 +131,15 @@ public class ProfileController {
             .headers(generateCookie(fullCdnUrl))
             .body(new ApiResponse<>(true, "User profile recieved successfully", profileResponse));
     }
+
+    @PostMapping("/profile/bio")
+    public ResponseEntity<ApiResponse<?>> updateBio(@RequestBody @Valid UpdateBioRequest bio) {
+        String userId = (String) SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
+        
+        userProfileService.updateBio(bio.getBio(), UUID.fromString(userId));
+        
+        return ResponseEntity.ok(new ApiResponse<>(true, "Bio updated", null));
+    }
+    
 }
