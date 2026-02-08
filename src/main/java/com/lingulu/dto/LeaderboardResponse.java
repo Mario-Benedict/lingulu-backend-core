@@ -15,4 +15,5 @@ public class LeaderboardResponse {
     private UUID userId;
     private String username;
     private int totalPoints;
+    private String avatarUrl;
 }

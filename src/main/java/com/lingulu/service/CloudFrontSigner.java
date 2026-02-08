@@ -14,12 +14,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities;
 import software.amazon.awssdk.services.cloudfront.model.CannedSignerRequest;
-
-
+import software.amazon.awssdk.services.cloudfront.model.CustomSignerRequest;
 import jakarta.annotation.PostConstruct;
 import software.amazon.awssdk.services.cloudfront.cookie.CookiesForCannedPolicy;
+import software.amazon.awssdk.services.cloudfront.cookie.CookiesForCustomPolicy;
 
 
 @Service
@@ -59,6 +60,10 @@ public class CloudFrontSigner {
         return "https://" + cdnDomain + "/" + s3Key;
     }
 
+    public String generateCdnUrlWithWildcard(String s3KeyPattern) {
+        return "https://" + cdnDomain + "/" + s3KeyPattern;
+    }
+
     /** Generate CloudFront Signed Cookies (valid 1 hari) */
     public CookiesForCannedPolicy generateSignedCookies(String resourceUrl) {
 
@@ -75,6 +80,29 @@ public class CloudFrontSigner {
                 .build();
 
         return utilities.getCookiesForCannedPolicy(request);
+    }
+
+    public CookiesForCustomPolicy generateSignedCookiesMultiUrl(String reourceUrl) {
+        Instant expiration = Instant.now().plus(7, ChronoUnit.DAYS);
+        // String resource = "https://dxxx.cloudfront.net/users/*/avatar.png";
+
+        // 1. Buat string JSON policy
+        // String rawPolicy = buildPolicy(resource, expiration);
+
+        // 2. Bungkus string JSON ke dalam SdkBytes
+        // SDK v2 akan melakukan encoding otomatis saat proses signing
+        // SdkBytes policyBytes = SdkBytes.fromUtf8String(rawPolicy);
+
+        // 3. Gunakan .encodedCustomPolicy(policyBytes)
+        CustomSignerRequest request = CustomSignerRequest.builder()
+                .resourceUrl(reourceUrl)
+                // .customPolicy(policyBytes) // Menggunakan SdkBytes
+                .expirationDate(expiration)
+                .keyPairId(keyPairId)
+                .privateKey(privateKey)
+                .build();
+
+        return CloudFrontUtilities.create().getCookiesForCustomPolicy(request);
     }
 
 }

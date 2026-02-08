@@ -46,4 +46,7 @@ public class Lesson {
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Section> sections;
+
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonProgress> lessonProgresses;
 }

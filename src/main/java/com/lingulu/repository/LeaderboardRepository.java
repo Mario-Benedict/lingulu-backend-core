@@ -18,7 +18,8 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
         SELECT new com.lingulu.dto.LeaderboardResponse(
             u.userId,
             up.username,
-            l.totalPoints
+            l.totalPoints,
+            up.avatarUrl
         )
         FROM Leaderboard l
         JOIN l.user u
@@ -34,7 +35,8 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
             u.userId,
             up.username,
             0,
-            l.totalPoints
+            l.totalPoints,
+            up.avatarUrl
         )
         FROM Leaderboard l
         JOIN l.user u
