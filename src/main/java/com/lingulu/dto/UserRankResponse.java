@@ -16,4 +16,5 @@ public class UserRankResponse {
     private String username;
     private int totalPoints;
     private long rank;
+    private String avatarUrl;
 }
