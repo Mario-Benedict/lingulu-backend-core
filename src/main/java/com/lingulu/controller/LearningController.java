@@ -1,7 +1,9 @@
 package com.lingulu.controller;
 
 import com.lingulu.dto.ApiResponse;
+import com.lingulu.dto.AttemptResponse;
 import com.lingulu.dto.CompleteSectionsRequest;
+import com.lingulu.dto.SubmitAttemptRequest;
 import com.lingulu.service.LearningService;
 
 import jakarta.validation.Valid;
@@ -10,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/learning")
@@ -31,7 +35,17 @@ public class LearningController {
                 .body(new ApiResponse<>(true, "Section mark as completed", null));
     }
 
+    @PostMapping("/section/attempt")
+    public ResponseEntity<ApiResponse<?>> submitAttempt(@RequestBody @Valid SubmitAttemptRequest submitAttemptRequest) {
+        String userId = (String) SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
 
+        AttemptResponse attemptResponse = learningService.submitAttempt(userId, submitAttemptRequest);
+        
+        return ResponseEntity.ok()
+                .body(new ApiResponse<>(true, "Attempt submitted", attemptResponse));
+    }
+    
 
 
 }

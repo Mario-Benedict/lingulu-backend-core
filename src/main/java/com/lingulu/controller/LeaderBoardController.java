@@ -97,7 +97,6 @@ public class LeaderBoardController {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
 
-
         UserRankResponse response = leaderboardService.getUserRank(UUID.fromString(userId));
         String fullCdnUrl = cloudFrontSigner.generateCdnUrl(response.getAvatarUrl());
         response.setAvatarUrl(fullCdnUrl);

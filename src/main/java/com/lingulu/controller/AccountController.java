@@ -40,8 +40,8 @@ public class AccountController {
 
         return ResponseCookie.from("token", token)
                 .httpOnly(true)
-                .secure(!isDev)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(days * 24 * 60 * 60)
                 .build()
