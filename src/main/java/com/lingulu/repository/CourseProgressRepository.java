@@ -1,6 +1,5 @@
 package com.lingulu.repository;
 
-import com.lingulu.entity.Course;
 import com.lingulu.entity.CourseProgress;
 import com.lingulu.enums.ProgressStatus;
 

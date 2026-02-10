@@ -10,8 +10,6 @@ import com.lingulu.enums.ProgressStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.lingulu.dto.LessonsResponse;
-
 public interface SectionProgressRepository extends JpaRepository<SectionProgress, UUID> {
 
     Optional<SectionProgress> findByUser_UserIdAndSection_SectionId(

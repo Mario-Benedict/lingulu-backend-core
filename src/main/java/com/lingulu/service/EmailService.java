@@ -24,5 +24,23 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendPasswordResetEmail(String to, String resetLink) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("Reset Password - Lingulu");
+        message.setText(
+            "Halo,\n\n" +
+            "Anda telah meminta untuk mereset password akun Anda.\n\n" +
+            "Klik link berikut untuk mereset password Anda:\n" +
+            resetLink + "\n\n" +
+            "Link ini berlaku selama 1 jam.\n\n" +
+            "Jika Anda tidak meminta reset password, abaikan email ini.\n\n" +
+            "Salam,\n" +
+            "Tim Lingulu"
+        );
+
+        mailSender.send(message);
+    }
 }
 
