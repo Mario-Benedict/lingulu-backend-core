@@ -1,16 +1,25 @@
 package com.lingulu.service;
 
+import com.lingulu.dto.AnswerResponse;
+import com.lingulu.dto.AttemptResponse;
+import com.lingulu.dto.SubmitAttemptRequest;
 import com.lingulu.entity.*;
+import com.lingulu.entity.sectionType.MCQOption;
 import com.lingulu.enums.ProgressStatus;
 import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.*;
+import com.lingulu.repository.sections.MCQOptionRepository;
+import com.lingulu.repository.sections.MCQQuestionRepository;
+
 import lombok.RequiredArgsConstructor;
 
+import org.aspectj.weaver.patterns.TypePatternQuestions.Question;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,8 +36,11 @@ public class LearningService {
     private final UserRepository userRepository;
     private final LeaderboardService leaderboardService;
     private final UserLearningStatsService userLearningStatsService;
+    private final MCQOptionRepository mCQOptionRepository;
+    private final MCQQuestionRepository mcqQuestionRepository;
 
     private final CourseRepository courseRepository;
+    private final MCQAnswerRepository mcqAnswerRepository;
 
     public void markSectionCompleted(UUID userId, UUID sectionId) {
 
@@ -162,6 +174,70 @@ public class LearningService {
                 }
 
         }
+    }
+
+    private AttemptResponse convertToAttemptResponse(MCQAnswer mcqAnswer) {
+        int totalQuestions = mcqAnswer.getAnsweredQuestions().size();
+        int correctAnswers = (int) mcqAnswer.getAnsweredQuestions().stream().filter(AnsweredQuestion::getIsCorrect).count();
+        int score = (int) ((correctAnswers / (double) totalQuestions) * 100);
+
+        AttemptResponse attemptResponse = new AttemptResponse();
+        attemptResponse.setSectionId(mcqAnswer.getSectionId());
+        attemptResponse.setTotalQuestions(totalQuestions);
+        attemptResponse.setCorrectAnswers(correctAnswers);
+        attemptResponse.setScore(score);
+
+        List<AnswerResponse> answerResponses = mcqAnswer.getAnsweredQuestions()
+                .stream()
+                .map(aq -> {
+                    AnswerResponse ar = new AnswerResponse();
+                    ar.setQuestionId(aq.getQuestionId());
+                    ar.setQuestionText(mcqQuestionRepository.findByQuestionId(UUID.fromString(aq.getQuestionId())).getQuestionText());
+                    ar.setSelectedOptionId(aq.getSelectedOptionId());
+                    ar.setIsCorrect(aq.getIsCorrect());
+                    ar.setSelectedOptionText(mCQOptionRepository.findByOptionId(UUID.fromString(aq.getSelectedOptionId())).getOptionText());
+                    return ar;
+                })
+                .toList();
+        
+        attemptResponse.setAnswers(answerResponses);
+
+        return attemptResponse;
+    }
+
+    public AttemptResponse submitAttempt(String userId, SubmitAttemptRequest submitAttemptRequest) {
+        MCQAnswer mcqAnswer = new MCQAnswer();
+        mcqAnswer.setSectionId(submitAttemptRequest.getSectionId());
+        mcqAnswer.setUserId(userId);
+        mcqAnswer.setAnsweredAt(LocalDateTime.now());
+        
+        List<AnsweredQuestion> answeredQuestions =
+        submitAttemptRequest.getAnswers()
+        .stream()
+        .map(answerRequest -> {
+            AnsweredQuestion aq = new AnsweredQuestion();
+            aq.setQuestionId(answerRequest.getQuestionId());
+            aq.setSelectedOptionId(answerRequest.getSelectedOptionId());
+            aq.setIsCorrect(mCQOptionRepository.findByOptionId(UUID.fromString(answerRequest.getSelectedOptionId())).getIsCorrect());
+                
+            return aq;
+        })
+        .toList();
+
+        mcqAnswer.setAnsweredQuestions(answeredQuestions);
+        mcqAnswerRepository.save(mcqAnswer);
+
+        return convertToAttemptResponse(mcqAnswer);
+    }
+
+    public AttemptResponse cekLatestAttempt(String userId, String sectionId) {
+        MCQAnswer mcqAnswer = mcqAnswerRepository.findFirstByUserIdAndSectionIdOrderByAnsweredAtDesc(userId, sectionId);
+        
+        if(mcqAnswer == null) {
+            return null;
+        }
+
+        return convertToAttemptResponse(mcqAnswer);
     }
 
 }

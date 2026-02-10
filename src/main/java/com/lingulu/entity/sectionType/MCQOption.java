@@ -28,5 +28,5 @@ public class MCQOption {
     private String optionText;
 
     @Column(name = "is_correct")
-    private boolean isCorrect;
+    private Boolean isCorrect;
 }

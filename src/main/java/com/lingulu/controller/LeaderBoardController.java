@@ -96,7 +96,14 @@ public class LeaderBoardController {
     public ResponseEntity<ApiResponse<?>> userRank() {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
+        System.out.println(userId);
+        System.out.println("asduasduasudsauduasudasudusa");
+        System.out.println("asduasduasudsauduasudasudusa");
+        System.out.println("asduasduasudsauduasudasudusa");
+        System.out.println("asduasduasudsauduasudasudusa");
 
+        System.out.println("asduasduasudsauduasudasudusa");
+        System.out.println("asduasduasudsauduasudasudusa");
 
         UserRankResponse response = leaderboardService.getUserRank(UUID.fromString(userId));
         String fullCdnUrl = cloudFrontSigner.generateCdnUrl(response.getAvatarUrl());
