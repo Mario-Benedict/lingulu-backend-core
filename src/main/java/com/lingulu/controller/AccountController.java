@@ -13,9 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.ResponseEntity;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/account")
@@ -135,6 +138,24 @@ public class AccountController {
 
         return ResponseEntity.ok(
             new ApiResponse<>(true, "Token validation result", isValid)
+        );
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<String>> changePassword(
+        @Valid @RequestBody ChangePasswordRequest request
+    ) {
+        String userId = (String) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        accountService.changePassword(
+            UUID.fromString(userId),
+            request.getCurrentPassword(),
+            request.getNewPassword()
+        );
+
+        return ResponseEntity.ok(
+            new ApiResponse<>(true, "Password has been changed successfully", null)
         );
     }
 }
