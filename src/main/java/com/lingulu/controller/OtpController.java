@@ -3,8 +3,6 @@ package com.lingulu.controller;
 import com.lingulu.dto.OtpRequest;
 import com.lingulu.dto.OtpVerifyRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

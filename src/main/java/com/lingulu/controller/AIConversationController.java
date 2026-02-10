@@ -5,17 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.lingulu.dto.AIConversationResponse;
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.ConversationRequest;
 import com.lingulu.service.ConversationService;
-import com.lingulu.validator.ValidAudio;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 
 @Validated
 @RestController

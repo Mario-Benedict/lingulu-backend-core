@@ -5,22 +5,16 @@ import java.util.UUID;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.LeaderboardResponse;
 import com.lingulu.dto.UserRankResponse;
 import com.lingulu.entity.Leaderboard;
 import com.lingulu.entity.User;
-import com.lingulu.exception.AppException;
 import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.LeaderboardRepository;
 import com.lingulu.repository.UserLearningStatsRepository;
 import com.lingulu.repository.UserRepository;
-import com.lingulu.exception.AppException;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
 
 import lombok.RequiredArgsConstructor;
 

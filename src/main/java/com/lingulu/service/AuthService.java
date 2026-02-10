@@ -1,11 +1,9 @@
 package com.lingulu.service;
 
-import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.LoginRequest;
 import com.lingulu.dto.RegisterRequest;
 import com.lingulu.entity.OAuthAccount;
 import com.lingulu.entity.User;
-import com.lingulu.entity.UserLearningStats;
 import com.lingulu.entity.UserProfile;
 import com.lingulu.exception.OAuthOnlyLoginException;
 import com.lingulu.exception.RegisterException;
@@ -19,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.*;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;

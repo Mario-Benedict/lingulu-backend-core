@@ -3,7 +3,6 @@ package com.lingulu.repository;
 import com.lingulu.dto.UserProfileResponse;
 import com.lingulu.entity.UserProfile;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import io.lettuce.core.dynamic.annotation.Param;

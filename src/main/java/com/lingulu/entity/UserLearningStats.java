@@ -3,8 +3,6 @@ package com.lingulu.entity;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import org.hibernate.annotations.DialectOverride.GeneratedColumns;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
