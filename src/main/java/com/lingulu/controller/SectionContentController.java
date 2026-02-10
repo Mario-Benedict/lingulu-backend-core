@@ -2,11 +2,15 @@ package com.lingulu.controller;
 
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.SectionContentResponse;
+import com.lingulu.dto.SpeakingResponse;
+import com.lingulu.service.LearningService;
 import com.lingulu.service.SectionContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -15,11 +19,23 @@ import java.util.UUID;
 public class SectionContentController {
 
     private final SectionContentService sectionContentService;
+    private final LearningService learningService;
 
     @GetMapping("/{sectionId}/content")
-    public ResponseEntity<ApiResponse<SectionContentResponse>> getSectionContent(
+    public ResponseEntity<ApiResponse<?>> getSectionContent(
             @PathVariable UUID sectionId
     ) {
+        String userId = (String) SecurityContextHolder.getContext()
+                        .getAuthentication().getPrincipal();
+
+        List<SpeakingResponse> speakingResponse = learningService.cekLatestSpeakingAttempt(userId, sectionId.toString());
+
+        if(speakingResponse == null || speakingResponse.isEmpty()){
+            return ResponseEntity.ok(
+                new ApiResponse<>(true, "Section already attempted", speakingResponse)
+            );
+        }
+        
         SectionContentResponse response =
                 sectionContentService.getSectionContent(sectionId);
 

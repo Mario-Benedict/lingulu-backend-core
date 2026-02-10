@@ -1,6 +1,10 @@
 package com.lingulu.service;
 
+import com.lingulu.dto.SpeakingRequest;
+import com.lingulu.dto.SpeakingResponse;
+import com.lingulu.dto.WordResponse;
 import com.lingulu.entity.*;
+import com.lingulu.entity.sectionType.Speaking;
 import com.lingulu.enums.ProgressStatus;
 import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.*;
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -29,6 +34,8 @@ public class LearningService {
     private final UserLearningStatsService userLearningStatsService;
 
     private final CourseRepository courseRepository;
+    private final SpeakingAnswerRepository speakingAnswerRepository;
+    private final SpeakingRepository speakingRepository;
 
     public void markSectionCompleted(UUID userId, UUID sectionId) {
 
@@ -164,4 +171,66 @@ public class LearningService {
         }
     }
 
+    public void recordSpeakingAttempt(String userId, SpeakingRequest speakingRequest) {
+        SpeakingAnswer speakingAnswer = new SpeakingAnswer();
+        speakingAnswer.setUserId(userId);
+        speakingAnswer.setSectionId(speakingRequest.getSectionId());
+        speakingAnswer.setSentenceId(speakingRequest.getSentenceId());
+        speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
+        
+        List<WordAnswer> wordAnswers = speakingRequest.getWords().stream()
+                .map(wordReq -> new WordAnswer(wordReq.getWord(), wordReq.getScore()))
+                .toList();
+
+
+        speakingAnswer.setWordAnswers(wordAnswers);
+
+        speakingAnswerRepository.save(speakingAnswer);
+    }
+
+    private List<SpeakingResponse> convertToSpeakingResponses(List<SpeakingAnswer> answers) {
+        List<SpeakingResponse> responses = answers.stream().map(answer -> {
+            SpeakingResponse response = new SpeakingResponse();
+            response.setAverageScore(answer.getAverageScore());
+            response.setSentence(speakingRepository.findByExerciseId(UUID.fromString(answer.getSentenceId())).getSentence());
+
+            List<WordResponse> wordResponses = answer.getWordAnswers().stream().map(wordAnswer -> {
+                WordResponse wordResponse = new WordResponse();
+                
+                wordResponse.setWord(wordAnswer.getWord());
+                wordResponse.setScore(wordAnswer.getScore());
+
+                return wordResponse;
+            }).toList();
+
+            response.setWords(wordResponses);
+            return response;
+        }).toList();
+
+        return responses;
+    }
+
+    public List<SpeakingResponse> completeSpeakingAttempt(String userId, SpeakingRequest speakingRequest) {
+        recordSpeakingAttempt(userId, speakingRequest);
+
+        List<SpeakingAnswer> answers = speakingAnswerRepository.findByUserIdAndSectionId(
+                userId,
+                speakingRequest.getSectionId()
+        );
+
+        return convertToSpeakingResponses(answers);
+    }
+
+    public List<SpeakingResponse> cekLatestSpeakingAttempt(String userId, String sectionId) {
+        List<SpeakingAnswer> answers = speakingAnswerRepository.findByUserIdAndSectionId(
+                userId,
+                sectionId
+        );
+        
+        if(answers == null || answers.isEmpty()){
+                return null;
+        }
+
+        return convertToSpeakingResponses(answers);
+    }
 }
