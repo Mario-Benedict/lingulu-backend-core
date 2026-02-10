@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/api/account/register",
                                 "/api/account/authenticated",
                                 "/oauth2/**"
+                                // "/api/ledaerboard/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -72,7 +73,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                Arrays.asList("http://localhost:5173")
+                Arrays.asList("http://localhost:5173", "http://127.0.0.1:5500")
         );
         configuration.setAllowedMethods(
                 Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")

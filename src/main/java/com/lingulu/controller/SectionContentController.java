@@ -1,8 +1,10 @@
 package com.lingulu.controller;
 
 import com.lingulu.dto.ApiResponse;
+import com.lingulu.dto.AttemptResponse;
 import com.lingulu.dto.SectionContentResponse;
 import com.lingulu.dto.SpeakingResponse;
+import com.lingulu.entity.MCQAnswer;
 import com.lingulu.service.LearningService;
 import com.lingulu.service.SectionContentService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,15 @@ public class SectionContentController {
             );
         }
         
+
+        AttemptResponse attemptResponse = learningService.cekLatestAttempt(userId, sectionId.toString());
+
+        if(attemptResponse != null) {
+            return ResponseEntity.ok(
+                new ApiResponse<>(true, "Section already attempted", attemptResponse)
+            );
+        }
+
         SectionContentResponse response =
                 sectionContentService.getSectionContent(sectionId);
 

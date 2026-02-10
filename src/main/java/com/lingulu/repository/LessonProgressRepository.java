@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.lingulu.dto.LessonsResponse;
-import com.lingulu.dto.SectionResponse;
 import com.lingulu.entity.LessonProgress;
 import com.lingulu.enums.ProgressStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

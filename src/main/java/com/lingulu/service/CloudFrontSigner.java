@@ -2,23 +2,19 @@ package com.lingulu.service;
 
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyFactory;
-import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
-import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities;
 import software.amazon.awssdk.services.cloudfront.model.CannedSignerRequest;
 import software.amazon.awssdk.services.cloudfront.model.CustomSignerRequest;
-import jakarta.annotation.PostConstruct;
 import software.amazon.awssdk.services.cloudfront.cookie.CookiesForCannedPolicy;
 import software.amazon.awssdk.services.cloudfront.cookie.CookiesForCustomPolicy;
 
@@ -32,7 +28,9 @@ public class CloudFrontSigner {
 
     private PrivateKey loadPrivateKey(String privateKeyPath) {
         try {
-            byte[] keyBytes = Files.readAllBytes(Path.of(privateKeyPath));
+            ClassPathResource resource = new ClassPathResource(privateKeyPath);
+
+            byte[] keyBytes = resource.getInputStream().readAllBytes();
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePrivate(keySpec);

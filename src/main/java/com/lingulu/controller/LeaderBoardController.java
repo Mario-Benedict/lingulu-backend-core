@@ -6,25 +6,19 @@ import java.util.UUID;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lingulu.dto.ApiResponse;
 import com.lingulu.dto.LeaderboardResponse;
 import com.lingulu.dto.UserRankResponse;
-import com.lingulu.entity.Leaderboard;
 import com.lingulu.service.CloudFrontSigner;
 import com.lingulu.service.LeaderboardService;
 
 import lombok.RequiredArgsConstructor;
-import software.amazon.awssdk.services.cloudfront.cookie.CookiesForCannedPolicy;
 import software.amazon.awssdk.services.cloudfront.cookie.CookiesForCustomPolicy;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpHeaders;
 
 
@@ -96,7 +90,6 @@ public class LeaderBoardController {
     public ResponseEntity<ApiResponse<?>> userRank() {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
-
 
         UserRankResponse response = leaderboardService.getUserRank(UUID.fromString(userId));
         String fullCdnUrl = cloudFrontSigner.generateCdnUrl(response.getAvatarUrl());

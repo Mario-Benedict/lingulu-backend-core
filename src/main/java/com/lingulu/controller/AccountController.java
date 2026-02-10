@@ -2,25 +2,23 @@ package com.lingulu.controller;
 
 import com.lingulu.dto.*;
 import com.lingulu.entity.User;
-import com.lingulu.entity.UserProfile;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.security.JwtUtil;
 import com.lingulu.service.AccountService;
 import com.lingulu.service.AuthService;
+import com.lingulu.service.PasswordResetService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import org.springframework.http.ResponseEntity;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/account")
@@ -31,6 +29,7 @@ public class AccountController {
     private final AccountService accountService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final PasswordResetService passwordResetService;
 
     @Value("${spring.application.dev}")
     private Boolean isDev;
@@ -40,8 +39,8 @@ public class AccountController {
 
         return ResponseCookie.from("token", token)
                 .httpOnly(true)
-                .secure(!isDev)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path("/")
                 .maxAge(days * 24 * 60 * 60)
                 .build()
@@ -106,6 +105,57 @@ public class AccountController {
                     .authenticated(true)
                     .build()
             )
+        );
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<String>> forgotPassword(
+        @Valid @RequestBody ForgotPasswordRequest request
+    ) {
+        passwordResetService.sendPasswordResetEmail(request.getEmail());
+
+        return ResponseEntity.ok(
+            new ApiResponse<>(true, "Password reset link has been sent to your email", null)
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse<String>> resetPassword(
+        @Valid @RequestBody ResetPasswordRequest request
+    ) {
+        passwordResetService.resetPassword(request.getToken(), request.getPassword());
+
+        return ResponseEntity.ok(
+            new ApiResponse<>(true, "Password has been reset successfully", null)
+        );
+    }
+
+    @GetMapping("/validate-reset-token")
+    public ResponseEntity<ApiResponse<Boolean>> validateResetToken(
+        @RequestParam String token
+    ) {
+        boolean isValid = passwordResetService.validateResetToken(token);
+
+        return ResponseEntity.ok(
+            new ApiResponse<>(true, "Token validation result", isValid)
+        );
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<String>> changePassword(
+        @Valid @RequestBody ChangePasswordRequest request
+    ) {
+        String userId = (String) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        accountService.changePassword(
+            UUID.fromString(userId),
+            request.getCurrentPassword(),
+            request.getNewPassword()
+        );
+
+        return ResponseEntity.ok(
+            new ApiResponse<>(true, "Password has been changed successfully", null)
         );
     }
 }

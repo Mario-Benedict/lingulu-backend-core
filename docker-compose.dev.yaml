@@ -36,9 +36,9 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: lingulu
       MONGO_INITDB_ROOT_PASSWORD: lingulu
-      MONGO_INITDB_DATABASE: lingulu_chat
+      MONGO_INITDB_DATABASE: lingulu
     volumes:
-      - mongo_chat_data:/data/db
+      - mongo_data:/data/db
     networks:
       - spring-network
 
@@ -48,4 +48,4 @@ networks:
 volumes:
   postgres_core_data:
   redis_cache_data:
-  mongo_chat_data:
+  mongo_data:

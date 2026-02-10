@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.lingulu.dto.CourseResponse;
 import com.lingulu.dto.DashboardResponse;
-import com.lingulu.entity.Course;
 import com.lingulu.entity.CourseProgress;
 import com.lingulu.enums.ProgressStatus;
 import com.lingulu.repository.CourseProgressRepository;
@@ -14,7 +13,6 @@ import com.lingulu.repository.LeaderboardRepository;
 import com.lingulu.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-import software.amazon.awssdk.services.s3.model.Progress;
 
 @Service
 @RequiredArgsConstructor
