@@ -232,6 +232,7 @@ public class LearningService {
                 speakingRequest.getSectionId()
         );
 
+        markSectionCompleted(UUID.fromString(userId), UUID.fromString(speakingRequest.getSectionId()));
         return convertToSpeakingResponses(answers);
     }
 
@@ -297,6 +298,8 @@ public class LearningService {
 
         mcqAnswer.setAnsweredQuestions(answeredQuestions);
         mcqAnswerRepository.save(mcqAnswer);
+
+        markSectionCompleted(UUID.fromString(userId), UUID.fromString(submitAttemptRequest.getSectionId()));
 
         return convertToAttemptResponse(mcqAnswer);
     }
