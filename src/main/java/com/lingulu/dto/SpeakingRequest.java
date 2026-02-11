@@ -16,7 +16,7 @@ public class SpeakingRequest {
     private String sectionId;
 
     @NotBlank
-    private String sentenceId;
+    private String sentence;
     
     @NotBlank
     private float averageScore;

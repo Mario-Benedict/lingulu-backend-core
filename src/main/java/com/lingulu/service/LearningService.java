@@ -187,7 +187,7 @@ public class LearningService {
         SpeakingAnswer speakingAnswer = new SpeakingAnswer();
         speakingAnswer.setUserId(userId);
         speakingAnswer.setSectionId(speakingRequest.getSectionId());
-        speakingAnswer.setSentenceId(speakingRequest.getSentenceId());
+        speakingAnswer.setSentence(speakingRequest.getSentence());
         speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
         
         List<WordAnswer> wordAnswers = speakingRequest.getWords().stream()
@@ -204,7 +204,7 @@ public class LearningService {
         List<SpeakingResponse> responses = answers.stream().map(answer -> {
             SpeakingResponse response = new SpeakingResponse();
             response.setAverageScore(answer.getAverageScore());
-            response.setSentence(speakingRepository.findByExerciseId(UUID.fromString(answer.getSentenceId())).getSentence());
+            response.setSentence(answer.getSentence());
 
             List<WordResponse> wordResponses = answer.getWordAnswers().stream().map(wordAnswer -> {
                 WordResponse wordResponse = new WordResponse();
