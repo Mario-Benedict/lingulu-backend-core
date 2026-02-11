@@ -37,7 +37,7 @@ public class SectionContentService {
             case GRAMMAR -> builder.grammar(
                     GrammarContent.builder()
                             .title(section.getGrammar().getTitle())
-                            .description(section.getGrammar().getDescription())
+                            .filePath(section.getGrammar().getFilePath())
                             .build()
             );
 

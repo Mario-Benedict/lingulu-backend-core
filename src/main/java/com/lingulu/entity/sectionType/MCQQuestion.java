@@ -29,7 +29,7 @@ public class MCQQuestion {
     @Column(name = "question_text")
     private String questionText;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "mcq_question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MCQOption> options;
 }
 
