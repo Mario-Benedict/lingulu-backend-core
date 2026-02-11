@@ -1,5 +1,6 @@
 package com.lingulu.entity;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,4 +18,5 @@ public class SpeakingAnswer {
     private String sentenceId;
     private List<WordAnswer> wordAnswers;
     private float averageScore;
+    private Instant answeredAt;
 }
