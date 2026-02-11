@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -85,27 +86,16 @@ public class AccountController {
     public ResponseEntity<ApiResponse<AuthenticationResponse>> isAuthenticated(
         @CookieValue(name = "token", required = false) String token
     ) {
-        if (token == null || token.isEmpty()) {
-            return ResponseEntity.ok(
-                new ApiResponse<>(true, "Token validation result",
-                    AuthenticationResponse
-                        .builder()
-                        .authenticated(false)
-                        .build()
-                )
-            );
+        boolean isValid = (token != null && !token.isEmpty()) && jwtUtil.validateToken(token);
+
+        if (!isValid) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse<>(false, "Invalid token",
+                            AuthenticationResponse.builder().authenticated(false).build()));
         }
 
-        boolean isValid = jwtUtil.validateToken(token);
-
-        return ResponseEntity.ok(
-            new ApiResponse<>(true, "Token validation result",
-                AuthenticationResponse
-                    .builder()
-                    .authenticated(true)
-                    .build()
-            )
-        );
+        return ResponseEntity.ok(new ApiResponse<>(true, "Token is valid",
+                AuthenticationResponse.builder().authenticated(true).build()));
     }
 
     @PostMapping("/forgot-password")
