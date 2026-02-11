@@ -68,7 +68,41 @@ public class LeaderBoardController {
         return headers;
     }
 
+    // get ledaerboard avatar url with signed cookie
     // Need /all to avoid conflict with /user-rank. If not, will cause internal server eror
+//     @GetMapping("/all")
+//     public ResponseEntity<ApiResponse<List<LeaderboardResponse>>> leaderboard() {
+//         String userId = (String)SecurityContextHolder.getContext()
+//                        .getAuthentication().getPrincipal();
+
+
+//         List<LeaderboardResponse> leaderboardResponse = leaderboardService.getTop10Leaderboards();
+
+//         leaderboardResponse.forEach(lr ->
+//                 lr.setAvatarUrl(cloudFrontSigner.generateCdnUrl(lr.getAvatarUrl()))
+//         );
+
+//         return ResponseEntity.ok()
+//             .headers(generateCookie(cloudFrontSigner.generateCdnUrlWithWildcard("users/avatars/*")))
+//             .body(new ApiResponse<>(true, "Top 10 Leaderboard received successfully", leaderboardResponse));
+//     }
+
+    // get user rank with avatar url and signed cookie
+//     @GetMapping("/user-rank")
+//     public ResponseEntity<ApiResponse<?>> userRank() {
+//         String userId = (String)SecurityContextHolder.getContext()
+//                        .getAuthentication().getPrincipal();
+
+//         UserRankResponse response = leaderboardService.getUserRank(UUID.fromString(userId));
+//         String fullCdnUrl = cloudFrontSigner.generateCdnUrl(response.getAvatarUrl());
+//         response.setAvatarUrl(fullCdnUrl);
+        
+//         return ResponseEntity.ok()
+//             .headers(generateCookie(fullCdnUrl))
+//             .body(new ApiResponse<>(true, "User Rank received", response));
+//     }
+
+// get ledaerboard avatar url with presigned url
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<LeaderboardResponse>>> leaderboard() {
         String userId = (String)SecurityContextHolder.getContext()
@@ -78,11 +112,11 @@ public class LeaderBoardController {
         List<LeaderboardResponse> leaderboardResponse = leaderboardService.getTop10Leaderboards();
 
         leaderboardResponse.forEach(lr ->
-                lr.setAvatarUrl(cloudFrontSigner.generateCdnUrl(lr.getAvatarUrl()))
+                lr.setAvatarUrl(cloudFrontSigner.generateSignedUrl(lr.getAvatarUrl()))
         );
 
         return ResponseEntity.ok()
-            .headers(generateCookie(cloudFrontSigner.generateCdnUrlWithWildcard("users/avatars/*")))
+        //     .headers(generateCookie(cloudFrontSigner.generateCdnUrlWithWildcard("users/avatars/*")))
             .body(new ApiResponse<>(true, "Top 10 Leaderboard received successfully", leaderboardResponse));
     }
 
@@ -92,11 +126,11 @@ public class LeaderBoardController {
                        .getAuthentication().getPrincipal();
 
         UserRankResponse response = leaderboardService.getUserRank(UUID.fromString(userId));
-        String fullCdnUrl = cloudFrontSigner.generateCdnUrl(response.getAvatarUrl());
-        response.setAvatarUrl(fullCdnUrl);
+        String presignedUrl = cloudFrontSigner.generateSignedUrl(response.getAvatarUrl());
+        response.setAvatarUrl(presignedUrl);
         
         return ResponseEntity.ok()
-            .headers(generateCookie(fullCdnUrl))
+        //     .headers(generateCookie(fullCdnUrl))
             .body(new ApiResponse<>(true, "User Rank received", response));
     }
     

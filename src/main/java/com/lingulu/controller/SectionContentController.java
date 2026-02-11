@@ -32,7 +32,7 @@ public class SectionContentController {
 
         List<SpeakingResponse> speakingResponse = learningService.cekLatestSpeakingAttempt(userId, sectionId.toString());
 
-        if(speakingResponse == null || speakingResponse.isEmpty()){
+        if(speakingResponse != null){
             return ResponseEntity.ok(
                 new ApiResponse<>(true, "Section already attempted", speakingResponse)
             );
