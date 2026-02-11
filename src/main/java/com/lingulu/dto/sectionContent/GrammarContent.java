@@ -9,5 +9,5 @@ import lombok.*;
 @Builder
 public class GrammarContent {
     private String title;
-    private String description;
+    private String filePath;
 }

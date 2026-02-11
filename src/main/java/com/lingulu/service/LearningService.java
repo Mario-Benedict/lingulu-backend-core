@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -189,6 +190,7 @@ public class LearningService {
         speakingAnswer.setSectionId(speakingRequest.getSectionId());
         speakingAnswer.setSentenceId(speakingRequest.getSentenceId());
         speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
+        speakingAnswer.setAnsweredAt(Instant.now());
         
         List<WordAnswer> wordAnswers = speakingRequest.getWords().stream()
                 .map(wordReq -> new WordAnswer(wordReq.getWord(), wordReq.getScore()))
@@ -225,7 +227,7 @@ public class LearningService {
     public List<SpeakingResponse> completeSpeakingAttempt(String userId, SpeakingRequest speakingRequest) {
         recordSpeakingAttempt(userId, speakingRequest);
 
-        List<SpeakingAnswer> answers = speakingAnswerRepository.findByUserIdAndSectionId(
+        List<SpeakingAnswer> answers = speakingAnswerRepository.findByUserIdAndSectionIdOrderByAnsweredAt(
                 userId,
                 speakingRequest.getSectionId()
         );
@@ -234,7 +236,7 @@ public class LearningService {
     }
 
     public List<SpeakingResponse> cekLatestSpeakingAttempt(String userId, String sectionId) {
-        List<SpeakingAnswer> answers = speakingAnswerRepository.findByUserIdAndSectionId(
+        List<SpeakingAnswer> answers = speakingAnswerRepository.findByUserIdAndSectionIdOrderByAnsweredAt(
                 userId,
                 sectionId
         );
@@ -278,7 +280,7 @@ public class LearningService {
         MCQAnswer mcqAnswer = new MCQAnswer();
         mcqAnswer.setSectionId(submitAttemptRequest.getSectionId());
         mcqAnswer.setUserId(userId);
-        mcqAnswer.setAnsweredAt(LocalDateTime.now());
+        mcqAnswer.setAnsweredAt(Instant.now());
         
         List<AnsweredQuestion> answeredQuestions =
         submitAttemptRequest.getAnswers()

@@ -28,7 +28,7 @@ public class Grammar {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "file_path", nullable = false, columnDefinition = "TEXT")
+    private String filePath;
 
 }

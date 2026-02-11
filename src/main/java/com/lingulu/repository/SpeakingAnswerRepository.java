@@ -7,5 +7,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import com.lingulu.entity.SpeakingAnswer;
 
 public interface SpeakingAnswerRepository extends MongoRepository<SpeakingAnswer, String>{
-    List<SpeakingAnswer> findByUserIdAndSectionId(String userId, String sectionId);
+    List<SpeakingAnswer> findByUserIdAndSectionIdOrderByAnsweredAt(String userId, String sectionId);
 }

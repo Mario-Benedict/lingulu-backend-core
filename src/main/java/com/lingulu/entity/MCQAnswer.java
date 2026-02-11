@@ -1,6 +1,6 @@
 package com.lingulu.entity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,6 +17,6 @@ public class MCQAnswer {
     private String sectionId;
     private String userId;
     private List<AnsweredQuestion> answeredQuestions;
-    private LocalDateTime answeredAt;
+    private Instant answeredAt;
 
 }
