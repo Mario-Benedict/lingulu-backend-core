@@ -15,7 +15,7 @@ public class SpeakingAnswer {
     private String id;
     private String userId;
     private String sectionId;
-    private String sentenceId;
+    private String sentence;
     private List<WordAnswer> wordAnswers;
     private float averageScore;
     private Instant answeredAt;
