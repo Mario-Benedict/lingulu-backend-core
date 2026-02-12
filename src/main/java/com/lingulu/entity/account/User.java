@@ -1,10 +1,14 @@
-package com.lingulu.entity;
+package com.lingulu.entity.account;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.lingulu.entity.course.CourseProgress;
+import com.lingulu.entity.course.Leaderboard;
+import com.lingulu.entity.course.LessonProgress;
+import com.lingulu.entity.course.SectionProgress;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 

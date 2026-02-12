@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lingulu.dto.response.info.ProfileResponse;
-import com.lingulu.entity.UserProfile;
+import com.lingulu.entity.account.UserProfile;
 import com.lingulu.repository.UserProfileRepository;
 import com.lingulu.repository.UserRepository;
 

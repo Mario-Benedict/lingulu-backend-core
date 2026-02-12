@@ -1,4 +1,4 @@
-package com.lingulu.entity;
+package com.lingulu.entity.course;
 
 import java.time.Instant;
 import java.util.List;

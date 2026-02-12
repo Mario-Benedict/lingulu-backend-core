@@ -1,6 +1,6 @@
 package com.lingulu.repository;
 
-import com.lingulu.entity.CourseProgress;
+import com.lingulu.entity.course.CourseProgress;
 import com.lingulu.enums.ProgressStatus;
 
 import io.lettuce.core.dynamic.annotation.Param;

@@ -1,7 +1,7 @@
 package com.lingulu.entity.sectionType;
 
 
-import com.lingulu.entity.Section;
+import com.lingulu.entity.course.Section;
 import jakarta.persistence.*;
 import lombok.*;
 

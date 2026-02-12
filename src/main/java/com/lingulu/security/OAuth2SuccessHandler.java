@@ -10,7 +10,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.lingulu.entity.User;
+import com.lingulu.entity.account.User;
 import com.lingulu.service.AuthService;
 
 import jakarta.servlet.http.Cookie;

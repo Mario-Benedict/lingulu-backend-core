@@ -1,19 +1,5 @@
 package com.lingulu.service;
 
-import java.io.File;
-
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lingulu.dto.CourseSeed;
-import com.lingulu.entity.Course;
-import com.lingulu.repository.CourseRepository;
-import com.lingulu.repository.LessonRepository;
-import com.lingulu.repository.SectionRepository;
-
-import lombok.AllArgsConstructor;
 //
 //@Component
 //@AllArgsConstructor

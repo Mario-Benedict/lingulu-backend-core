@@ -1,4 +1,4 @@
-package com.lingulu.entity;
+package com.lingulu.entity.conversation;
 
 import java.time.Instant;
 

@@ -1,23 +1,22 @@
-package com.lingulu.entity;
+package com.lingulu.entity.course;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
+import com.lingulu.entity.account.User;
 import com.lingulu.enums.ProgressStatus;
 import jakarta.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(
-        name = "section_progress",
+        name = "course_progress",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"user_id", "section_id"})
+                @UniqueConstraint(columnNames = {"user_id", "course_id"})
         }
 )
 @Getter
@@ -25,11 +24,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SectionProgress {
+public class CourseProgress {
 
     @Id
     @GeneratedValue
-    @Column(name = "progress_id")
     private UUID progressId;
 
     @ManyToOne
@@ -37,8 +35,8 @@ public class SectionProgress {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "section_id", nullable = false)
-    private Section section;
+    @JoinColumn(name = "course_id", nullable = false)
+    private Course course;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -47,7 +45,7 @@ public class SectionProgress {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private int totalLessons;
+    private int completedLessons;
+
 }

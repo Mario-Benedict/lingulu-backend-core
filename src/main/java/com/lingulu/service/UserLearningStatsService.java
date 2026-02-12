@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.lingulu.entity.User;
-import com.lingulu.entity.UserLearningStats;
+import com.lingulu.entity.account.User;
+import com.lingulu.entity.account.UserLearningStats;
 import com.lingulu.repository.UserLearningStatsRepository;
 
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package com.lingulu.service;
 
-import com.lingulu.entity.User;
+import com.lingulu.entity.account.User;
 import com.lingulu.exception.UserNotFoundException;
 import com.lingulu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

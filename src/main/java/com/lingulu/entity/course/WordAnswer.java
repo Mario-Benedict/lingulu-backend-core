@@ -1,4 +1,4 @@
-package com.lingulu.entity;
+package com.lingulu.entity.course;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

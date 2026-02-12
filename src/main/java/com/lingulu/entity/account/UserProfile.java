@@ -1,4 +1,4 @@
-package com.lingulu.entity;
+package com.lingulu.entity.account;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

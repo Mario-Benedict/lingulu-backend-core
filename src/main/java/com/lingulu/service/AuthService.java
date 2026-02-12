@@ -2,9 +2,9 @@ package com.lingulu.service;
 
 import com.lingulu.dto.request.account.LoginRequest;
 import com.lingulu.dto.request.account.RegisterRequest;
-import com.lingulu.entity.OAuthAccount;
-import com.lingulu.entity.User;
-import com.lingulu.entity.UserProfile;
+import com.lingulu.entity.account.OAuthAccount;
+import com.lingulu.entity.account.User;
+import com.lingulu.entity.account.UserProfile;
 import com.lingulu.exception.OAuthOnlyLoginException;
 import com.lingulu.exception.RegisterException;
 import com.lingulu.exception.UserNotFoundException;

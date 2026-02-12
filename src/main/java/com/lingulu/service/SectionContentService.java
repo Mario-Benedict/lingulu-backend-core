@@ -5,7 +5,7 @@ import com.lingulu.dto.sectionContent.GrammarContent;
 import com.lingulu.dto.sectionContent.McqContent;
 import com.lingulu.dto.sectionContent.SpeakingContent;
 import com.lingulu.dto.sectionContent.VocabularyContent;
-import com.lingulu.entity.Section;
+import com.lingulu.entity.course.Section;
 import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.SectionRepository;
 import lombok.RequiredArgsConstructor;

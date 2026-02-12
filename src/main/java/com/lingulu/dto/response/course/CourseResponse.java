@@ -1,6 +1,6 @@
 package com.lingulu.dto.response.course;
 
-import com.lingulu.entity.CourseProgress;
+import com.lingulu.entity.course.CourseProgress;
 import lombok.*;
 
 import java.util.UUID;
