@@ -22,10 +22,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 )
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
 public class SectionProgress {
 
     @Id

@@ -20,9 +20,9 @@ import lombok.Setter;
 @Table(name = "user_learning_stats")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class UserLearningStats {
 
     @Id

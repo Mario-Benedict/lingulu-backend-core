@@ -8,8 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lingulu.dto.ApiResponse;
-import com.lingulu.dto.DashboardResponse;
+import com.lingulu.dto.response.general.ApiResponse;
+import com.lingulu.dto.response.info.DashboardResponse;
 import com.lingulu.service.DashboardService;
 
 import lombok.AllArgsConstructor;

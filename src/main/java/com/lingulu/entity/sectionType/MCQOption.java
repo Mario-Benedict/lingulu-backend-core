@@ -10,9 +10,9 @@ import java.util.UUID;
 @Table(name = "mcq_option")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class MCQOption {
 
     @Id

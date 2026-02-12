@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.lingulu.dto.ProfileResponse;
+import com.lingulu.dto.response.info.ProfileResponse;
 import com.lingulu.entity.UserProfile;
 import com.lingulu.repository.UserProfileRepository;
 import com.lingulu.repository.UserRepository;

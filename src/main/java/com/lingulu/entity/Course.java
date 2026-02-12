@@ -11,12 +11,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "courses")
-@Builder
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Course {
 
     @Id

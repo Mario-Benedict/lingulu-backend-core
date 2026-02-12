@@ -4,13 +4,19 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Data
 @Document(collection = "conversations")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Conversation {
 
     @Id

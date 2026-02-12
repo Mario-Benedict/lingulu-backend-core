@@ -22,9 +22,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(name = "section")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Section {
 
     @Id

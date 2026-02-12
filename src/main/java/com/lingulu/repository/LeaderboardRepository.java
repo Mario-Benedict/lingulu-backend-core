@@ -1,7 +1,7 @@
 package com.lingulu.repository;
 
-import com.lingulu.dto.LeaderboardResponse;
-import com.lingulu.dto.UserRankResponse;
+import com.lingulu.dto.response.info.LeaderboardResponse;
+import com.lingulu.dto.response.info.UserRankResponse;
 import com.lingulu.entity.Leaderboard;
 
 import io.lettuce.core.dynamic.annotation.Param;

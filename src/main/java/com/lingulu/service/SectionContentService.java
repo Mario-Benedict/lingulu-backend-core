@@ -1,6 +1,6 @@
 package com.lingulu.service;
 
-import com.lingulu.dto.SectionContentResponse;
+import com.lingulu.dto.response.course.SectionContentResponse;
 import com.lingulu.dto.sectionContent.GrammarContent;
 import com.lingulu.dto.sectionContent.McqContent;
 import com.lingulu.dto.sectionContent.SpeakingContent;

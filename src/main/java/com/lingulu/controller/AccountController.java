@@ -1,6 +1,9 @@
 package com.lingulu.controller;
 
-import com.lingulu.dto.*;
+import com.lingulu.dto.request.account.*;
+import com.lingulu.dto.request.profile.ChangePasswordRequest;
+import com.lingulu.dto.response.general.ApiResponse;
+import com.lingulu.dto.response.account.AuthenticationResponse;
 import com.lingulu.entity.User;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.security.JwtUtil;

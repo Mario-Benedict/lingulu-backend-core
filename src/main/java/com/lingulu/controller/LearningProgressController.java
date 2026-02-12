@@ -1,6 +1,11 @@
 package com.lingulu.controller;
 
-import com.lingulu.dto.*;
+import com.lingulu.dto.request.course.LessonsRequest;
+import com.lingulu.dto.request.course.SectionsRequest;
+import com.lingulu.dto.response.general.ApiResponse;
+import com.lingulu.dto.response.course.CourseResponse;
+import com.lingulu.dto.response.course.LessonsResponse;
+import com.lingulu.dto.response.course.SectionResponse;
 import com.lingulu.service.LearningProgressService;
 
 import jakarta.validation.Valid;

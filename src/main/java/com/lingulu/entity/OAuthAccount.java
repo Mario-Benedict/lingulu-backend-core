@@ -12,9 +12,9 @@ import lombok.*;
 @Table(name = "oauth_accounts")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class OAuthAccount {
 
     @Id

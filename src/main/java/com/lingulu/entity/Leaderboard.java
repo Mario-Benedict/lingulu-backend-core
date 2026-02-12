@@ -22,9 +22,9 @@ import lombok.Setter;
 @Table(name = "leaderboard")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Leaderboard {
 
     @Id

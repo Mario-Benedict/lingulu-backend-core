@@ -11,10 +11,9 @@ import java.util.UUID;
 @Table(name = "mcq_question")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
 public class MCQQuestion {
 
     @Id

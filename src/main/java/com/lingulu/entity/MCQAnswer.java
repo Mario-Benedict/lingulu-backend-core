@@ -3,13 +3,19 @@ package com.lingulu.entity;
 import java.time.Instant;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.persistence.Id;
 import lombok.Data;
 
-@Data
 @Document(collection = "mcq_answers")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MCQAnswer {
     
     @Id

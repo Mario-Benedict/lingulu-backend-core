@@ -1,6 +1,6 @@
 package com.lingulu.repository;
 
-import com.lingulu.dto.UserProfileResponse;
+import com.lingulu.dto.response.info.UserProfileResponse;
 import com.lingulu.entity.UserProfile;
 
 import java.util.UUID;

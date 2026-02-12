@@ -1,14 +1,9 @@
 package com.lingulu.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Data
-@Setter
-@Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnsweredQuestion {

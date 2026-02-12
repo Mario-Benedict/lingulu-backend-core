@@ -8,12 +8,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "grammar")
-@Setter
 @Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
 public class Grammar {
 
     @Id

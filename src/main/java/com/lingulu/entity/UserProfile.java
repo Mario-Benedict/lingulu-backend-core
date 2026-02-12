@@ -13,9 +13,9 @@ import lombok.*;
 @Table(name = "user_profiles")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class UserProfile {
     
     @Id

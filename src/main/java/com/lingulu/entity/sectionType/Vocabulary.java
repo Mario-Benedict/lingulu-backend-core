@@ -11,9 +11,9 @@ import java.util.UUID;
 @Table(name = "vocabulary")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Vocabulary{
 
     @Id

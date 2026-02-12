@@ -11,9 +11,9 @@ import java.util.UUID;
 @Table(name = "speaking")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Speaking {
 
     @Id
