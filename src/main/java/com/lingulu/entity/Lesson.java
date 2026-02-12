@@ -18,7 +18,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Lesson {
 
     @Id
