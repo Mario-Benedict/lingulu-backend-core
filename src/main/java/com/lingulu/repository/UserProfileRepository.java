@@ -13,7 +13,7 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID>{
 
     boolean existsByUsername(String username);
 
-    @Query("SELECT new com.lingulu.dto.UserProfileResponse(p.username, p.avatarUrl, p.bio) " +
+    @Query("SELECT new com.lingulu.dto.response.info.UserProfileResponse(p.username, p.avatarUrl, p.bio) " +
             "FROM UserProfile p WHERE p.user.userId = :userId")
     UserProfileResponse findActiveProfileByUserId(@Param("userId") UUID userId);
 

@@ -24,7 +24,7 @@ public interface LessonProgressRepository extends JpaRepository<LessonProgress, 
     );
 
     @Query("""
-        SELECT new com.lingulu.dto.LessonsResponse(
+        SELECT new com.lingulu.dto.response.course.LessonsResponse(
             l.lessonId,
             lp.status,
             lp.completedAt

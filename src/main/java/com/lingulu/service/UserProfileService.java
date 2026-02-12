@@ -23,9 +23,7 @@ public class UserProfileService {
     private final UserRepository userRepository;
 
     public ProfileResponse getUserProfile(UUID userId){
-        ProfileResponse profileResponse = userRepository.getUserProfile(userId);
-
-        return profileResponse;
+        return userRepository.getUserProfile(userId);
     }
 
     private static final List<String> DEFAULT_AVATARS = List.of(

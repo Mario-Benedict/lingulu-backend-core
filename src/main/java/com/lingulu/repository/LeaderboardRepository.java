@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> {
     @Query("""
-        SELECT new com.lingulu.dto.LeaderboardResponse(
+        SELECT new com.lingulu.dto.response.info.LeaderboardResponse(
             u.userId,
             up.username,
             l.totalPoints,
@@ -31,7 +31,7 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
     Leaderboard findByUser_UserId(UUID userId);
 
     @Query("""
-        SELECT new com.lingulu.dto.UserRankResponse(
+        SELECT new com.lingulu.dto.response.info.UserRankResponse(
             u.userId,
             up.username,
             0,

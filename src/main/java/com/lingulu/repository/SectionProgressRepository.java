@@ -24,7 +24,7 @@ public interface SectionProgressRepository extends JpaRepository<SectionProgress
     );
 
     @Query("""
-        SELECT new com.lingulu.dto.SectionResponse(
+        SELECT new com.lingulu.dto.response.course.SectionResponse(
             s.sectionId,
             sp.status,
             sp.completedAt
