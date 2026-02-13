@@ -15,8 +15,8 @@ public class CourseResponse {
 
     private String status;
 
-    private int completedSections;
-    private int totalSections;
+    private int completedLessons;
+    private int totalLessons;
     private float progressPercentage;
 
     public static CourseResponse from(CourseProgress cp) {
@@ -29,8 +29,8 @@ public class CourseResponse {
                 .courseId(cp.getCourse().getCourseId())
                 .courseTitle(cp.getCourse().getCourseTitle())
                 .status(String.valueOf(cp.getStatus()))
-                .completedSections(cp.getCompletedLessons())
-                .totalSections(cp.getTotalLessons())
+                .completedLessons(cp.getCompletedLessons())
+                .totalLessons(cp.getTotalLessons())
                 .progressPercentage(percentage)
                 .build();
     }

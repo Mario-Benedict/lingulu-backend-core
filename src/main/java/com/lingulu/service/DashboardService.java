@@ -28,8 +28,8 @@ public class DashboardService {
                                         .courseId(courseProgress.getCourse().getCourseId())
                                         .courseTitle(courseProgress.getCourse().getCourseTitle())
                                         .status(String.valueOf(courseProgress.getStatus()))
-                                        .completedSections(courseProgress.getCompletedLessons())
-                                        .totalSections(courseProgress.getTotalLessons())
+                                        .completedLessons(courseProgress.getCompletedLessons())
+                                        .totalLessons(courseProgress.getTotalLessons())
                                         .progressPercentage(progressPercentage)
                                         .build();
         
