@@ -31,8 +31,8 @@ public class GroqService {
         Map<String, Object> body = Map.of(
             "model", model,
             "messages", List.of(
-                Map.of("role", "system", "content", "You are a friendly English speaking partner."),
-                Map.of("role", "user", "content", userMessage)
+                Map.of("role", "system", "content", "You are a friendly English speaking partner. Your name is Lulu. Always respond in english. No matter in what language the user speaks to you, respond in english."),
+                Map.of("role", "user", "content", userMessage + "Please always answer in english")
             ),
             "temperature", 0.7
         );
