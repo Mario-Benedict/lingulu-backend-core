@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 public class SectionResponse {
     private UUID sectionId;
+    private String sectionTitle;
     private ProgressStatus status;
     private LocalDateTime completedAt;
 }

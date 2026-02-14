@@ -32,6 +32,9 @@ public class Section {
     @Column(name = "section_id")
     private UUID sectionId;
 
+    @Column(name = "section_title")
+    private String sectionTitle;
+
     @Column(name = "section_type")
     @Enumerated(EnumType.STRING)
     private SectionType sectionType;

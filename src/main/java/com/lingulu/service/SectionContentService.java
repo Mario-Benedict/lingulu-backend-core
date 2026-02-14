@@ -30,6 +30,7 @@ public class SectionContentService {
         SectionContentResponse.SectionContentResponseBuilder builder =
                 SectionContentResponse.builder()
                         .sectionId(section.getSectionId())
+                        .sectionTitle(section.getSectionTitle())
                         .sectionType(section.getSectionType());
 
         switch (section.getSectionType()) {

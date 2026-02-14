@@ -48,8 +48,9 @@ public class SecurityConfig {
                                 "/api/account/login",
                                 "/api/account/register",
                                 "/api/account/authenticated",
+                                "/api/account/forgot-password",
+                                "/api/account/reset-password",
                                 "/oauth2/**"
-                                // "/api/ledaerboard/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
