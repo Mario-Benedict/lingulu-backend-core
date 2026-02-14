@@ -33,6 +33,7 @@ public class WhisperService {
                 .body(
                         BodyInserters.fromMultipartData("file", audioFile.getResource())
                                 .with("model", "whisper-large-v3")
+                                .with("language", "en")
                 )
                 .retrieve()
                 .bodyToMono(WhisperResponse.class)
