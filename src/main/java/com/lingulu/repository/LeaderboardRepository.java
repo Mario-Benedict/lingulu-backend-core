@@ -24,7 +24,7 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
         FROM Leaderboard l
         JOIN l.user u
         JOIN u.userProfile up
-        ORDER BY l.totalPoints DESC
+        ORDER BY l.totalPoints DESC,l.updatedAt ASC
     """)
     List<LeaderboardResponse> findTopLeaderboard(PageRequest pageable);
 
@@ -52,6 +52,18 @@ public interface LeaderboardRepository extends JpaRepository<Leaderboard, UUID> 
             SELECT total_points
             FROM leaderboard
             WHERE user_id = :userId
+        )
+        OR (
+            lb.total_points = (
+                SELECT total_points
+                FROM leaderboard
+                WHERE user_id = :userId
+            )
+            AND lb.updated_at < (
+                SELECT updated_at
+                FROM leaderboard
+                WHERE user_id = :userId
+            )
         )
     """, nativeQuery = true)
     Integer getUserRank(@Param("userId") UUID userId);

@@ -1,5 +1,6 @@
 package com.lingulu.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +35,7 @@ public class LeaderboardService {
         Leaderboard leaderboard = Leaderboard.builder()
                                     .user(user)
                                     .totalPoints(0)
+                                    .updatedAt(LocalDateTime.now())
                                     .build();
         leaderboardRepository.save(leaderboard);
     }
@@ -44,6 +46,7 @@ public class LeaderboardService {
         if (leaderboard != null) {
             int streak = userLearningStatsRepository.getStreak(userId);
             leaderboard.setTotalPoints(leaderboard.getTotalPoints() + 100 * ( 1 + streak  / 50));
+            leaderboard.setUpdatedAt(LocalDateTime.now());
             leaderboardRepository.save(leaderboard);
         }
         else {
