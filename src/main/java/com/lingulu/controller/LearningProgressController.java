@@ -27,7 +27,7 @@ public class LearningProgressController {
     private final LearningProgressService learningProgressService;
 
     @GetMapping("/sections")
-    public ResponseEntity<ApiResponse<?>> getSections(@Valid SectionsRequest sectionsRequest) {
+    public ResponseEntity<ApiResponse<?>> getSections(@Valid @RequestBody SectionsRequest sectionsRequest) {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
         
@@ -40,7 +40,7 @@ public class LearningProgressController {
     }
     
     @GetMapping("/lessons")
-    public ResponseEntity<ApiResponse<?>> getLessons(@Valid LessonsRequest lessonsRequest) {
+    public ResponseEntity<ApiResponse<?>> getLessons(@Valid @RequestBody LessonsRequest lessonsRequest) {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
         
