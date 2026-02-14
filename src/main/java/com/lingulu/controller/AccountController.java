@@ -55,16 +55,13 @@ public class AccountController {
     public ResponseEntity<ApiResponse<AuthenticationResponse>> register(
         @Valid @RequestBody RegisterRequest request
     ) throws Exception {
-        User user = authService.register(request);
-
-        String token = jwtUtil.generateAccessToken(user);
+        authService.register(request);
 
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, generateCookie(token, true))
             .body(new ApiResponse<>(true, "Registration successful",
                     AuthenticationResponse
                         .builder()
-                        .authenticated(true)
+                        .authenticated(false)
                         .build()
             ));
     }
@@ -94,6 +91,15 @@ public class AccountController {
         if (!isValid) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ApiResponse<>(false, "Invalid token",
+                            AuthenticationResponse.builder().authenticated(false).build()));
+        }
+
+        String userId = jwtUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(UUID.fromString(userId)).orElse(null);
+        boolean isEmailVerified = user != null && user.isEmailVerified();
+        if (!isEmailVerified) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse<>(false, "Email not verified",
                             AuthenticationResponse.builder().authenticated(false).build()));
         }
 
