@@ -20,6 +20,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "section")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @Builder
@@ -53,17 +54,5 @@ public class Section {
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SectionProgress> sectionProgresses;
-
-    @OneToOne(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Grammar grammar;
-
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Vocabulary> vocabularies;
-
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Speaking> speakings;
-
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MCQQuestion> mcqQuestions;
 
 }

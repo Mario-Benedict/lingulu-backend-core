@@ -2,6 +2,8 @@ package com.lingulu.entity.sectionType;
 
 
 import com.lingulu.entity.course.Section;
+import com.lingulu.entity.course.SectionVocabulary;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +25,7 @@ public class Vocabulary{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id", nullable = false)
-    private Section section;
+    private SectionVocabulary sectionVocabulary;
 
     @Column(name = "word")
     private String word;

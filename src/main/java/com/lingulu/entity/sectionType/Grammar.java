@@ -1,6 +1,8 @@
 package com.lingulu.entity.sectionType;
 
 import com.lingulu.entity.course.Section;
+import com.lingulu.entity.course.SectionGrammar;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +21,10 @@ public class Grammar {
     @Column(name = "section_id", nullable = false)
     private UUID sectionId;
 
-    @OneToOne
+    @ManyToOne
     @MapsId
     @JoinColumn(name = "section_id")
-    private Section section;
+    private SectionGrammar sectionGrammar;
 
     @Column(name = "title", nullable = false)
     private String title;

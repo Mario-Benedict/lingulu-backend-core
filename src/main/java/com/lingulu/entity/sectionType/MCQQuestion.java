@@ -1,6 +1,8 @@
 package com.lingulu.entity.sectionType;
 
 import com.lingulu.entity.course.Section;
+import com.lingulu.entity.course.SectionMCQQuestion;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +25,7 @@ public class MCQQuestion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id", nullable = false)
-    private Section section;
+    private SectionMCQQuestion sectionMcqQuestion;
 
     @Column(name = "question_text")
     private String questionText;
