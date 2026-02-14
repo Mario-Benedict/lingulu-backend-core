@@ -79,11 +79,12 @@ public class SectionContentService {
         if(section instanceof SectionGrammar grammar) {
                 SectionContentResponseGrammar sectionContentResponseGrammar = new SectionContentResponseGrammar();
                 sectionContentResponseGrammar.setGrammar(grammar.getGrammars().stream()
-                                                .map(g -> GrammarContent.builder()
-                                                        .title(g.getTitle())
-                                                        .filePath(g.getFilePath())
-                                                        .build())
-                                                .toList());
+                                        .map(g -> GrammarContent.builder()
+                                                .grammarId(g.getGrammarId())
+                                                .title(g.getTitle())
+                                                .filePath(g.getFilePath())
+                                                .build())
+                                        .toList());
                 sectionContentResponseGrammar.setSectionId(grammar.getSectionId());
                 sectionContentResponseGrammar.setSectionTitle(grammar.getSectionTitle());
                 sectionContentResponseGrammar.setSectionType(grammar.getSectionType());

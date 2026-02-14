@@ -1,5 +1,7 @@
 package com.lingulu.dto.sectionContent;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Data
@@ -7,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GrammarContent {
+    private UUID grammarId;
     private String title;
     private String filePath;
 }
