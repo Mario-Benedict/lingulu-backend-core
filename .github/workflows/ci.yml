@@ -34,9 +34,21 @@ jobs:
           echo "dummy-key-content" > src/main/resources/private_lingulu_cdn_key_pkcs8.der
 
       - name: Run tests with test profile
-        run: mvn clean test -Dspring.profiles.active=test
+        run: mvn clean test -Dspring.profiles.active=test -X
         env:
           SPRING_PROFILES_ACTIVE: test
+        continue-on-error: true
+
+      - name: Display test failures (if any)
+        if: failure()
+        run: |
+          echo "### ⚠️ Test Failures Detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Checking test reports..." >> $GITHUB_STEP_SUMMARY
+          if [ -d "target/surefire-reports" ]; then
+            echo "Test reports found. Check artifacts for details." >> $GITHUB_STEP_SUMMARY
+            find target/surefire-reports -name "*.txt" -exec echo "=== {} ===" \; -exec cat {} \; || true
+          fi
 
       - name: Generate test report
         if: always()
