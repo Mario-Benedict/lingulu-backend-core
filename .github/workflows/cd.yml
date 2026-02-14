@@ -16,7 +16,7 @@ on:
 
 env:
   AWS_REGION: ap-southeast-1
-  ECR_REPOSITORY: lingulu-backend-core
+  ECR_REPOSITORY: lingulu-backend
 
 jobs:
   deploy:
@@ -62,7 +62,7 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition \
-            --task-definition lingulu-backend \
+            --task-definition lingulu-backend-core \
             --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
@@ -70,7 +70,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: lingulu-backend
+          container-name: lingulu-backend-core
           image: ${{ steps.image-info.outputs.image-uri }}
           environment-variables: |
             POSTGRESQL_DB_HOST=${{ secrets.POSTGRESQL_DB_HOST }}
