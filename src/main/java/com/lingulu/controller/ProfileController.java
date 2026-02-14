@@ -9,11 +9,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import com.lingulu.dto.ApiResponse;
-import com.lingulu.dto.CdnAccessResponse;
-import com.lingulu.dto.ProfileResponse;
-import com.lingulu.dto.UpdateBioRequest;
-import com.lingulu.dto.UploadAvatarRequest;
+import com.lingulu.dto.response.general.ApiResponse;
+import com.lingulu.dto.response.general.CdnAccessResponse;
+import com.lingulu.dto.response.info.ProfileResponse;
+import com.lingulu.dto.request.profile.UpdateBioRequest;
+import com.lingulu.dto.request.profile.UploadAvatarRequest;
 import com.lingulu.service.CloudFrontSigner;
 import com.lingulu.service.UserProfileService;
 

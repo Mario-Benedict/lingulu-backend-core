@@ -1,7 +1,7 @@
 package com.lingulu.controller;
 
-import com.lingulu.dto.OtpRequest;
-import com.lingulu.dto.OtpVerifyRequest;
+import com.lingulu.dto.request.account.OtpRequest;
+import com.lingulu.dto.request.account.OtpVerifyRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

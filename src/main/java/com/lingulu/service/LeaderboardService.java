@@ -7,10 +7,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.lingulu.dto.LeaderboardResponse;
-import com.lingulu.dto.UserRankResponse;
-import com.lingulu.entity.Leaderboard;
-import com.lingulu.entity.User;
+import com.lingulu.dto.response.info.LeaderboardResponse;
+import com.lingulu.dto.response.info.UserRankResponse;
+import com.lingulu.entity.course.Leaderboard;
+import com.lingulu.entity.account.User;
 import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.LeaderboardRepository;
 import com.lingulu.repository.UserLearningStatsRepository;

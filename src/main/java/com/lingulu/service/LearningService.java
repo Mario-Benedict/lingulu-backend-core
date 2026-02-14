@@ -1,15 +1,12 @@
 package com.lingulu.service;
 
-import com.lingulu.dto.SpeakingRequest;
-import com.lingulu.dto.SpeakingResponse;
-import com.lingulu.dto.WordResponse;
-import com.lingulu.entity.*;
-import com.lingulu.entity.sectionType.Speaking;
-import com.lingulu.dto.AnswerResponse;
-import com.lingulu.dto.AttemptResponse;
-import com.lingulu.dto.SubmitAttemptRequest;
-import com.lingulu.entity.*;
-import com.lingulu.entity.sectionType.MCQOption;
+import com.lingulu.dto.request.course.SpeakingRequest;
+import com.lingulu.dto.response.course.SpeakingResponse;
+import com.lingulu.dto.response.course.WordResponse;
+import com.lingulu.dto.response.course.AnswerResponse;
+import com.lingulu.dto.response.course.AttemptResponse;
+import com.lingulu.dto.request.course.SubmitAttemptRequest;
+import com.lingulu.entity.course.*;
 import com.lingulu.enums.ProgressStatus;
 import com.lingulu.exception.DataNotFoundException;
 import com.lingulu.repository.*;
@@ -18,7 +15,6 @@ import com.lingulu.repository.sections.MCQQuestionRepository;
 
 import lombok.RequiredArgsConstructor;
 
-import org.aspectj.weaver.patterns.TypePatternQuestions.Question;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

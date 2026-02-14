@@ -1,7 +1,7 @@
 package com.lingulu.service;
 
-import com.lingulu.entity.*;
-import com.lingulu.entity.Lesson;
+import com.lingulu.entity.course.*;
+import com.lingulu.entity.account.User;
 import com.lingulu.enums.ProgressStatus;
 import com.lingulu.exception.UserNotFoundException;
 import com.lingulu.repository.*;

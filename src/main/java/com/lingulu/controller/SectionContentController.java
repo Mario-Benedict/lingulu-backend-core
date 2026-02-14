@@ -1,10 +1,9 @@
 package com.lingulu.controller;
 
-import com.lingulu.dto.ApiResponse;
-import com.lingulu.dto.AttemptResponse;
-import com.lingulu.dto.SectionContentResponse;
-import com.lingulu.dto.SpeakingResponse;
-import com.lingulu.entity.MCQAnswer;
+import com.lingulu.dto.response.general.ApiResponse;
+import com.lingulu.dto.response.course.AttemptResponse;
+import com.lingulu.dto.response.course.SectionContentResponse;
+import com.lingulu.dto.response.course.SpeakingResponse;
 import com.lingulu.service.LearningService;
 import com.lingulu.service.SectionContentService;
 import lombok.RequiredArgsConstructor;

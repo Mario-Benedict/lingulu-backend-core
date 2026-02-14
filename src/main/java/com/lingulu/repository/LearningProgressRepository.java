@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.lingulu.entity.SectionProgress;
+import com.lingulu.entity.course.SectionProgress;
 
 public interface LearningProgressRepository extends JpaRepository<SectionProgress, UUID> {
 

@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.lingulu.dto.WhisperResponse;
+import com.lingulu.dto.response.conversation.WhisperResponse;
 
 @Service
 public class WhisperService {
@@ -33,6 +33,7 @@ public class WhisperService {
                 .body(
                         BodyInserters.fromMultipartData("file", audioFile.getResource())
                                 .with("model", "whisper-large-v3")
+                                .with("language", "en")
                 )
                 .retrieve()
                 .bodyToMono(WhisperResponse.class)

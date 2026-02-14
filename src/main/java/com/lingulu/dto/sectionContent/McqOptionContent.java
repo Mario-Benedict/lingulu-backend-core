@@ -3,11 +3,10 @@ package com.lingulu.dto.sectionContent;
 import com.lingulu.entity.sectionType.MCQOption;
 import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class McqOptionContent {
     private String text;
 

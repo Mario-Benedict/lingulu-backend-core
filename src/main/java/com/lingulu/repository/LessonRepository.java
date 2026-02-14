@@ -1,6 +1,6 @@
 package com.lingulu.repository;
 
-import com.lingulu.entity.Lesson;
+import com.lingulu.entity.course.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

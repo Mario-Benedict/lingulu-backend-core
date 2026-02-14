@@ -1,6 +1,6 @@
 package com.lingulu.entity.sectionType;
 
-import com.lingulu.entity.Section;
+import com.lingulu.entity.course.Section;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,10 +11,9 @@ import java.util.UUID;
 @Table(name = "mcq_question")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
 public class MCQQuestion {
 
     @Id

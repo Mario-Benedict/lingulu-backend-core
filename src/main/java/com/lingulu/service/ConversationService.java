@@ -6,9 +6,9 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.lingulu.dto.AIConversationResponse;
-import com.lingulu.entity.Conversation;
-import com.lingulu.entity.ConversationMessage;
+import com.lingulu.dto.response.conversation.AIConversationResponse;
+import com.lingulu.entity.conversation.Conversation;
+import com.lingulu.entity.conversation.ConversationMessage;
 import com.lingulu.repository.ConversationRepository;
 
 @Service

@@ -8,7 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.lingulu.dto.ApiResponse;
+import com.lingulu.dto.response.general.ApiResponse;
 
 import jakarta.validation.ConstraintViolationException;
 

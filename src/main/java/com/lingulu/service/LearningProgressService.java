@@ -6,10 +6,10 @@ import java.util.UUID;
 import com.lingulu.repository.LessonProgressRepository;
 import org.springframework.stereotype.Service;
 
-import com.lingulu.dto.CourseResponse;
-import com.lingulu.dto.LessonsResponse;
-import com.lingulu.dto.SectionResponse;
-import com.lingulu.entity.CourseProgress;
+import com.lingulu.dto.response.course.CourseResponse;
+import com.lingulu.dto.response.course.LessonsResponse;
+import com.lingulu.dto.response.course.SectionResponse;
+import com.lingulu.entity.course.CourseProgress;
 import com.lingulu.repository.CourseProgressRepository;
 import com.lingulu.repository.SectionProgressRepository;
 

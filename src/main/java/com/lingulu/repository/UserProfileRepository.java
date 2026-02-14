@@ -1,7 +1,7 @@
 package com.lingulu.repository;
 
-import com.lingulu.dto.UserProfileResponse;
-import com.lingulu.entity.UserProfile;
+import com.lingulu.dto.response.info.UserProfileResponse;
+import com.lingulu.entity.account.UserProfile;
 
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID>{
 
     boolean existsByUsername(String username);
 
-    @Query("SELECT new com.lingulu.dto.UserProfileResponse(p.username, p.avatarUrl, p.bio) " +
+    @Query("SELECT new com.lingulu.dto.response.info.UserProfileResponse(p.username, p.avatarUrl, p.bio) " +
             "FROM UserProfile p WHERE p.user.userId = :userId")
     UserProfileResponse findActiveProfileByUserId(@Param("userId") UUID userId);
 

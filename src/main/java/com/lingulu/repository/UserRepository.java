@@ -1,8 +1,8 @@
 package com.lingulu.repository;
 
-import com.lingulu.dto.DashboardResponse;
-import com.lingulu.dto.ProfileResponse;
-import com.lingulu.entity.User;
+import com.lingulu.dto.response.info.DashboardResponse;
+import com.lingulu.dto.response.info.ProfileResponse;
+import com.lingulu.entity.account.User;
 
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -23,14 +23,14 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByEmail(String email);
 
     @Query("""
-        SELECT new com.lingulu.dto.ProfileResponse(
+        SELECT new com.lingulu.dto.response.info.ProfileResponse(
             up.username,
             u.email,
             up.avatarUrl,
             ul.currentStreak,
             lb.totalPoints,
-            0,
-            COALESCE(SUM(lp.completedSections), 0),
+            CAST(0 AS long),
+            CAST(COALESCE(SUM(lp.completedSections), 0) AS long),
             up.bio
         )
         FROM User u
@@ -50,11 +50,11 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     ProfileResponse getUserProfile(@Param("userId") UUID userId);
 
     @Query("""
-        SELECT new com.lingulu.dto.DashboardResponse(
+        SELECT new com.lingulu.dto.response.info.DashboardResponse(
             null,
             up.username,
             ul.currentStreak,
-            0
+            0L
         )
         FROM User u
         JOIN u.userProfile up

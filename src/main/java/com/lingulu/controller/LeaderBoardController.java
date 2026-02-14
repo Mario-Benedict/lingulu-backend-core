@@ -9,9 +9,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.lingulu.dto.ApiResponse;
-import com.lingulu.dto.LeaderboardResponse;
-import com.lingulu.dto.UserRankResponse;
+import com.lingulu.dto.response.general.ApiResponse;
+import com.lingulu.dto.response.info.LeaderboardResponse;
+import com.lingulu.dto.response.info.UserRankResponse;
 import com.lingulu.service.CloudFrontSigner;
 import com.lingulu.service.LeaderboardService;
 

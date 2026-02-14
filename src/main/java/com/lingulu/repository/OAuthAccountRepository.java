@@ -1,6 +1,6 @@
 package com.lingulu.repository;
 
-import com.lingulu.entity.OAuthAccount;
+import com.lingulu.entity.account.OAuthAccount;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;

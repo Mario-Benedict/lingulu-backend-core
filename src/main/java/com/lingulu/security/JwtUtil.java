@@ -1,6 +1,6 @@
 package com.lingulu.security;
 
-import com.lingulu.entity.User;
+import com.lingulu.entity.account.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 

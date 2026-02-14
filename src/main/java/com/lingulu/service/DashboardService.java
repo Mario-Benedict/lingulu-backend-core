@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.lingulu.dto.CourseResponse;
-import com.lingulu.dto.DashboardResponse;
-import com.lingulu.entity.CourseProgress;
+import com.lingulu.dto.response.course.CourseResponse;
+import com.lingulu.dto.response.info.DashboardResponse;
+import com.lingulu.entity.course.CourseProgress;
 import com.lingulu.enums.ProgressStatus;
 import com.lingulu.repository.CourseProgressRepository;
 import com.lingulu.repository.LeaderboardRepository;

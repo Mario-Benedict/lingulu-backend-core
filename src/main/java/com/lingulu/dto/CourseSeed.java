@@ -1,10 +1,13 @@
 package com.lingulu.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CourseSeed {
 
     private String courseTitle;
