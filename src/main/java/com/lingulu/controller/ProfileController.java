@@ -79,6 +79,92 @@ public class ProfileController {
     }
     
 
+    // get avatar url with cookies to access cdn
+    // @GetMapping("/profile/avatarUrl")
+    // public ResponseEntity<ApiResponse<?>> getAvatarUrl() {
+    //     String userId = (String)SecurityContextHolder.getContext()
+    //                    .getAuthentication().getPrincipal();
+        
+    //     String s3Key = userProfileService.getAvatarUrl(UUID.fromString(userId));
+
+    //     String fullCdnUrl = cloudFrontSigner.generateCdnUrl(s3Key);
+
+    //     CdnAccessResponse cdnUrl = CdnAccessResponse.builder()
+    //                                 .avatarUrl(fullCdnUrl)
+    //                                 .build();
+
+    //     return ResponseEntity.ok()
+    //         .headers(generateCookie(fullCdnUrl))
+    //         .body(new ApiResponse<>(true, "Avatar updated", cdnUrl));
+
+    // }
+    
+
+    // update avatar with cookies to access cdn
+    // @PostMapping(value = "/profile/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // public ResponseEntity<ApiResponse<?>> uploadAvatar(@Valid @ModelAttribute UploadAvatarRequest request) throws IOException {
+    //     String userId = (String)SecurityContextHolder.getContext()
+    //                    .getAuthentication().getPrincipal();
+        
+    //     String s3Key = userProfileService.updateAvatar(request.getAvatarFile(), UUID.fromString(userId));
+    //     String fullCdnUrl = cloudFrontSigner.generateCdnUrl(s3Key);
+    //     CdnAccessResponse cdnUrl = CdnAccessResponse.builder()
+    //                                 .avatarUrl(fullCdnUrl)
+    //                                 .build();
+
+    //     return ResponseEntity.ok()
+    //         .headers(generateCookie(fullCdnUrl))
+    //         .body(new ApiResponse<>(true, "Avatar updated", cdnUrl));
+        
+    // }
+
+    // profile with cookies to access cdn
+    // @GetMapping("/profile")
+    // public ResponseEntity<ApiResponse<?>> getMethodName() {
+    //     String userId = (String) SecurityContextHolder.getContext()
+    //                    .getAuthentication().getPrincipal();
+        
+    //     ProfileResponse profileResponse = userProfileService.getUserProfile(UUID.fromString(userId));
+    //     String fullCdnUrl = cloudFrontSigner.generateCdnUrl(profileResponse.getAvatarUrl());
+    //     profileResponse.setAvatarUrl(fullCdnUrl);
+
+    //     return ResponseEntity.ok()
+    //         .headers(generateCookie(fullCdnUrl))
+    //         .body(new ApiResponse<>(true, "User profile recieved successfully", profileResponse));
+    // }
+
+    // get profile with presignedURL
+        @GetMapping("/profile")
+        public ResponseEntity<ApiResponse<?>> getMethodName() {
+            String userId = (String) SecurityContextHolder.getContext()
+                        .getAuthentication().getPrincipal();
+            
+            ProfileResponse profileResponse = userProfileService.getUserProfile(UUID.fromString(userId));
+            String presignedURL = cloudFrontSigner.generateSignedUrl(profileResponse.getAvatarUrl());
+            profileResponse.setAvatarUrl(presignedURL);
+
+            return ResponseEntity.ok()
+                // .headers(generateCookie(fullCdnUrl))
+                .body(new ApiResponse<>(true, "User profile recieved successfully", profileResponse));
+        }
+
+        @PostMapping(value = "/profile/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public ResponseEntity<ApiResponse<?>> uploadAvatar(@Valid @ModelAttribute UploadAvatarRequest request) throws IOException {
+            String userId = (String)SecurityContextHolder.getContext()
+                        .getAuthentication().getPrincipal();
+            
+            String s3Key = userProfileService.updateAvatar(request.getAvatarFile(), UUID.fromString(userId));
+            String presignedURL = cloudFrontSigner.generateSignedUrl(s3Key);
+            CdnAccessResponse cdnUrl = CdnAccessResponse.builder()
+                                        .avatarUrl(presignedURL)
+                                        .build();
+
+            return ResponseEntity.ok()
+                // .headers(generateCookie(cdnUrl))
+                .body(new ApiResponse<>(true, "Avatar updated", cdnUrl));
+            
+        }
+
     @GetMapping("/profile/avatarUrl")
     public ResponseEntity<ApiResponse<?>> getAvatarUrl() {
         String userId = (String)SecurityContextHolder.getContext()
@@ -86,50 +172,17 @@ public class ProfileController {
         
         String s3Key = userProfileService.getAvatarUrl(UUID.fromString(userId));
 
-        String fullCdnUrl = cloudFrontSigner.generateCdnUrl(s3Key);
+        String presignedURL = cloudFrontSigner.generateSignedUrl(s3Key);
 
         CdnAccessResponse cdnUrl = CdnAccessResponse.builder()
-                                    .avatarUrl(fullCdnUrl)
+                                    .avatarUrl(presignedURL)
                                     .build();
 
         return ResponseEntity.ok()
-            .headers(generateCookie(fullCdnUrl))
+            // .headers(generateCookie(fullCdnUrl))
             .body(new ApiResponse<>(true, "Avatar updated", cdnUrl));
 
-    }
-    
-
-    
-    @PostMapping(value = "/profile/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<?>> uploadAvatar(@Valid @ModelAttribute UploadAvatarRequest request) throws IOException {
-        String userId = (String)SecurityContextHolder.getContext()
-                       .getAuthentication().getPrincipal();
-        
-        String s3Key = userProfileService.updateAvatar(request.getAvatarFile(), UUID.fromString(userId));
-        String fullCdnUrl = cloudFrontSigner.generateCdnUrl(s3Key);
-        CdnAccessResponse cdnUrl = CdnAccessResponse.builder()
-                                    .avatarUrl(fullCdnUrl)
-                                    .build();
-
-        return ResponseEntity.ok()
-            .headers(generateCookie(fullCdnUrl))
-            .body(new ApiResponse<>(true, "Avatar updated", cdnUrl));
-        
-    }
-    
-    @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<?>> getMethodName() {
-        String userId = (String) SecurityContextHolder.getContext()
-                       .getAuthentication().getPrincipal();
-        
-        ProfileResponse profileResponse = userProfileService.getUserProfile(UUID.fromString(userId));
-        String fullCdnUrl = cloudFrontSigner.generateCdnUrl(profileResponse.getAvatarUrl());
-        profileResponse.setAvatarUrl(fullCdnUrl);
-
-        return ResponseEntity.ok()
-            .headers(generateCookie(fullCdnUrl))
-            .body(new ApiResponse<>(true, "User profile recieved successfully", profileResponse));
-    }
+    }        
 
     @PostMapping("/profile/bio")
     public ResponseEntity<ApiResponse<?>> updateBio(@RequestBody @Valid UpdateBioRequest bio) {

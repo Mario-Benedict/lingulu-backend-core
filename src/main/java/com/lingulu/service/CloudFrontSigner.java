@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.cloudfront.CloudFrontUtilities;
 import software.amazon.awssdk.services.cloudfront.model.CannedSignerRequest;
 import software.amazon.awssdk.services.cloudfront.model.CustomSignerRequest;
+import software.amazon.awssdk.services.cloudfront.url.SignedUrl;
 import software.amazon.awssdk.services.cloudfront.cookie.CookiesForCannedPolicy;
 import software.amazon.awssdk.services.cloudfront.cookie.CookiesForCustomPolicy;
 
@@ -102,5 +103,29 @@ public class CloudFrontSigner {
 
         return CloudFrontUtilities.create().getCookiesForCustomPolicy(request);
     }
+
+        /**
+     * Generate CloudFront Signed URL (1 file, tanpa IP restriction)
+     * Default valid: 7 hari
+     */
+    public String generateSignedUrl(String s3Key) {
+
+        Instant expiration = Instant.now().plus(7, ChronoUnit.DAYS);
+        String resourceUrl = generateCdnUrl(s3Key);
+
+        CloudFrontUtilities utilities = CloudFrontUtilities.create();
+
+        CannedSignerRequest request = CannedSignerRequest.builder()
+                .resourceUrl(resourceUrl)
+                .keyPairId(keyPairId)
+                .privateKey(privateKey)
+                .expirationDate(expiration)
+                .build();
+
+        SignedUrl signedUrl = utilities.getSignedUrlWithCannedPolicy(request);
+
+        return signedUrl.url();
+    }
+
 
 }
