@@ -13,7 +13,7 @@ NC='\033[0m'
 
 # Configuration
 AWS_REGION="ap-southeast-1"
-CLUSTER_NAME="lingulu-backend-core-cluster"
+CLUSTER_NAME="lingulu-cluster"
 SERVICE_NAME="lingulu-backend-service"
 TASK_FAMILY="lingulu-backend-core"
 DESIRED_COUNT=1
@@ -131,7 +131,7 @@ echo ""
 echo -e "${YELLOW}Registering task definition...${NC}"
 
 # Copy template
-cp ../.github/ecs/task-definition.json task-definition-temp.json
+cp ../../.github/ecs/task-definition.json task-definition-temp.json
 
 # Replace placeholder
 sed -i "s/{ACCOUNT_ID}/${ACCOUNT_ID}/g" task-definition-temp.json

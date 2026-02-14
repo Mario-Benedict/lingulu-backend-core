@@ -63,7 +63,7 @@ create_ecr_repo() {
 
 # Function to create ECS cluster
 create_ecs_cluster() {
-    local cluster_name="${APP_NAME}-cluster"
+    local cluster_name="lingulu-cluster"
 
     echo -e "${YELLOW}Creating ECS cluster...${NC}"
 
@@ -177,7 +177,7 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "${GREEN}Summary:${NC}"
 echo -e "  ECR Repository: ${ECR_URI}"
-echo -e "  ECS Cluster: ${APP_NAME}-cluster"
+echo -e "  ECS Cluster: lingulu-cluster"
 echo -e "  CloudWatch Log Group: //ecs/${APP_NAME}"
 echo -e "  IAM Roles:"
 echo -e "    - ecsTaskExecutionRole"
