@@ -9,7 +9,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "grammar")
+@Table(name = "grammars")
 @Getter
 @Setter
 @Builder
@@ -21,8 +21,8 @@ public class Grammar {
     @Column(name = "grammar_id", nullable = false)
     private UUID grammarId;
 
-    @ManyToOne
-    @JoinColumn(name = "section_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "section_id", nullable = false)
     private SectionGrammar sectionGrammar;
 
     @Column(name = "title", nullable = false)
