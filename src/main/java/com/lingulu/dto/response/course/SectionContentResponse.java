@@ -18,6 +18,7 @@ public class SectionContentResponse {
 
     private UUID sectionId;
     private SectionType sectionType;
+    private String sectionTitle;
 
     private GrammarContent grammar;
     private List<VocabularyContent> vocabularies;
