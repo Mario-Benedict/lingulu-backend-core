@@ -2,8 +2,8 @@
   "family": "lingulu-backend-core",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
-  "cpu": "512",
-  "memory": "1024",
+  "cpu": "1024",
+  "memory": "2048",
   "executionRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/ecsTaskExecutionRole",
   "taskRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/ecsTaskRole",
   "containerDefinitions": [
@@ -27,8 +27,20 @@
           "value": "8080"
         },
         {
-          "name": "LOG_LEVEL",
+          "name": "JAVA_OPTS",
+          "value": "-Xmx1536m -Xms512m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+        },
+        {
+          "name": "LOGGING_LEVEL_ROOT",
+          "value": "WARN"
+        },
+        {
+          "name": "LOGGING_LEVEL_COM_LINGULU",
           "value": "INFO"
+        },
+        {
+          "name": "SPRING_JPA_SHOW_SQL",
+          "value": "false"
         }
       ],
       "secrets": [],
@@ -45,10 +57,10 @@
           "CMD-SHELL",
           "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1"
         ],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 60
+        "interval": 60,
+        "timeout": 10,
+        "retries": 5,
+        "startPeriod": 180
       }
     }
   ]
