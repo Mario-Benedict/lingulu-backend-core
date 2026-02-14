@@ -44,7 +44,7 @@ public class LearningProgressService {
     }
 
     public List<CourseResponse> getCourses(UUID userId) {
-        List<CourseProgress> courseProgresses = courseProgressRepository.findByUser_UserId(userId);
+        List<CourseProgress> courseProgresses = courseProgressRepository.findByUser_UserIdOrderByCreatedAtAsc(userId);
 
         if(courseProgresses == null || courseProgresses.isEmpty()) {
             throw new IllegalStateException("Unexpected null list");

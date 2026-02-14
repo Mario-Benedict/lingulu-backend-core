@@ -17,7 +17,7 @@ public interface CourseProgressRepository extends JpaRepository<CourseProgress, 
     Optional<CourseProgress> findByUser_UserIdAndCourse_CourseId(UUID userId, UUID courseId);
     Optional<CourseProgress> findByCourse_CourseId(UUID courseId);
 
-    List<CourseProgress> findByUser_UserId(UUID userId);
+    List<CourseProgress> findByUser_UserIdOrderByCreatedAtAsc(UUID userId);
 
     @Query("""
         SELECT cp
