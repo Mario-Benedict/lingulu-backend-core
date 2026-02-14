@@ -20,7 +20,7 @@ public class Speaking {
 
     @Id
     @GeneratedValue
-    @Column(name = "exercise_id")
+    @Column(name = "speaking_id")
     private UUID exerciseId;
 
     @ManyToOne(fetch = FetchType.LAZY)
