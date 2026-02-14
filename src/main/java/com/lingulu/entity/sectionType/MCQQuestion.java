@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "mcq_question")
+@Table(name = "mcq_questions")
 @Getter
 @Setter
 @Builder
