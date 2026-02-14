@@ -34,5 +34,5 @@ public class Vocabulary{
     private String translation;
 
     @Column(name = "vocab_audio_path")
-    private String audioPath;
+    private String vocabAudioPath;
 }

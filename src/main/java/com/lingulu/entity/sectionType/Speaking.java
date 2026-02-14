@@ -30,6 +30,6 @@ public class Speaking {
     @Column(name = "sentence")
     private String sentence;
 
-    @Column(name = "audio_path")
-    private String audioPath;
+    @Column(name = "speaking_audio_path")
+    private String speakingAudioPath;
 }
