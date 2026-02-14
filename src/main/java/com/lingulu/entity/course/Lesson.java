@@ -10,7 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name = "lesson")
+@Table(name = "lessons")
 @Getter
 @Setter
 @Builder

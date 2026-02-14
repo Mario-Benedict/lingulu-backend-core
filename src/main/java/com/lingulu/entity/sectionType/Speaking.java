@@ -10,7 +10,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "speaking")
+@Table(name = "speakings")
 @Getter
 @Setter
 @Builder
@@ -20,7 +20,7 @@ public class Speaking {
 
     @Id
     @GeneratedValue
-    @Column(name = "exercise_id")
+    @Column(name = "speaking_id")
     private UUID exerciseId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,6 +30,6 @@ public class Speaking {
     @Column(name = "sentence")
     private String sentence;
 
-    @Column(name = "audio_path")
-    private String audioPath;
+    @Column(name = "speaking_audio_path")
+    private String speakingAudioPath;
 }

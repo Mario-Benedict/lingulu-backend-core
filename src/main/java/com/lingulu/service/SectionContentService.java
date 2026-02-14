@@ -111,7 +111,7 @@ public class SectionContentService {
                                                 .word(v.getWord())
                                                 .vocabId(v.getVocabId())
                                                 .translation(v.getTranslation())
-                                                .audioPath(v.getAudioPath())
+                                                .audioPath(v.getVocabAudioPath())
                                                 .build())
                                                 .toList());
                 return vocabularyContent;
@@ -126,7 +126,7 @@ public class SectionContentService {
                                         .map(s -> SpeakingContent.builder()
                                                 .speakingId(s.getExerciseId())
                                                 .sentence(s.getSentence())
-                                                .audioPath(s.getAudioPath())
+                                                .audioPath(s.getSpeakingAudioPath())
                                                 .build())
                                         .toList());
                 return speakingContent;

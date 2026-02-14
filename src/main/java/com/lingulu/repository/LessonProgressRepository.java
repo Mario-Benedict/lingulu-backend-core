@@ -33,6 +33,7 @@ public interface LessonProgressRepository extends JpaRepository<LessonProgress, 
         JOIN lp.lesson l
         WHERE l.course.courseId = :courseId
         AND lp.user.userId = :userId
+        ORDER BY lp.createdAt ASC
     """)
     List<LessonsResponse> getProgress(UUID userId, UUID courseId);
 }

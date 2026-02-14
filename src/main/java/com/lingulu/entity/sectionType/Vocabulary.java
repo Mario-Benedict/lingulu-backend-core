@@ -10,7 +10,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "vocabulary")
+@Table(name = "vocabularies")
 @Getter
 @Setter
 @Builder
@@ -33,6 +33,6 @@ public class Vocabulary{
     @Column(name = "translation")
     private String translation;
 
-    @Column(name = "audio_path")
-    private String audioPath;
+    @Column(name = "vocab_audio_path")
+    private String vocabAudioPath;
 }
