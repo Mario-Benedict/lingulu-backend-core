@@ -19,4 +19,11 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID>{
 
     UserProfile findByUser_UserId(UUID userId);
 
+    @Query("""
+        SELECT p.username
+        FROM UserProfile p
+        WHERE p.user.userId = :userId
+    """)
+    String getUsername(UUID userId);
+
 }
