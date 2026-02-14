@@ -3,26 +3,22 @@ package com.lingulu.entity.course;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
-import com.lingulu.entity.sectionType.Grammar;
-import com.lingulu.entity.sectionType.MCQQuestion;
-import com.lingulu.entity.sectionType.Speaking;
-import com.lingulu.entity.sectionType.Vocabulary;
 import com.lingulu.enums.SectionType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name = "section")
+@Table(name = "sections")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Section {
@@ -39,6 +35,9 @@ public class Section {
     @Enumerated(EnumType.STRING)
     private SectionType sectionType;
 
+    @Column(name = "position")
+    private Integer position;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -53,17 +52,5 @@ public class Section {
 
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SectionProgress> sectionProgresses;
-
-    @OneToOne(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Grammar grammar;
-
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Vocabulary> vocabularies;
-
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Speaking> speakings;
-
-    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MCQQuestion> mcqQuestions;
 
 }

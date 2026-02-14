@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "mcq_option")
+@Table(name = "mcq_options")
 @Getter
 @Setter
 @Builder

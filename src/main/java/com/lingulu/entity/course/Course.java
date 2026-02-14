@@ -29,7 +29,7 @@ public class Course {
     @Column(name = "course_title")
     private String courseTitle;
 
-    @Column(name = "description")
+    @Column(name = "course_description")
     private String description;
 
     @Column(name = "position")

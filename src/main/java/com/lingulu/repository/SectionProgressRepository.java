@@ -35,6 +35,7 @@ public interface SectionProgressRepository extends JpaRepository<SectionProgress
         JOIN sp.section s
         WHERE s.lesson.lessonId = :lessonId
         AND sp.user.userId = :userId
+        ORDER BY s.position ASC
     """)
     List<SectionResponse> getProgress(UUID userId, UUID lessonId);
 }

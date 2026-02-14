@@ -1,17 +1,13 @@
 package com.lingulu.dto.response.course;
-
-import com.lingulu.dto.sectionContent.GrammarContent;
-import com.lingulu.dto.sectionContent.McqContent;
-import com.lingulu.dto.sectionContent.SpeakingContent;
-import com.lingulu.dto.sectionContent.VocabularyContent;
 import com.lingulu.enums.SectionType;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.util.List;
 import java.util.UUID;
 
-@Data
-@Builder
+@Getter
+@Setter
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class SectionContentResponse {
@@ -19,9 +15,4 @@ public class SectionContentResponse {
     private UUID sectionId;
     private SectionType sectionType;
     private String sectionTitle;
-
-    private GrammarContent grammar;
-    private List<VocabularyContent> vocabularies;
-    private List<SpeakingContent> speakings;
-    private McqContent mcq;
 }
