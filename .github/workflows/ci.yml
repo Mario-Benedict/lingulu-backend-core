@@ -11,7 +11,7 @@ on:
 env:
   AWS_REGION: ap-southeast-1
   ECR_REPOSITORY: lingulu-backend-core
-  JAVA_VERSION: '25'
+  JAVA_VERSION: '21'
 
 jobs:
   test:
