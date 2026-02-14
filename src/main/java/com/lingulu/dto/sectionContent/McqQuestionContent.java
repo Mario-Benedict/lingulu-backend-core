@@ -4,6 +4,7 @@ import com.lingulu.entity.sectionType.MCQQuestion;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -11,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class McqQuestionContent {
 
+    private UUID questionId;
     private String question;
     private List<McqOptionContent> options;
 
@@ -22,6 +24,7 @@ public class McqQuestionContent {
                                 .map(McqOptionContent::from)
                                 .toList()
                 )
+                .questionId(q.getQuestionId())
                 .build();
     }
 }
