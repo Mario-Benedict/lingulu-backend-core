@@ -29,6 +29,44 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Create secret.properties
+        run: |
+          cat > src/main/resources/secret.properties << EOF
+          POSTGRESQL_DB_HOST=${{ secrets.POSTGRESQL_DB_HOST }}
+          POSTGRESQL_DB_PORT=${{ secrets.POSTGRESQL_DB_PORT }}
+          POSTGRESQL_DB_NAME=${{ secrets.POSTGRESQL_DB_NAME }}
+          POSTGRESQL_DB_USER=${{ secrets.POSTGRESQL_DB_USER }}
+          POSTGRESQL_DB_PASSWORD=${{ secrets.POSTGRESQL_DB_PASSWORD }}
+          REDIS_DB_HOST=${{ secrets.REDIS_DB_HOST }}
+          REDIS_DB_PORT=${{ secrets.REDIS_DB_PORT }}
+          REDIS_DB_USER=${{ secrets.REDIS_DB_USER }}
+          REDIS_DB_PASSWORD=${{ secrets.REDIS_DB_PASSWORD }}
+          SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }}
+          SPRING_MAIL_PASSWORD=${{ secrets.SPRING_MAIL_PASSWORD }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          AWS_REGION=${{ secrets.AWS_REGION_S3 }}
+          AWS_ENDPOINT=${{ secrets.AWS_ENDPOINT }}
+          AWS_S3_CHAT_BUCKET_NAME=${{ secrets.AWS_S3_CHAT_BUCKET_NAME }}
+          AWS_S3_PROFILE_BUCKET_NAME=${{ secrets.AWS_S3_PROFILE_BUCKET_NAME }}
+          AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
+          GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
+          MONGO_DB_USER=${{ secrets.MONGO_DB_USER }}
+          MONGO_DB_PASSWORD=${{ secrets.MONGO_DB_PASSWORD }}
+          MONGO_DB_HOST=${{ secrets.MONGO_DB_HOST }}
+          MONGO_DB_PORT=${{ secrets.MONGO_DB_PORT }}
+          MONGO_DB_NAME=${{ secrets.MONGO_DB_NAME }}
+          AWS_CLOUDFRONT_KEYPAIR=${{ secrets.AWS_CLOUDFRONT_KEYPAIR }}
+          AWS_CLOUDFRONT_PRIVATE_KEY_PATH=private_lingulu_cdn_key_pkcs8.der
+          CDN_DOMAIN=${{ secrets.CDN_DOMAIN }}
+          EOF
+
+      - name: Create CloudFront private key file
+        run: |
+          echo "${{ secrets.AWS_CLOUDFRONT_PRIVATE_KEY_BASE64 }}" | base64 -d > src/main/resources/private_lingulu_cdn_key_pkcs8.der
+
       - name: Run tests
         run: mvn clean test
 
@@ -63,6 +101,44 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: 'maven'
+
+      - name: Create secret.properties
+        run: |
+          cat > src/main/resources/secret.properties << EOF
+          POSTGRESQL_DB_HOST=${{ secrets.POSTGRESQL_DB_HOST }}
+          POSTGRESQL_DB_PORT=${{ secrets.POSTGRESQL_DB_PORT }}
+          POSTGRESQL_DB_NAME=${{ secrets.POSTGRESQL_DB_NAME }}
+          POSTGRESQL_DB_USER=${{ secrets.POSTGRESQL_DB_USER }}
+          POSTGRESQL_DB_PASSWORD=${{ secrets.POSTGRESQL_DB_PASSWORD }}
+          REDIS_DB_HOST=${{ secrets.REDIS_DB_HOST }}
+          REDIS_DB_PORT=${{ secrets.REDIS_DB_PORT }}
+          REDIS_DB_USER=${{ secrets.REDIS_DB_USER }}
+          REDIS_DB_PASSWORD=${{ secrets.REDIS_DB_PASSWORD }}
+          SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }}
+          SPRING_MAIL_PASSWORD=${{ secrets.SPRING_MAIL_PASSWORD }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          AWS_REGION=${{ secrets.AWS_REGION_S3 }}
+          AWS_ENDPOINT=${{ secrets.AWS_ENDPOINT }}
+          AWS_S3_CHAT_BUCKET_NAME=${{ secrets.AWS_S3_CHAT_BUCKET_NAME }}
+          AWS_S3_PROFILE_BUCKET_NAME=${{ secrets.AWS_S3_PROFILE_BUCKET_NAME }}
+          AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
+          GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
+          MONGO_DB_USER=${{ secrets.MONGO_DB_USER }}
+          MONGO_DB_PASSWORD=${{ secrets.MONGO_DB_PASSWORD }}
+          MONGO_DB_HOST=${{ secrets.MONGO_DB_HOST }}
+          MONGO_DB_PORT=${{ secrets.MONGO_DB_PORT }}
+          MONGO_DB_NAME=${{ secrets.MONGO_DB_NAME }}
+          AWS_CLOUDFRONT_KEYPAIR=${{ secrets.AWS_CLOUDFRONT_KEYPAIR }}
+          AWS_CLOUDFRONT_PRIVATE_KEY_PATH=${{ secrets.AWS_CLOUDFRONT_PRIVATE_KEY_PATH }}
+          CDN_DOMAIN=${{ secrets.CDN_DOMAIN }}
+          EOF
+
+      - name: Create CloudFront private key file
+        run: |
+          echo "${{ secrets.AWS_CLOUDFRONT_PRIVATE_KEY_BASE64 }}" | base64 -d > src/main/resources/private_lingulu_cdn_key_pkcs8.der
 
       - name: Build with Maven
         run: mvn clean package -DskipTests

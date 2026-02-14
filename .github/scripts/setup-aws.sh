@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 AWS_REGION="ap-southeast-1"
-ECR_REPO_NAME="lingulu-backend-core"
+ECR_REPO_NAME="lingulu-backend"
 APP_NAME="lingulu-backend-core"
 
 echo -e "${GREEN}========================================${NC}"

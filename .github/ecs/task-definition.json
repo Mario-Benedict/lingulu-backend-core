@@ -31,32 +31,7 @@
           "value": "INFO"
         }
       ],
-      "secrets": [
-        {
-          "name": "DB_HOST",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:{ACCOUNT_ID}:secret:lingulu/db-host"
-        },
-        {
-          "name": "DB_PORT",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:{ACCOUNT_ID}:secret:lingulu/db-port"
-        },
-        {
-          "name": "DB_NAME",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:{ACCOUNT_ID}:secret:lingulu/db-name"
-        },
-        {
-          "name": "DB_USERNAME",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:{ACCOUNT_ID}:secret:lingulu/db-username"
-        },
-        {
-          "name": "DB_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:{ACCOUNT_ID}:secret:lingulu/db-password"
-        },
-        {
-          "name": "JWT_SECRET",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:{ACCOUNT_ID}:secret:lingulu/jwt-secret"
-        }
-      ],
+      "secrets": [],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
