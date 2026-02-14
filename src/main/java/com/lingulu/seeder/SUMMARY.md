@@ -8,13 +8,17 @@
 ### 2. Seeder Core
 - `CourseDataSeeder.java` - Main seeder logic class
 - `CourseDataSeederRunner.java` - Auto-run seeder on startup
+- `SeederService.java` - Service for manual seeding operations
 
 ### 3. Configuration
 - `CourseSeederConfig.java` - Data configuration model
 - `CourseSeederConfigExample.java` - Example configuration dengan sample data
 - `CourseSeederConfigTemplate.java` - Template untuk custom configuration
 
-### 4. Documentation
+### 4. Optional REST API (Dev Only)
+- `SeederController.java` - REST API endpoints untuk trigger seeding (profile: dev/seeder)
+
+### 5. Documentation
 - `README.md` - Dokumentasi lengkap
 - `QUICKSTART.md` - Quick start guide
 - `SUMMARY.md` - File ini
@@ -131,6 +135,39 @@ CourseSeederConfig config = CourseSeederConfig.builder()
 seeder.seedData(config);
 ```
 
+### Via REST API (Dev Only)
+```bash
+# Check status
+curl http://localhost:8080/api/dev/seeder/status
+
+# Seed data
+curl -X POST http://localhost:8080/api/dev/seeder/seed
+
+# Clear data
+curl -X POST http://localhost:8080/api/dev/seeder/clear
+
+# Force re-seed
+curl -X POST http://localhost:8080/api/dev/seeder/force-reseed
+```
+
+### Via Service (Programmatic)
+```java
+@Autowired
+private SeederService seederService;
+
+// Seed example data
+seederService.seedExampleData();
+
+// Seed only if empty
+seederService.seedIfEmpty();
+
+// Force re-seed
+seederService.forceReseed();
+
+// Check if has data
+boolean hasData = seederService.hasData();
+```
+
 ## 🔧 API Methods
 
 ### CourseDataSeeder
@@ -150,11 +187,14 @@ public boolean hasData()
 
 ```
 com.lingulu/
+├── controller/
+│   └── SeederController.java          # REST API (dev only)
 ├── repository/
 │   └── GrammarRepository.java
 └── seeder/
     ├── CourseDataSeeder.java
     ├── CourseDataSeederRunner.java
+    ├── SeederService.java
     ├── README.md
     ├── QUICKSTART.md
     ├── SUMMARY.md
@@ -258,4 +298,8 @@ Create config via code dan panggil `seeder.seedData(config)`
 **Created:** February 2026
 **Version:** 1.0
 **Status:** ✅ Ready to Use
+
+
+
+
 

@@ -32,14 +32,8 @@ public class Course {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "language_from")
-    private String languageFrom;
-
     @Column(name = "position")
     private Integer position;
-
-    @Column(name = "language_to")
-    private String languageTo;
 
     @Column(name = "published")
     private boolean published;

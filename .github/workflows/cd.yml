@@ -1,0 +1,101 @@
+name: CD - Deploy to AWS ECS
+
+on:
+  workflow_run:
+    workflows: ["CI - Build and Push to ECR"]
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: 'Optional: Specify an image tag to deploy (default: latest)'
+        required: false
+        type: string
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REPOSITORY: lingulu-backend-core
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+      (github.event_name == 'workflow_dispatch')
+    environment:
+      name: production
+      url: https://api.lingulu.com  # Sesuaikan dengan URL Anda
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Determine image tag
+        id: image-info
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          if [ -n "${{ github.event.inputs.image-tag }}" ]; then
+            IMAGE_TAG="${{ github.event.inputs.image-tag }}"
+          else
+            IMAGE_TAG="latest"
+          fi
+          
+          IMAGE_URI="${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}"
+          echo "image-uri=${IMAGE_URI}" >> $GITHUB_OUTPUT
+          echo "image-tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition lingulu-backend \
+            --query taskDefinition > task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: lingulu-backend
+          image: ${{ steps.image-info.outputs.image-uri }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: lingulu-backend-service
+          cluster: lingulu-cluster
+          wait-for-service-stability: true
+          wait-for-minutes: 10
+
+      - name: Deployment Summary
+        if: success()
+        run: |
+          echo "### ✅ Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ steps.image-info.outputs.image-uri }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Cluster:** lingulu-cluster" >> $GITHUB_STEP_SUMMARY
+          echo "**Service:** lingulu-backend-service" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployed at:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "Deployment failed. Consider rolling back..."
+          echo "Run: aws ecs update-service --cluster lingulu-cluster --service lingulu-backend-service --force-new-deployment"
+
+
