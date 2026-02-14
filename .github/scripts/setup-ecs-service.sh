@@ -13,7 +13,7 @@ NC='\033[0m'
 
 # Configuration
 AWS_REGION="ap-southeast-1"
-CLUSTER_NAME="lingulu-cluster"
+CLUSTER_NAME="lingulu-backend-core-cluster"
 SERVICE_NAME="lingulu-backend-service"
 TASK_FAMILY="lingulu-backend-core"
 DESIRED_COUNT=1
