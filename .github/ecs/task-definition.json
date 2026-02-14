@@ -1,5 +1,5 @@
 {
-  "family": "lingulu-backend",
+  "family": "lingulu-backend-core",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
@@ -8,7 +8,7 @@
   "taskRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/ecsTaskRole",
   "containerDefinitions": [
     {
-      "name": "lingulu-backend",
+      "name": "lingulu-backend-core",
       "image": "{ACCOUNT_ID}.dkr.ecr.ap-southeast-1.amazonaws.com/lingulu-backend:latest",
       "essential": true,
       "portMappings": [
