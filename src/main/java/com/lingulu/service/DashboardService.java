@@ -22,7 +22,9 @@ public class DashboardService {
     private final LeaderboardRepository leaderboardRepository;
 
     public DashboardResponse getDashboard(UUID userId){
-        CourseProgress courseProgress = courseProgressRepository.findActiveCourse(userId, ProgressStatus.IN_PROGRESS);
+        CourseProgress courseProgress = courseProgressRepository.findActiveCourse(userId, ProgressStatus.IN_PROGRESS)
+                                        .orElseGet(() -> courseProgressRepository.findByUser_UserIdAndCourse_Position(userId, courseProgressRepository.countByUser_UserId(userId)));
+
         float progressPercentage = courseProgress.getCompletedLessons() * 100 / courseProgress.getTotalLessons();
         CourseResponse courseResponse = CourseResponse.builder()
                                         .courseId(courseProgress.getCourse().getCourseId())
