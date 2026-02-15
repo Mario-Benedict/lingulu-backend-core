@@ -101,8 +101,6 @@ Response to frontend (JSON)
 ---
 
 ## 🛠️ Tech Stack
-
-- Tech Stack
 - Java 17+
 - Spring Boot
 - Spring Security (JWT + OAuth2)
@@ -232,7 +230,7 @@ Uses JPA with layered entities:
 ### 📋 Requirements
 
 Make sure you have installed:
-- Java 17+
+- Java 25+
 - Maven 3.9+
 - PostgreSQL
 - Redis
@@ -298,21 +296,23 @@ mvn spring-boot:run
 ## 📡 API Architecture
 
 Follows RESTful design:
-```
-- /api/auth
+
+```bash
 - /api/account
-- /api/course
-- /api/learning
+- /api/otp
+- /api/dashboard
 - /api/leaderboard
 - /api/conversation
+- /api/learning
+- /api/learning/progress
 ```
 
-All secured endpoints require JWT token in header:
-```makefile
-Authorization: Bearer <token>
-```
+All secured endpoints require JWT token in cookie
+
 ---
+
 ## 🧪 Testing
+
 ```bash
 src/test/java
 ```
