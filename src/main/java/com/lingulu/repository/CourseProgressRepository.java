@@ -1,5 +1,6 @@
 package com.lingulu.repository;
 
+import com.lingulu.entity.course.Course;
 import com.lingulu.entity.course.CourseProgress;
 import com.lingulu.enums.ProgressStatus;
 
@@ -23,8 +24,14 @@ public interface CourseProgressRepository extends JpaRepository<CourseProgress, 
         SELECT cp
         FROM CourseProgress cp
         JOIN cp.user u
+        Join cp.course c
         WHERE u.userId = :userId
         AND cp.status = :progressStatus
     """)
-    CourseProgress findActiveCourse(@Param("userId") UUID userId, @Param("progressStatus") ProgressStatus progressStatus);
+    Optional<CourseProgress> findActiveCourse(@Param("userId") UUID userId, @Param("progressStatus") ProgressStatus progressStatus);
+
+
+    CourseProgress findByUser_UserIdAndCourse_Position(UUID userId, long position);
+
+    long countByUser_UserId(UUID userId);
 }
