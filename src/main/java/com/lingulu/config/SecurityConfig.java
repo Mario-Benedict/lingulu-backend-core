@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 "/api/account/authenticated",
                                 "/api/account/forgot-password",
                                 "/api/account/reset-password",
+                                "/api/otp/*",
                                 "/oauth2/**"
                         ).permitAll()
                         .anyRequest().authenticated()
