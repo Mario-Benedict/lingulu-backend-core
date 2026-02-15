@@ -55,7 +55,7 @@ public class UserProfileService {
         int firstSlash = oldS3Key.indexOf("/");
         String result = oldS3Key.substring(firstSlash + 1);
 
-        if(DEFAULT_AVATARS.contains(result)){
+        if(!DEFAULT_AVATARS.contains(result)){
             s3StorageService.deleteFile("profile", oldS3Key);
         }
         
