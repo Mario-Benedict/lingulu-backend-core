@@ -17,10 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-
-
 @RestController
-@RequestMapping("/learning/progress")
+@RequestMapping("/api/learning/progress")
 @RequiredArgsConstructor
 public class LearningProgressController {
 

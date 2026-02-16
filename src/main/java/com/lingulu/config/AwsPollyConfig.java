@@ -11,9 +11,6 @@ import software.amazon.awssdk.services.polly.PollyClient;
 @Configuration
 public class AwsPollyConfig {
 
-    @Value("{aws.endpoint}")
-    private String endpoint;
-
     @Value("${aws.region}")
     private String region;
 

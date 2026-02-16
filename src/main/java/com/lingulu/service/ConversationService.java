@@ -51,10 +51,8 @@ public class ConversationService {
 
         String chatId = UUID.randomUUID().toString();
 
-        // 1. STT
         String userText = whisperService.transcribe(audio);
 
-        // 2. Save user audio
         String userAudioKey =
                 "conversations/" + userId + "/" + conversationId + "/user/" + chatId + "/input-audio.wav";
 
@@ -67,25 +65,19 @@ public class ConversationService {
         String userAudioUrl =
                 s3StorageService.generatePresignedUrl(userAudioKey);
 
-        // 3. Gemini
-        // String aiText = geminiService.generateResponse(userText);
-        // 3. Groq
         String aiText = groqService.chat(userText);
 
-        // 4. Polly
         byte[] aiAudioBytes = pollyService.synthesize(aiText);
 
         String aiAudioKey =
                 "conversations/" + userId + "/" + conversationId + "/ai/" + chatId + "/response-audio.mp3";
 
-        // 5. Save AI result
         s3StorageService.uploadBytes(
                 aiAudioBytes,
                 "audio/mpeg",
                 aiAudioKey
         );
 
-        // 6. Pre-signed URL
         String aiAudioUrl =
                 s3StorageService.generatePresignedUrl(aiAudioKey);
 
@@ -98,8 +90,6 @@ public class ConversationService {
                 )
         );
 
-
-        // AI bubble
         conversation.getMessages().add(
                 new ConversationMessage(
                         "AI",

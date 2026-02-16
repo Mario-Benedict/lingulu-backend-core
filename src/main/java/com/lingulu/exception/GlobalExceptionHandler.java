@@ -1,5 +1,6 @@
 package com.lingulu.exception;
 
+import com.lingulu.exception.account.EmailNotVerifiedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.lingulu.dto.response.general.ApiResponse;
 
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +21,24 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleEmailNotVerified(EmailNotVerifiedException ex) {
+        return ResponseEntity
+            .status(ex.getHttpStatus())
+            .body(new ApiResponse<>(false, ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleNoResourceFound(NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(
+                        false,
+                        "Resource not found.",
+                        null
+                ));
+    }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResponse<Object>> handleMethodNotAllowed(
             HttpRequestMethodNotSupportedException ex) {
@@ -62,7 +82,6 @@ public class GlobalExceptionHandler {
             String field = error.getField();
             String message = error.getDefaultMessage();
 
-            // buat list baru kalau belum ada
             errors.computeIfAbsent(field, k -> new ArrayList<>()).add(message);
         });
 
@@ -72,7 +91,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleAllExceptions(Exception ex) {
-        ex.printStackTrace(); // log error
+        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new ApiResponse<>(false, "Internal Server Error", null));
     }
@@ -86,7 +105,6 @@ public class GlobalExceptionHandler {
         ex.getConstraintViolations().forEach(v -> {
             String fullPath = v.getPropertyPath().toString();
 
-            // ambil nama parameter terakhir (setelah titik)
             String field = fullPath.contains(".")
                     ? fullPath.substring(fullPath.lastIndexOf('.') + 1)
                     : fullPath;
@@ -104,10 +122,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("success", false);
-        body.put("message", ex.getMessage()); // "Unexpected null list"
+        body.put("message", ex.getMessage());
         body.put("data", null);
-        
-        // tetap pakai status 500
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 

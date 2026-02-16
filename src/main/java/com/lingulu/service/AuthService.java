@@ -37,7 +37,7 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public User register(RegisterRequest request) {
+    public void register(RegisterRequest request) {
         Map<String, List<String>> errors = new HashMap<>();
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -76,19 +76,19 @@ public class AuthService {
                                     .provider("Local")
                                     .build();
 
-        System.out.println(oAuthAccount.getAccessToken());
-
         oAuthAccountRepository.save(oAuthAccount);
         leaderboardService.addLeaderBoard(user);
         enrollmentService.enrollUserToAllLessons(user.getUserId());
         userLearningStatsService.addUserLearningStats(user);
-        
-        return user;
     }
 
     public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Invalid email or password", HttpStatus.UNAUTHORIZED));
+
+        if (!user.isEmailVerified()) {
+            throw new UserNotFoundException("Email not verified. Please verify your email before logging in.", HttpStatus.UNAUTHORIZED);
+        }
 
         if(user.getOauthAccounts().getProvider().equals("Google")){
             throw new OAuthOnlyLoginException("Please login using Google OAuth", HttpStatus.UNAUTHORIZED);

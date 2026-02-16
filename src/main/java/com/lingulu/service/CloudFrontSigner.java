@@ -38,8 +38,8 @@ public class CloudFrontSigner {
 
         } catch (Exception e) {
             throw new IllegalStateException(
-                    "Gagal memuat Private Key dari file .der: " + privateKeyPath + 
-                    ". Pastikan file tersebut adalah format PKCS#8 biner.", e
+                    "Failed to load Private Key from file .der: " + privateKeyPath +
+                    ". Please make sure the file is in PKCS#8 binary format.", e
             );
         }
     }
@@ -54,60 +54,10 @@ public class CloudFrontSigner {
         this.privateKey = loadPrivateKey(privateKeyPath);
     }
 
-    /** Generate URL CDN **/
     public String generateCdnUrl(String s3Key) {
         return "https://" + cdnDomain + "/" + s3Key;
     }
 
-    public String generateCdnUrlWithWildcard(String s3KeyPattern) {
-        return "https://" + cdnDomain + "/" + s3KeyPattern;
-    }
-
-    /** Generate CloudFront Signed Cookies (valid 1 hari) */
-    public CookiesForCannedPolicy generateSignedCookies(String resourceUrl) {
-
-        Instant expiration = Instant.now()
-                .plus(7, ChronoUnit.DAYS);
-
-        CloudFrontUtilities utilities = CloudFrontUtilities.create();
-
-        CannedSignerRequest request = CannedSignerRequest.builder()
-                .resourceUrl(resourceUrl)
-                .keyPairId(keyPairId)
-                .privateKey(privateKey)
-                .expirationDate(expiration)
-                .build();
-
-        return utilities.getCookiesForCannedPolicy(request);
-    }
-
-    public CookiesForCustomPolicy generateSignedCookiesMultiUrl(String reourceUrl) {
-        Instant expiration = Instant.now().plus(7, ChronoUnit.DAYS);
-        // String resource = "https://dxxx.cloudfront.net/users/*/avatar.png";
-
-        // 1. Buat string JSON policy
-        // String rawPolicy = buildPolicy(resource, expiration);
-
-        // 2. Bungkus string JSON ke dalam SdkBytes
-        // SDK v2 akan melakukan encoding otomatis saat proses signing
-        // SdkBytes policyBytes = SdkBytes.fromUtf8String(rawPolicy);
-
-        // 3. Gunakan .encodedCustomPolicy(policyBytes)
-        CustomSignerRequest request = CustomSignerRequest.builder()
-                .resourceUrl(reourceUrl)
-                // .customPolicy(policyBytes) // Menggunakan SdkBytes
-                .expirationDate(expiration)
-                .keyPairId(keyPairId)
-                .privateKey(privateKey)
-                .build();
-
-        return CloudFrontUtilities.create().getCookiesForCustomPolicy(request);
-    }
-
-        /**
-     * Generate CloudFront Signed URL (1 file, tanpa IP restriction)
-     * Default valid: 7 hari
-     */
     public String generateSignedUrl(String s3Key) {
 
         Instant expiration = Instant.now().plus(7, ChronoUnit.DAYS);
@@ -126,6 +76,4 @@ public class CloudFrontSigner {
 
         return signedUrl.url();
     }
-
-
 }

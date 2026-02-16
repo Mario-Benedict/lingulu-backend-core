@@ -21,16 +21,10 @@ public class JwtUtil {
     @Value("${jwt.access-token-expiration}")
     private long accessTokenExpiration;
 
-    @Value("${jwt.refresh-token-expiration}")
-    private long refreshTokenExpiration;
-
-
-
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Generate access token
     public String generateAccessToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getUserId().toString())
@@ -42,7 +36,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Validate token
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);

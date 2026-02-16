@@ -35,9 +35,6 @@ public class AccountController {
     private final UserRepository userRepository;
     private final PasswordResetService passwordResetService;
 
-    @Value("${spring.application.dev}")
-    private Boolean isDev;
-
     private String generateCookie(String token, Boolean isRememberMe) {
         int days = isRememberMe ? 7 : 1;
 
