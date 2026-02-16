@@ -104,6 +104,14 @@ public class AccountController {
                 AuthenticationResponse.builder().authenticated(true).build()));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> logout() {
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, generateCookie("", false))
+            .body(new ApiResponse<>(true, "Logout successful",
+                AuthenticationResponse.builder().authenticated(false).build()));
+    }
+
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<String>> forgotPassword(
         @Valid @RequestBody ForgotPasswordRequest request
