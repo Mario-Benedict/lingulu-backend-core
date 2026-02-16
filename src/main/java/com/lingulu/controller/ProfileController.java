@@ -20,14 +20,14 @@ import java.util.UUID;
 import org.springframework.http.MediaType;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/account/profile")
 @RequiredArgsConstructor
 public class ProfileController {
 
     private final UserProfileService userProfileService;
     private final CloudFrontSigner cloudFrontSigner;
 
-    @GetMapping("/profile")
+    @GetMapping("")
     public ResponseEntity<ApiResponse<ProfileResponse>> getMethodName() {
         String userId = (String) SecurityContextHolder.getContext()
                     .getAuthentication().getPrincipal();
@@ -40,7 +40,7 @@ public class ProfileController {
             .body(new ApiResponse<>(true, "User profile recieved successfully", profileResponse));
     }
 
-    @PatchMapping(value = "/profile/update-avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/update-avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<CdnAccessResponse>> uploadAvatar(@Valid @ModelAttribute UploadAvatarRequest request) throws IOException {
         String userId = (String)SecurityContextHolder.getContext()
                     .getAuthentication().getPrincipal();
@@ -56,7 +56,7 @@ public class ProfileController {
 
     }
 
-    @GetMapping("/profile/avatarUrl")
+    @GetMapping("/avatar-url")
     public ResponseEntity<ApiResponse<CdnAccessResponse>> getAvatarUrl() {
         String userId = (String)SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
@@ -74,7 +74,7 @@ public class ProfileController {
 
     }        
 
-    @PatchMapping("/profile/update-bio")
+    @PatchMapping("/update-bio")
     public ResponseEntity<ApiResponse<?>> updateBio(@RequestBody @Valid UpdateBioRequest bio) {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();

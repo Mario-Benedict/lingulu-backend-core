@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfileResponse {
-    private String userName;
+    private String username;
     private String email;
     private String avatarUrl;
     private int streak;
