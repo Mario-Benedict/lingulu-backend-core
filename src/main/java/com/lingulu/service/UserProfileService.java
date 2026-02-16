@@ -46,9 +46,19 @@ public class UserProfileService {
     public String updateAvatar(MultipartFile file, UUID userId) throws IOException {
         String filename = file.getOriginalFilename();
         String ext = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-        String s3Key = "users/avatars/" + userId + "/avatar." + ext;
+        String newFileName = UUID.randomUUID().toString() + "." + ext;
+        String s3Key = "users/avatars/" + userId + "/" + newFileName;
 
         UserProfile userProfile = userProfileRepository.findByUser_UserId(userId);
+        String oldS3Key = userProfile.getAvatarUrl();
+
+        int firstSlash = oldS3Key.indexOf("/");
+        String result = oldS3Key.substring(firstSlash + 1);
+
+        if(!DEFAULT_AVATARS.contains(result)){
+            s3StorageService.deleteFile("profile", oldS3Key);
+        }
+        
         userProfile.setAvatarUrl(s3Key);
 
         s3StorageService.uploadMultipartFile(file, s3Key, "profile");
