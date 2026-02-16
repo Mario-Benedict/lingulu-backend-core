@@ -45,6 +45,7 @@ public class UserProfileService {
 
     public String updateAvatar(MultipartFile file, UUID userId) throws IOException {
         String filename = file.getOriginalFilename();
+        assert filename != null;
         String ext = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
         String newFileName = UUID.randomUUID().toString() + "." + ext;
         String s3Key = "users/avatars/" + userId + "/" + newFileName;

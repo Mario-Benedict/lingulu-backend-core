@@ -32,14 +32,11 @@ public class PasswordResetService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with this email not found", HttpStatus.NOT_FOUND));
 
-        // Generate a unique reset token
         String resetToken = UUID.randomUUID().toString();
         String redisKey = RESET_TOKEN_PREFIX + resetToken;
 
-        // Store user's email with the token
         redisTemplate.opsForValue().set(redisKey, email, TOKEN_TTL);
 
-        // Send email with reset link
         String resetLink = frontendUrl + "/reset-password?token=" + resetToken;
         emailService.sendPasswordResetEmail(email, resetLink);
     }
@@ -55,11 +52,9 @@ public class PasswordResetService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found", HttpStatus.NOT_FOUND));
 
-        // Update password
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        // Delete the used token
         redisTemplate.delete(redisKey);
     }
 

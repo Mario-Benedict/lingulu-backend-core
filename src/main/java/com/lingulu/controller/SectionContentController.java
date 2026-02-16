@@ -29,7 +29,7 @@ public class SectionContentController {
         String userId = (String) SecurityContextHolder.getContext()
                         .getAuthentication().getPrincipal();
 
-        List<SpeakingResponse> speakingResponse = learningService.cekLatestSpeakingAttempt(userId, sectionId.toString());
+        List<SpeakingResponse> speakingResponse = learningService.checkLatestSpeakingAttempt(userId, sectionId.toString());
 
         if(speakingResponse != null){
             return ResponseEntity.ok(
