@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/sections")
+@RequestMapping("/api/learning/sections")
 @RequiredArgsConstructor
 public class SectionContentController {
 
