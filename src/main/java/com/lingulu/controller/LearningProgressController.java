@@ -20,7 +20,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/learning/progress")
+@RequestMapping("/api/learning/progress")
 @RequiredArgsConstructor
 public class LearningProgressController {
 
