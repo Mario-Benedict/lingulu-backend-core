@@ -17,12 +17,6 @@ public interface SectionProgressRepository extends JpaRepository<SectionProgress
             UUID sectionID
     );
 
-    int countByUser_UserIdAndSection_Lesson_LessonIdAndStatus(
-            UUID userId,
-            UUID lessonId,
-            ProgressStatus status
-    );
-
     @Query("""
         SELECT new com.lingulu.dto.response.course.SectionResponse(
             s.sectionId,
