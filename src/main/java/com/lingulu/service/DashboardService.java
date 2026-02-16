@@ -29,7 +29,7 @@ public class DashboardService {
 
     public DashboardResponse getDashboard(UUID userId){
         CourseProgress courseProgress = courseProgressRepository.findActiveCourse(userId, ProgressStatus.IN_PROGRESS)
-                                        .orElseGet(() -> courseProgressRepository.findByUser_UserIdAndCourse_Position(userId, courseProgressRepository.countByUser_UserId(userId)));;
+                                        .orElseGet(() -> courseProgressRepository.findByUser_UserIdAndCourse_Position(userId, courseProgressRepository.countByUser_UserId(userId)));
         int streak = userLearningStatsRepository.getStreak(userId);
         float progressPercentage = courseProgress.getCompletedLessons() * 100 / courseProgress.getTotalLessons();
         CourseResponse courseResponse = CourseResponse.builder()
