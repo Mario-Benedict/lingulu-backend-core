@@ -258,7 +258,7 @@ public class LearningService {
         return convertToAttemptResponse(mcqAnswer);
     }
 
-    public AttemptResponse cekLatestAttempt(String userId, String sectionId) {
+    public AttemptResponse checkLatestAttempt(String userId, String sectionId) {
         MCQAnswer mcqAnswer = mcqAnswerRepository.findFirstByUserIdAndSectionIdOrderByAnsweredAtDesc(userId, sectionId);
         
         if(mcqAnswer == null) {

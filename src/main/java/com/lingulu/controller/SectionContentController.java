@@ -38,7 +38,7 @@ public class SectionContentController {
         }
         
 
-        AttemptResponse attemptResponse = learningService.cekLatestAttempt(userId, sectionId.toString());
+        AttemptResponse attemptResponse = learningService.checkLatestAttempt(userId, sectionId.toString());
 
         if(attemptResponse != null) {
             return ResponseEntity.ok(
