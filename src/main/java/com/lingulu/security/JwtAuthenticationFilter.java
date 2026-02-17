@@ -13,6 +13,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,10 +26,16 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
     private UserRepository userRepository;
+
+    JwtAuthenticationFilter(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -48,18 +55,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             User user = userRepository.findById(UUID.fromString(userId)).orElse(null);
 
             if (user != null) {
-                if (!user.isEmailVerified()) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.setContentType("application/json");
-                    response.getWriter().write("""
-                        {
-                          "success": false,
-                          "message": "Email not verified. Please verify your email to access this resource.",
-                          "data": null
-                        }
-                    """);
-                    return;
-                }
+
+                // if (!user.isEmailVerified()) {
+                //     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                //     response.setContentType("application/json");
+                //     response.getWriter().write("""
+                //         {
+                //           "success": false,
+                //           "message": "Email not verified. Please verify your email to access this resource.",
+                //           "data": null
+                //         }
+                //     """);
+                //     return;
+                // }
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
