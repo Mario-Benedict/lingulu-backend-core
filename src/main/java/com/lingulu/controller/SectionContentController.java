@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/api/sections")
 @RequiredArgsConstructor
@@ -21,6 +22,17 @@ public class SectionContentController {
 
     private final SectionContentService sectionContentService;
     private final LearningService learningService;
+
+    @GetMapping("/{sectionId}/content-retry")
+    public ResponseEntity<ApiResponse<?>> retrySection(@PathVariable UUID sectionId) {
+        SectionContentResponse response =
+                sectionContentService.getSectionContent(sectionId);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(true, "Section content fetched", response)
+        );
+    }
+    
 
     @GetMapping("/{sectionId}/content")
     public ResponseEntity<ApiResponse<?>> getSectionContent(
