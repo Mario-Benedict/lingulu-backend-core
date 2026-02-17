@@ -20,7 +20,7 @@ import lombok.Data;
 public class Conversation {
 
     @Id
-    private String id; // conversationId
+    private String id;
 
     private String userId;
 

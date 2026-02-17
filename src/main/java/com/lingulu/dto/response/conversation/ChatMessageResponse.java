@@ -1,20 +1,21 @@
-package com.lingulu.entity.conversation;
-
-import java.time.Instant;
+package com.lingulu.dto.response.conversation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConversationMessage {
+public class ChatMessageResponse {
 
     private String role;
-    private String audioKey;
-    private String transcript;
+    private String text;
+    private String audioUrl;
     private Instant createdAt;
 }
+
