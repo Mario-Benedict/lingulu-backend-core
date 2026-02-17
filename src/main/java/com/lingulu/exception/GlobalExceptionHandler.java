@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.lingulu.dto.response.account.AuthenticationResponse;
 import com.lingulu.dto.response.general.ApiResponse;
 
 import jakarta.validation.ConstraintViolationException;
@@ -26,7 +27,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleEmailNotVerified(EmailNotVerifiedException ex) {
         return ResponseEntity
             .status(ex.getHttpStatus())
-            .body(new ApiResponse<>(false, ex.getMessage(), null));
+            .body(new ApiResponse<>(false, ex.getMessage(), AuthenticationResponse.builder().authenticated(false).build()));
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
