@@ -11,7 +11,7 @@ import lombok.*;
 public class UserRankResponse {
     private UUID userId;
     private String username;
-    private int totalPoints;
     private long rank;
+    private int totalPoints;
     private String avatarUrl;
 }
