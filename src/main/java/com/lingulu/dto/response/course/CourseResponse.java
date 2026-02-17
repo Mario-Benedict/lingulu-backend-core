@@ -13,6 +13,7 @@ public class CourseResponse {
 
     private UUID courseId;
     private String courseTitle;
+    private String courseDescription;
     private String difficulty;
     private String status;
 
@@ -30,6 +31,7 @@ public class CourseResponse {
                 .courseId(cp.getCourse().getCourseId())
                 .courseTitle(cp.getCourse().getCourseTitle())
                 .difficulty(cp.getCourse().getDifficultyLevel())
+                .courseDescription(cp.getCourse().getDescription())
                 .status(String.valueOf(cp.getStatus()))
                 .completedLessons(cp.getCompletedLessons())
                 .totalLessons(cp.getTotalLessons())

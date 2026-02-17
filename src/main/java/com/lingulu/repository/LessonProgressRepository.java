@@ -17,15 +17,24 @@ public interface LessonProgressRepository extends JpaRepository<LessonProgress, 
             UUID lessonId
     );
 
-    int countByUser_UserIdAndLesson_Course_CourseIdAndStatus(
-            UUID userId,
-            UUID courseId,
-            ProgressStatus status
-    );
+    @Query("""
+        SELECT new com.lingulu.dto.response.course.LessonsResponse(
+            l.lessonId,
+            l.lessonTitle,
+            lp.status,
+            lp.completedAt
+        )
+        FROM LessonProgress lp
+        JOIN lp.lesson l
+        WHERE l.lessonId = :lessonId
+        AND lp.user.userId = :userId
+    """)
+    LessonsResponse getLessonProgressByLessonId(UUID userId, UUID lessonId);
 
     @Query("""
         SELECT new com.lingulu.dto.response.course.LessonsResponse(
             l.lessonId,
+            l.lessonTitle,
             lp.status,
             lp.completedAt
         )

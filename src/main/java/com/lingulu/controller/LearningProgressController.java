@@ -1,5 +1,7 @@
 package com.lingulu.controller;
 
+import com.lingulu.dto.request.course.CourseDetailRequest;
+import com.lingulu.dto.request.course.LessonDetailRequest;
 import com.lingulu.dto.request.course.LessonsRequest;
 import com.lingulu.dto.request.course.SectionsRequest;
 import com.lingulu.dto.response.general.ApiResponse;
@@ -9,6 +11,7 @@ import com.lingulu.dto.response.course.SectionResponse;
 import com.lingulu.service.LearningProgressService;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +28,7 @@ public class LearningProgressController {
     private final LearningProgressService learningProgressService;
 
     @GetMapping("/sections")
-    public ResponseEntity<ApiResponse<?>> getSections(@Valid @ModelAttribute SectionsRequest sectionsRequest) {
+    public ResponseEntity<ApiResponse<List<SectionResponse>>> getSections(@Valid @ModelAttribute SectionsRequest sectionsRequest) {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
         
@@ -38,7 +41,7 @@ public class LearningProgressController {
     }
     
     @GetMapping("/lessons")
-    public ResponseEntity<ApiResponse<?>> getLessons(@Valid @ModelAttribute LessonsRequest lessonsRequest) {
+    public ResponseEntity<ApiResponse<List<LessonsResponse>>> getLessons(@Valid @ModelAttribute LessonsRequest lessonsRequest) {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
         
@@ -51,7 +54,7 @@ public class LearningProgressController {
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<ApiResponse<?>> getCourses() {
+    public ResponseEntity<ApiResponse<List<CourseResponse>>> getCourses() {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
         
@@ -60,5 +63,32 @@ public class LearningProgressController {
         return ResponseEntity.ok()
             .body(new ApiResponse<>(true, "Courses progress recieved successfully", courseResponses));
     }
-    
+
+    @GetMapping("/course/detail")
+    public ResponseEntity<ApiResponse<CourseResponse>> getCourseDetail(
+            @ModelAttribute @Valid CourseDetailRequest courseDetailRequest){
+        String userId = (String) SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
+
+        UUID courseId = UUID.fromString(courseDetailRequest.getCourseId());
+
+        CourseResponse courseResponse = learningProgressService.getCourseDetail(UUID.fromString(userId), courseId);
+
+        return ResponseEntity.ok()
+            .body(new ApiResponse<>(true, "Course detail received successfully", courseResponse));
+    }
+
+    @GetMapping("/lesson/detail")
+    public ResponseEntity<ApiResponse<LessonsResponse>> getLessonDetail(
+            @ModelAttribute @Valid LessonDetailRequest lessonsRequest){
+        String userId = (String) SecurityContextHolder.getContext()
+                       .getAuthentication().getPrincipal();
+
+        UUID lessonId = UUID.fromString(lessonsRequest.getLessonId());
+
+        LessonsResponse lessonsResponse = learningProgressService.getLessonDetail(UUID.fromString(userId), lessonId);
+
+        return ResponseEntity.ok()
+            .body(new ApiResponse<>(true, "Lesson detail received successfully", lessonsResponse));
+    }
 }

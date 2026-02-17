@@ -55,4 +55,15 @@ public class LearningProgressService {
                 .map(CourseResponse::from)
                 .toList();
     }
+
+    public CourseResponse getCourseDetail(UUID userId, UUID courseId) {
+        CourseProgress courseProgress = courseProgressRepository.findByUser_UserIdAndCourse_CourseId(userId, courseId)
+                .orElseThrow(() -> new IllegalStateException("Course progress not found"));
+
+        return CourseResponse.from(courseProgress);
+    }
+
+    public LessonsResponse getLessonDetail(UUID userId, UUID lessonId) {
+        return lessonProgressRepository.getLessonProgressByLessonId(userId, lessonId);
+    }
 }
