@@ -8,6 +8,7 @@ import com.lingulu.entity.account.UserProfile;
 import com.lingulu.exception.OAuthOnlyLoginException;
 import com.lingulu.exception.RegisterException;
 import com.lingulu.exception.UserNotFoundException;
+import com.lingulu.exception.account.EmailNotVerifiedException;
 import com.lingulu.repository.UserRepository;
 import com.lingulu.security.JwtUtil;
 import com.lingulu.repository.OAuthAccountRepository;
@@ -95,7 +96,7 @@ public class AuthService {
         }
 
         if (!user.isEmailVerified()) {
-            throw new UserNotFoundException("Email not verified. Please verify your email before logging in.", HttpStatus.UNAUTHORIZED);
+            throw new EmailNotVerifiedException("Email not verified. Please verify your email before logging in.", HttpStatus.UNAUTHORIZED);
         }
 
         return updateAccessToken(jwtUtil.generateAccessToken(user), user.getUserId());
