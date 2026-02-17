@@ -16,7 +16,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/api/sections")
+@RequestMapping("/api/learning/sections")
 @RequiredArgsConstructor
 public class SectionContentController {
 
@@ -41,7 +41,7 @@ public class SectionContentController {
         String userId = (String) SecurityContextHolder.getContext()
                         .getAuthentication().getPrincipal();
 
-        List<SpeakingResponse> speakingResponse = learningService.cekLatestSpeakingAttempt(userId, sectionId.toString());
+        List<SpeakingResponse> speakingResponse = learningService.checkLatestSpeakingAttempt(userId, sectionId.toString());
 
         if(speakingResponse != null){
             return ResponseEntity.ok(
@@ -50,7 +50,7 @@ public class SectionContentController {
         }
         
 
-        AttemptResponse attemptResponse = learningService.cekLatestAttempt(userId, sectionId.toString());
+        AttemptResponse attemptResponse = learningService.checkLatestAttempt(userId, sectionId.toString());
 
         if(attemptResponse != null) {
             return ResponseEntity.ok(

@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 public class GroqService {
@@ -29,28 +31,35 @@ public class GroqService {
 
     public String chat(String userMessage) {
         Map<String, Object> body = Map.of(
-            "model", model,
-            "messages", List.of(
-                Map.of("role", "system", "content", "You are a friendly English speaking partner. Your name is Lulu. Always respond in english. No matter in what language the user speaks to you, respond in english."),
-                Map.of("role", "user", "content", userMessage + "Please always answer in english")
-            ),
-            "temperature", 0.7
+                "model", model,
+                "messages", List.of(
+                        Map.of("role", "system", "content", "You are a friendly English speaking partner named Lulu. Always respond in English."),
+                        Map.of("role", "user", "content", userMessage + " Please always answer in English.")
+                ),
+                "temperature", 0.7
         );
 
         return webClient.post()
-            .uri(apiUrl)
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(body)
-            .retrieve()
-            .bodyToMono(Map.class)
-            .map(res -> {
-                List<Map<String, Object>> choices =
-                        (List<Map<String, Object>>) res.get("choices");
-                Map<String, Object> message =
-                        (Map<String, Object>) choices.get(0).get("message");
-                return message.get("content").toString();
-            })
-            .block();
+                .uri(apiUrl)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .map(res -> {
+                    Object choicesObj = res.get("choices");
+                    if (choicesObj instanceof List<?> choices && !choices.isEmpty()) {
+                        Object firstChoice = choices.getFirst();
+                        if (firstChoice instanceof Map<?, ?> choiceMap) {
+                            Object messageObj = choiceMap.get("message");
+                            if (messageObj instanceof Map<?, ?> messageMap) {
+                                return String.valueOf(messageMap.get("content"));
+                            }
+                        }
+                    }
+                    return "";
+                })
+                .onErrorResume(e -> Mono.just("Lulu is currently unavailable.")) // Safe fallback
+                .block();
     }
 }

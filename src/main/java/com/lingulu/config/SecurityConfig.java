@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -14,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.lingulu.security.JwtAuthenticationFilter;
 import com.lingulu.security.OAuth2SuccessHandler;
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -27,45 +29,34 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // API ONLY
-                .csrf(csrf -> csrf.disable())
-
-                // WAJIB STATELESS
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-
-                // CORS
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-                // UNAUTHORIZED HANDLER
-                .exceptionHandling(ex ->
-                        ex.authenticationEntryPoint(entryPoint)
-                )
-
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/api/account/login",
-                                "/api/account/register",
-                                "/api/account/authenticated",
-                                "/api/account/forgot-password",
-                                "/api/account/reset-password",
-                                "/api/otp/*",
-                                "/oauth2/**"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-
-                .oauth2Login(oauth ->
-                        oauth.successHandler(oAuth2SuccessHandler)
-                )
-
-                .formLogin(form -> form.disable())
-
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .exceptionHandling(ex ->
+                    ex.authenticationEntryPoint(entryPoint)
+            )
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(
+                            "/api/account/login",
+                            "/api/account/register",
+                            "/api/account/authenticated",
+                            "/api/account/forgot-password",
+                            "/api/account/reset-password",
+                            "/api/otp/**",
+                            "/oauth2/**"
+                    ).permitAll()
+                    .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth ->
+                    oauth.successHandler(oAuth2SuccessHandler)
+            )
+            .formLogin(AbstractHttpConfigurer::disable)
+            .addFilterBefore(
+                    jwtAuthenticationFilter,
+                    UsernamePasswordAuthenticationFilter.class
+            );
 
         return http.build();
     }
@@ -78,17 +69,15 @@ public class SecurityConfig {
                 Arrays.asList("http://localhost:5173", "http://127.0.0.1:5500")
         );
         configuration.setAllowedMethods(
-                Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
         );
-        configuration.setAllowedHeaders(
-                Arrays.asList("Authorization", "Content-Type")
-        );
-        configuration.setAllowCredentials(true); // karena pakai cookie
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 }

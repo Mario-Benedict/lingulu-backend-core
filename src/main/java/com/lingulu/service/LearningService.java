@@ -57,23 +57,12 @@ public class LearningService {
         sp.setCompletedAt(LocalDateTime.now());
         sectionProgressRepository.save(sp);
 
-        recalcLessonProgress(userId, sp.getSection().getLesson());
+        recalculateLessonProgress(userId, sp.getSection().getLesson());
         leaderboardService.updateTotalPoints(userId);
         userLearningStatsService.updateStreak(userId);
     }
 
-    private void recalcLessonProgress(UUID userId, Lesson lesson) {
-
-        // int totalLessons =
-        //         sectionRepository.countByLesson_LessonId(lesson.getSectionId());
-
-        // int completedLessons =
-        //         lessonProgressRepository.countByUser_UserIdAndLesson_Section_SectionIdAndStatus(
-        //                 userId,
-        //                 lesson.getSectionId(),
-        //                 ProgressStatus.COMPLETED
-        //         );
-
+    private void recalculateLessonProgress(UUID userId, Lesson lesson) {
         LessonProgress lp = lessonProgressRepository
                 .findByUser_UserIdAndLesson_LessonId(userId, lesson.getLessonId())
                 .orElseThrow(() -> new DataNotFoundException("Lesson progress not found", HttpStatus.NOT_FOUND));
@@ -81,7 +70,6 @@ public class LearningService {
         int totalSections = lp.getTotalSections();
         int completedSections = lp.getCompletedSections() + 1;
 
-        // sp.setTotalLessons(totalLessons);
         lp.setCompletedSections(completedSections);
         lp.setStatus(
                 completedSections == totalSections ? ProgressStatus.COMPLETED :
@@ -105,41 +93,16 @@ public class LearningService {
 
                         LessonProgress nextLp = lessonProgressRepository.findByUser_UserIdAndLesson_LessonId(userId, nextLesson.getLessonId())
                                 .orElseThrow(() -> new DataNotFoundException("Lesson progress not found", HttpStatus.NOT_FOUND));
-                
-                        if(nextLp != null) {
-                                nextLp.setStatus(ProgressStatus.IN_PROGRESS);
-                                lessonProgressRepository.save(nextLp);
-                        }
+
+                    nextLp.setStatus(ProgressStatus.IN_PROGRESS);
+                    lessonProgressRepository.save(nextLp);
                 }
                 
-                recalcCourseProgress(userId, lesson.getCourse());
+                recalculateCourseProgress(userId, lesson.getCourse());
         }
     }
 
-    private void recalcCourseProgress(UUID userId, Course course) {
-
-        // int totalSections =
-        //         lessonsRepository.countByCourse_CourseId(course.getCourseId());
-
-        // int completedSections =
-        //         lessonProgressRepository.countByUser_UserIdAndLesson_Course_CourseIdAndStatus(
-        //                 userId,
-        //                 course.getCourseId(),
-        //                 ProgressStatus.COMPLETED
-        //         );
-
-        // CourseProgress cp = courseProgressRepository
-        //         .findByUser_UserId(userId)
-        //         .stream()
-        //         .filter(p -> p.getCourse().getCourseId().equals(course.getCourseId()))
-        //         .findFirst()
-        //         .orElseGet(() -> {
-        //             CourseProgress c = new CourseProgress();
-        //             c.setUser(userRepository.getReferenceById(userId));
-        //             c.setCourse(course);
-        //             return c;
-        //         });
-
+    private void recalculateCourseProgress(UUID userId, Course course) {
         CourseProgress cp = courseProgressRepository.findByUser_UserIdAndCourse_CourseId(userId, course.getCourseId())
                 .orElseThrow(() -> new DataNotFoundException("Course progress not found", HttpStatus.NOT_FOUND));
 
@@ -170,10 +133,8 @@ public class LearningService {
                         CourseProgress nextCp = courseProgressRepository.findByCourse_CourseId(nextCourse.getCourseId())
                                 .orElseThrow(() -> new DataNotFoundException("Course progress not found", HttpStatus.NOT_FOUND));
 
-                        if(nextCp != null) {
-                                nextCp.setStatus(ProgressStatus.IN_PROGRESS);
-                                courseProgressRepository.save(nextCp);
-                        }
+                    nextCp.setStatus(ProgressStatus.IN_PROGRESS);
+                    courseProgressRepository.save(nextCp);
 
                 }
 
@@ -192,21 +153,20 @@ public class LearningService {
                 .map(wordReq -> new WordAnswer(wordReq.getWord(), wordReq.getScore()))
                 .toList();
 
-
         speakingAnswer.setWordAnswers(wordAnswers);
 
         speakingAnswerRepository.save(speakingAnswer);
     }
 
     private List<SpeakingResponse> convertToSpeakingResponses(List<SpeakingAnswer> answers) {
-        List<SpeakingResponse> responses = answers.stream().map(answer -> {
+        return answers.stream().map(answer -> {
             SpeakingResponse response = new SpeakingResponse();
             response.setAverageScore(answer.getAverageScore());
             response.setSentence(answer.getSentence());
 
             List<WordResponse> wordResponses = answer.getWordAnswers().stream().map(wordAnswer -> {
                 WordResponse wordResponse = new WordResponse();
-                
+
                 wordResponse.setWord(wordAnswer.getWord());
                 wordResponse.setScore(wordAnswer.getScore());
 
@@ -216,8 +176,6 @@ public class LearningService {
             response.setWords(wordResponses);
             return response;
         }).toList();
-
-        return responses;
     }
 
     public List<SpeakingResponse> completeSpeakingAttempt(String userId, SpeakingRequest speakingRequest) {
@@ -232,7 +190,7 @@ public class LearningService {
         return convertToSpeakingResponses(answers);
     }
 
-    public List<SpeakingResponse> cekLatestSpeakingAttempt(String userId, String sectionId) {
+    public List<SpeakingResponse> checkLatestSpeakingAttempt(String userId, String sectionId) {
         List<SpeakingAnswer> answers = speakingAnswerRepository.findByUserIdAndSectionIdOrderByAnsweredAt(
                 userId,
                 sectionId
@@ -300,7 +258,7 @@ public class LearningService {
         return convertToAttemptResponse(mcqAnswer);
     }
 
-    public AttemptResponse cekLatestAttempt(String userId, String sectionId) {
+    public AttemptResponse checkLatestAttempt(String userId, String sectionId) {
         MCQAnswer mcqAnswer = mcqAnswerRepository.findFirstByUserIdAndSectionIdOrderByAnsweredAtDesc(userId, sectionId);
         
         if(mcqAnswer == null) {

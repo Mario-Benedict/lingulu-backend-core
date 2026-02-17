@@ -15,4 +15,5 @@ public class SectionContentResponse {
     private UUID sectionId;
     private SectionType sectionType;
     private String sectionTitle;
+    private Boolean isCompleted;
 }

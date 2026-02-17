@@ -35,9 +35,6 @@ public class AccountController {
     private final UserRepository userRepository;
     private final PasswordResetService passwordResetService;
 
-    @Value("${spring.application.dev}")
-    private Boolean isDev;
-
     private String generateCookie(String token, Boolean isRememberMe) {
         int days = isRememberMe ? 7 : 1;
 
@@ -105,6 +102,14 @@ public class AccountController {
 
         return ResponseEntity.ok(new ApiResponse<>(true, "Token is valid",
                 AuthenticationResponse.builder().authenticated(true).build()));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> logout() {
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, generateCookie("", false))
+            .body(new ApiResponse<>(true, "Logout successful",
+                AuthenticationResponse.builder().authenticated(false).build()));
     }
 
     @PostMapping("/forgot-password")
