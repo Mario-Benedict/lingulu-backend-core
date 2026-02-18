@@ -1,0 +1,21 @@
+{
+  "family": "lingulu-task",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "springboot-app",
+      "image": "URL_ECR_AKAN_DIISI_OTOMATIS",
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true
+    }
+  ],
+  "requiresCompatibilities": [ "FARGATE" ],
+  "cpu": "512",
+  "memory": "1024"
+}
