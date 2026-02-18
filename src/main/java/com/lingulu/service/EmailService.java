@@ -37,10 +37,12 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(htmlContent, true); // true = HTML
-            helper.setFrom("noreply@lingulu.com");
+            helper.setFrom("no-reply@lingulu.site");
 
             mailSender.send(message);
+            System.out.println("oke done");
         } catch (MessagingException e) {
+            System.out.println("Tak bisa bang");
             throw new RuntimeException("Failed to send email", e);
         }
     }
@@ -63,7 +65,7 @@ public class EmailService {
                                 
                                 <!-- Header -->
                                 <tr>
-                                    <td style="background-color: #4f46e5; padding: 40px; text-align: center;">
+                                    <td style="background-color: #ff7000; padding: 40px; text-align: center;">
                                         <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: 1px;">
                                             LINGULU
                                         </h1>
@@ -92,7 +94,7 @@ public class EmailService {
                                                     <table cellpadding="0" cellspacing="0" style="border: 2px solid #e5e7eb; border-radius: 8px;">
                                                         <tr>
                                                             <td style="background-color: #f9fafb; padding: 24px 48px; text-align: center;">
-                                                                <span style="font-size: 32px; font-weight: 700; letter-spacing: 12px; color: #4f46e5; font-family: 'Courier New', Consolas, monospace;">
+                                                                <span style="font-size: 32px; font-weight: 700; letter-spacing: 12px; color: #ff7000; font-family: 'Courier New', Consolas, monospace;">
                                                                     %s
                                                                 </span>
                                                             </td>
@@ -120,19 +122,19 @@ public class EmailService {
                                             <table width="100%%" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                     <td style="padding: 8px 0;">
-                                                        <span style="display: inline-block; width: 6px; height: 6px; background-color: #4f46e5; border-radius: 50%%; margin-right: 12px; vertical-align: middle;"></span>
+                                                        <span style="display: inline-block; width: 6px; height: 6px; background-color: #ff7000; border-radius: 50%%; margin-right: 12px; vertical-align: middle;"></span>
                                                         <span style="color: #6b7280; font-size: 14px; line-height: 1.6;">Never share this verification code with anyone</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="padding: 8px 0;">
-                                                        <span style="display: inline-block; width: 6px; height: 6px; background-color: #4f46e5; border-radius: 50%%; margin-right: 12px; vertical-align: middle;"></span>
+                                                        <span style="display: inline-block; width: 6px; height: 6px; background-color: #ff7000; border-radius: 50%%; margin-right: 12px; vertical-align: middle;"></span>
                                                         <span style="color: #6b7280; font-size: 14px; line-height: 1.6;">Lingulu will never request your verification code via email or phone</span>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="padding: 8px 0;">
-                                                        <span style="display: inline-block; width: 6px; height: 6px; background-color: #4f46e5; border-radius: 50%%; margin-right: 12px; vertical-align: middle;"></span>
+                                                        <span style="display: inline-block; width: 6px; height: 6px; background-color: #ff7000; border-radius: 50%%; margin-right: 12px; vertical-align: middle;"></span>
                                                         <span style="color: #6b7280; font-size: 14px; line-height: 1.6;">If you did not request this code, please disregard this message</span>
                                                     </td>
                                                 </tr>
@@ -151,7 +153,7 @@ public class EmailService {
                                                         Questions? Contact our support team
                                                     </p>
                                                     <p style="margin: 8px 0 0;">
-                                                        <a href="mailto:support@lingulu.com" style="color: #4f46e5; text-decoration: none; font-weight: 600; font-size: 14px;">support@lingulu.com</a>
+                                                        <a href="mailto:support@lingulu.site" style="color: #ff7000; text-decoration: none; font-weight: 600; font-size: 14px;">support@lingulu.site</a>
                                                     </p>
                                                 </td>
                                             </tr>
@@ -200,7 +202,7 @@ public class EmailService {
                                 
                                 <!-- Header -->
                                 <tr>
-                                    <td style="background-color: #4f46e5; padding: 40px; text-align: center;">
+                                    <td style="background-color: #ff7000; padding: 40px; text-align: center;">
                                         <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: 1px;">
                                             LINGULU
                                         </h1>
@@ -228,7 +230,7 @@ public class EmailService {
                                                 <td align="center" style="padding: 32px 0;">
                                                     <table cellpadding="0" cellspacing="0">
                                                         <tr>
-                                                            <td style="background-color: #4f46e5; border-radius: 6px; text-align: center;">
+                                                            <td style="background-color: #ff7000; border-radius: 6px; text-align: center;">
                                                                 <a href="%s" style="display: inline-block; color: #ffffff; text-decoration: none; padding: 16px 48px; font-size: 16px; font-weight: 600; letter-spacing: 0.5px;">
                                                                     RESET PASSWORD
                                                                 </a>
@@ -269,7 +271,7 @@ public class EmailService {
                                                 If the button above does not work, please copy and paste the following URL into your web browser:
                                             </p>
                                             <p style="margin: 0; padding: 12px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; word-break: break-all;">
-                                                <a href="%s" style="color: #4f46e5; text-decoration: none; font-size: 13px; font-family: 'Courier New', Consolas, monospace;">%s</a>
+                                                <a href="%s" style="color: #ff7000; text-decoration: none; font-size: 13px; font-family: 'Courier New', Consolas, monospace;">%s</a>
                                             </p>
                                         </div>
                                     </td>
@@ -285,7 +287,7 @@ public class EmailService {
                                                         Questions? Contact our support team
                                                     </p>
                                                     <p style="margin: 8px 0 0;">
-                                                        <a href="mailto:support@lingulu.com" style="color: #4f46e5; text-decoration: none; font-weight: 600; font-size: 14px;">support@lingulu.com</a>
+                                                        <a href="mailto:support@lingulu.com" style="color: #ff7000; text-decoration: none; font-weight: 600; font-size: 14px;">support@lingulu.com</a>
                                                     </p>
                                                 </td>
                                             </tr>
