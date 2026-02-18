@@ -46,7 +46,7 @@ public class LearningController {
         learningService.recordSpeakingAttempt(userId, speakingRequest);
         
         return ResponseEntity.ok()
-                .body(new ApiResponse<>(true, "Speaking attempt recorded", null));
+                .body(new ApiResponse<>(true, "Speaking attempt recorded", speakingRequest));
     }
     
     @PostMapping("/section/speaking/complete")
