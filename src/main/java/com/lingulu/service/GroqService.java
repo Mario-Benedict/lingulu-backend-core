@@ -2,6 +2,7 @@ package com.lingulu.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,16 +32,29 @@ public class GroqService {
 
     public String chat(List<com.lingulu.dto.request.conversation.GroqMessage> messages) {
 
-        List<Map<String, String>> formattedMessages = messages.stream()
-                .map(msg -> Map.of(
-                        "role", msg.getRole(),
-                        "content", msg.getContent()
-                ))
+        String userMessage = (messages != null && !messages.isEmpty())
+                ? messages.get(messages.size() - 1).getContent()
+                : "";
+
+        List<Map<String, String>> initialMessages = List.of(
+                Map.of("role", "system", "content", "You are a friendly English speaking partner named Lulu. Always respond in English."),
+                Map.of("role", "user", "content", userMessage + " Please always answer in English.")
+        );
+
+        List<Map<String, String>> formattedMessages = (messages == null ? List.<Map<String, String>>of() :
+                messages.stream()
+                        .map(msg -> Map.of(
+                                "role", msg.getRole(),
+                                "content", msg.getContent()
+                        ))
+                        .toList());
+
+        List<Map<String, String>> combinedMessages = Stream.concat(initialMessages.stream(), formattedMessages.stream())
                 .toList();
 
         Map<String, Object> body = Map.of(
                 "model", model,
-                "messages", formattedMessages,
+                "messages", combinedMessages,
                 "temperature", 0.7
         );
 
@@ -64,7 +78,7 @@ public class GroqService {
                     }
                     return "";
                 })
-                .onErrorResume(e -> Mono.just("Lulu is currently unavailable.")) // Safe fallback
+                .onErrorResume(e -> Mono.just("Lulu is currently unavailable."))
                 .block();
     }
 }
