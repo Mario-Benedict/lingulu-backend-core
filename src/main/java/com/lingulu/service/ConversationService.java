@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
+import com.lingulu.dto.request.conversation.GroqMessage;
 import com.lingulu.dto.response.conversation.ChatMessageResponse;
 import com.lingulu.dto.response.conversation.ConversationHistoryResponse;
 import com.lingulu.enums.ConversationRole;
@@ -31,6 +32,7 @@ public class ConversationService {
     private final RedisTemplate<String, String> redisTemplate;
     private final CloudFrontSigner cloudFrontSigner;
     private static final long CONVERSATION_TTL_HOURS = 24;
+    private static final int MEMORY_LIMIT = 20;
 
     public ConversationService(
             WhisperService whisperService,
@@ -56,14 +58,11 @@ public class ConversationService {
     ) throws Exception {
 
         String redisKey = "conversation:user:" + userId;
-
-        String conversationId =
-                redisTemplate.opsForValue().get(redisKey);
+        String conversationId = redisTemplate.opsForValue().get(redisKey);
 
         Conversation conversation;
 
         if (conversationId == null) {
-
             conversation = Conversation.builder()
                     .userId(userId)
                     .createdAt(Instant.now())
@@ -72,7 +71,6 @@ public class ConversationService {
                     .build();
 
             conversationRepository.save(conversation);
-
             conversationId = conversation.getId();
 
             redisTemplate.opsForValue()
@@ -81,8 +79,7 @@ public class ConversationService {
         } else {
 
             conversation = conversationRepository.findById(conversationId)
-                    .orElseThrow(() ->
-                            new RuntimeException("Conversation not found"));
+                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
 
             if (conversation.getMessages() == null) {
                 conversation.setMessages(new ArrayList<>());
@@ -112,7 +109,9 @@ public class ConversationService {
                 )
         );
 
-        String aiText = groqService.chat(userText);
+        List<GroqMessage> contextMessages = buildContext(conversation);
+
+        String aiText = groqService.chat(contextMessages);
 
         byte[] aiAudioBytes = pollyService.synthesize(aiText);
 
@@ -148,6 +147,32 @@ public class ConversationService {
                 .aiAudioUrl(aiAudioUrl)
                 .createdAt(now)
                 .build();
+    }
+
+    private List<GroqMessage> buildContext(Conversation conversation) {
+
+        List<ConversationMessage> allMessages = conversation.getMessages();
+        int fromIndex = Math.max(0, allMessages.size() - MEMORY_LIMIT);
+
+        List<ConversationMessage> recentMessages =
+                allMessages.subList(fromIndex, allMessages.size());
+
+        List<GroqMessage> context = new ArrayList<>();
+
+        context.add(new GroqMessage(
+                "system",
+                "You are Lingulu, a friendly English speaking tutor. Keep responses natural and conversational."
+        ));
+
+        for (ConversationMessage msg : recentMessages) {
+            String role = msg.getRole() == ConversationRole.USER
+                    ? "user"
+                    : "assistant";
+
+            context.add(new GroqMessage(role, msg.getTranscript()));
+        }
+
+        return context;
     }
 
     public ConversationHistoryResponse loadHistory(String userId) {
