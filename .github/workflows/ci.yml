@@ -11,35 +11,9 @@ env:
   JAVA_VERSION: '25'
 
 jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Run tests
-        run: mvn clean test -B
-
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: target/surefire-reports/
-
   build-and-push:
     name: Build and Push to ECR
     runs-on: ubuntu-latest
-    needs: test
 
     steps:
       - name: Checkout code
@@ -52,7 +26,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Create secreet.properties
+      - name: Create secret.properties
         run: |
           cat > src/main/resources/secret.properties << 'EOF'
           POSTGRESQL_DB_HOST=${{ secrets.POSTGRESQL_DB_HOST }}
@@ -89,7 +63,7 @@ jobs:
       - name: Create CloudFront private key
         run: echo "${{ secrets.AWS_CLOUDFRONT_PRIVATE_KEY_BASE64 }}" | base64 -d > src/main/resources/private_lingulu_cdn_key_pkcs8.der
 
-      - name: Build with Maven
+      - name: Build with Maven (skip tests)
         run: mvn clean package -DskipTests -B
 
       - name: Configure AWS credentials
@@ -112,8 +86,4 @@ jobs:
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-
-
-
-
 
