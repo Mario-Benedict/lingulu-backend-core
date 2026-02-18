@@ -17,6 +17,9 @@ public class SpeakingRequest {
     private List<WordRequest> words;
 
     @NotBlank
+    private String speakingId;
+
+    @NotBlank
     private String sectionId;
 
     @NotBlank

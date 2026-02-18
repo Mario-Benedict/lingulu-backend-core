@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -142,13 +143,34 @@ public class LearningService {
     }
 
     public void recordSpeakingAttempt(String userId, SpeakingRequest speakingRequest) {
-        SpeakingAnswer speakingAnswer = new SpeakingAnswer();
-        speakingAnswer.setUserId(userId);
-        speakingAnswer.setSectionId(speakingRequest.getSectionId());
-        speakingAnswer.setSentence(speakingRequest.getSentence());
-        speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
-        speakingAnswer.setAnsweredAt(Instant.now());
-        
+        // Check if this speaking attempt already exists
+        Optional<SpeakingAnswer> existingAnswer = speakingAnswerRepository
+                .findByUserIdAndSectionIdAndSpeakingId(
+                        userId,
+                        speakingRequest.getSectionId(),
+                        speakingRequest.getSpeakingId()
+                );
+
+        SpeakingAnswer speakingAnswer;
+
+        if (existingAnswer.isPresent()) {
+            // Update existing record
+            speakingAnswer = existingAnswer.get();
+            speakingAnswer.setSentence(speakingRequest.getSentence());
+            speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
+            speakingAnswer.setAnsweredAt(Instant.now());
+        } else {
+            // Create new record
+            speakingAnswer = new SpeakingAnswer();
+            speakingAnswer.setUserId(userId);
+            speakingAnswer.setSectionId(speakingRequest.getSectionId());
+            speakingAnswer.setSpeakingId(speakingRequest.getSpeakingId());
+            speakingAnswer.setSentence(speakingRequest.getSentence());
+            speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
+            speakingAnswer.setAnsweredAt(Instant.now());
+        }
+
+        // Update word answers (both for new and existing records)
         List<WordAnswer> wordAnswers = speakingRequest.getWords().stream()
                 .map(wordReq -> new WordAnswer(wordReq.getWord(), wordReq.getScore()))
                 .toList();

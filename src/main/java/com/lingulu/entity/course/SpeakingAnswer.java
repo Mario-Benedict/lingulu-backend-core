@@ -20,6 +20,7 @@ public class SpeakingAnswer {
     @Id
     private String id;
     private String userId;
+    private String speakingId;
     private String sectionId;
     private String sentence;
     private List<WordAnswer> wordAnswers;
