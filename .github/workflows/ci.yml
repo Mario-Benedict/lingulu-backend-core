@@ -26,13 +26,8 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Create minimal secret.properties for test
-        run: |
-          touch src/main/resources/secret.properties
-          echo "# Test dummy file" > src/main/resources/secret.properties
-
-      - name: Run tests with test profile
-        run: mvn clean test -Dspring.profiles.active=test -B
+      - name: Run tests
+        run: mvn clean test -B
 
       - name: Upload test results
         if: failure()
@@ -57,7 +52,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Create secret.properties
+      - name: Create secreet.properties
         run: |
           cat > src/main/resources/secret.properties << 'EOF'
           POSTGRESQL_DB_HOST=${{ secrets.POSTGRESQL_DB_HOST }}
