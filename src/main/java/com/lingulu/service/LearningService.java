@@ -156,19 +156,16 @@ public class LearningService {
         if (existingAnswer.isPresent()) {
             // Update existing record
             speakingAnswer = existingAnswer.get();
-            speakingAnswer.setSentence(speakingRequest.getSentence());
-            speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
-            speakingAnswer.setAnsweredAt(Instant.now());
         } else {
             // Create new record
             speakingAnswer = new SpeakingAnswer();
             speakingAnswer.setUserId(userId);
             speakingAnswer.setSectionId(speakingRequest.getSectionId());
             speakingAnswer.setSpeakingId(speakingRequest.getSpeakingId());
-            speakingAnswer.setSentence(speakingRequest.getSentence());
-            speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
-            speakingAnswer.setAnsweredAt(Instant.now());
         }
+        speakingAnswer.setSentence(speakingRequest.getSentence());
+        speakingAnswer.setAverageScore(speakingRequest.getAverageScore());
+        speakingAnswer.setAnsweredAt(Instant.now());
 
         // Update word answers (both for new and existing records)
         List<WordAnswer> wordAnswers = speakingRequest.getWords().stream()

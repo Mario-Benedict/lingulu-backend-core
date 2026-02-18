@@ -38,7 +38,7 @@ public class UserLearningStatsService {
         } else if (lastActivityDate.isBefore(today.minusDays(1))) {
             stats.setCurrentStreak(1);
         } else if(lastActivityDate.isEqual(today) && stats.getCurrentStreak() == 0) {
-            stats.setCurrentStreak(stats.getCurrentStreak() + 1);
+            stats.setCurrentStreak(1);
         }
         if (stats.getCurrentStreak() > stats.getLongestStreak()) {
             stats.setLongestStreak(stats.getCurrentStreak());
