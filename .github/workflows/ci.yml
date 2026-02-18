@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 env:
   AWS_REGION: ap-southeast-1
@@ -29,33 +26,16 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Create dummy CloudFront private key for testing
+      - name: Create minimal secret.properties for test
         run: |
-          echo "dummy-key-content" > src/main/resources/private_lingulu_cdn_key_pkcs8.der
+          touch src/main/resources/secret.properties
+          echo "# Test dummy file" > src/main/resources/secret.properties
 
       - name: Run tests with test profile
-        run: mvn clean test -Dspring.profiles.active=test -X
-        env:
-          SPRING_PROFILES_ACTIVE: test
-        continue-on-error: true
-
-      - name: Display test failures (if any)
-        if: failure()
-        run: |
-          echo "### ⚠️ Test Failures Detected" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Checking test reports..." >> $GITHUB_STEP_SUMMARY
-          if [ -d "target/surefire-reports" ]; then
-            echo "Test reports found. Check artifacts for details." >> $GITHUB_STEP_SUMMARY
-            find target/surefire-reports -name "*.txt" -exec echo "=== {} ===" \; -exec cat {} \; || true
-          fi
-
-      - name: Generate test report
-        if: always()
-        run: mvn surefire-report:report
+        run: mvn clean test -Dspring.profiles.active=test -B
 
       - name: Upload test results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
@@ -65,11 +45,6 @@ jobs:
     name: Build and Push to ECR
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'push'
-
-    outputs:
-      image-tag: ${{ steps.image-tag.outputs.tag }}
-      image-uri: ${{ steps.build-image.outputs.image }}
 
     steps:
       - name: Checkout code
@@ -84,7 +59,7 @@ jobs:
 
       - name: Create secret.properties
         run: |
-          cat > src/main/resources/secret.properties << EOF
+          cat > src/main/resources/secret.properties << 'EOF'
           POSTGRESQL_DB_HOST=${{ secrets.POSTGRESQL_DB_HOST }}
           POSTGRESQL_DB_PORT=${{ secrets.POSTGRESQL_DB_PORT }}
           POSTGRESQL_DB_NAME=${{ secrets.POSTGRESQL_DB_NAME }}
@@ -112,16 +87,15 @@ jobs:
           MONGO_DB_PORT=${{ secrets.MONGO_DB_PORT }}
           MONGO_DB_NAME=${{ secrets.MONGO_DB_NAME }}
           AWS_CLOUDFRONT_KEYPAIR=${{ secrets.AWS_CLOUDFRONT_KEYPAIR }}
-          AWS_CLOUDFRONT_PRIVATE_KEY_PATH=${{ secrets.AWS_CLOUDFRONT_PRIVATE_KEY_PATH }}
+          AWS_CLOUDFRONT_PRIVATE_KEY_PATH=private_lingulu_cdn_key_pkcs8.der
           CDN_DOMAIN=${{ secrets.CDN_DOMAIN }}
           EOF
 
-      - name: Create CloudFront private key file
-        run: |
-          echo "${{ secrets.AWS_CLOUDFRONT_PRIVATE_KEY_BASE64 }}" | base64 -d > src/main/resources/private_lingulu_cdn_key_pkcs8.der
+      - name: Create CloudFront private key
+        run: echo "${{ secrets.AWS_CLOUDFRONT_PRIVATE_KEY_BASE64 }}" | base64 -d > src/main/resources/private_lingulu_cdn_key_pkcs8.der
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests
+        run: mvn clean package -DskipTests -B
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -134,73 +108,15 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Generate image tag
-        id: image-tag
-        run: |
-          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-          TAG="${SHORT_SHA}-${TIMESTAMP}"
-          
-          echo "tag=${TAG}" >> $GITHUB_OUTPUT
-          echo "short-sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
-
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
+      - name: Build and push Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ steps.image-tag.outputs.tag }}
-          SHORT_SHA: ${{ steps.image-tag.outputs.short-sha }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          # Build Docker image
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          
-          # Tag dengan latest
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          
-          # Tag dengan commit SHA
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:sha-$SHORT_SHA
-          
-          # Push semua tags
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY --all-tags
-          
-          # Output image URI
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Generate image summary
-        run: |
-          echo "### 🐳 Docker Image Built Successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image URI:** \`${{ steps.build-image.outputs.image }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Image Tag:** \`${{ steps.image-tag.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit SHA:** \`${{ steps.image-tag.outputs.short-sha }}\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Scan image for vulnerabilities
-        continue-on-error: true
-        run: |
-          # Install Trivy
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install trivy
-          
-          # Scan image
-          trivy image --severity HIGH,CRITICAL ${{ steps.build-image.outputs.image }}
-
-  notify:
-    name: Notify Build Status
-    runs-on: ubuntu-latest
-    needs: [test, build-and-push]
-    if: always()
-
-    steps:
-      - name: Build Status Summary
-        run: |
-          echo "### 📊 Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Tests:** ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Build & Push:** ${{ needs.build-and-push.result }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** ${GITHUB_REF#refs/heads/}" >> $GITHUB_STEP_SUMMARY
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
 
 
