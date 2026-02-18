@@ -36,6 +36,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2 # Gunakan v2
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: lingulu-service
+          service: lingulu-spring-service
           cluster: lingulu-cluster
           wait-for-service-stability: true
