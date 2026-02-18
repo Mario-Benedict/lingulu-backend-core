@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.lingulu.dto.response.conversation.ChatMessageResponse;
 import com.lingulu.dto.response.conversation.ConversationHistoryResponse;
+import com.lingulu.enums.ConversationRole;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,7 +71,7 @@ public class ConversationService {
                     .messages(new ArrayList<>())
                     .build();
 
-            conversation = conversationRepository.save(conversation);
+            conversationRepository.save(conversation);
 
             conversationId = conversation.getId();
 
@@ -104,7 +105,7 @@ public class ConversationService {
 
         conversation.getMessages().add(
                 new ConversationMessage(
-                        "USER",
+                        ConversationRole.USER,
                         userAudioKey,
                         userText,
                         now
@@ -123,7 +124,7 @@ public class ConversationService {
 
         conversation.getMessages().add(
                 new ConversationMessage(
-                        "AI",
+                        ConversationRole.AI,
                         aiAudioKey,
                         aiText,
                         now
