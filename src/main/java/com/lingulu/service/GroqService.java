@@ -29,13 +29,18 @@ public class GroqService {
         this.webClient = builder.build();
     }
 
-    public String chat(String userMessage) {
+    public String chat(List<com.lingulu.dto.request.conversation.GroqMessage> messages) {
+
+        List<Map<String, String>> formattedMessages = messages.stream()
+                .map(msg -> Map.of(
+                        "role", msg.getRole(),
+                        "content", msg.getContent()
+                ))
+                .toList();
+
         Map<String, Object> body = Map.of(
                 "model", model,
-                "messages", List.of(
-                        Map.of("role", "system", "content", "You are a friendly English speaking partner named Lulu. Always respond in English."),
-                        Map.of("role", "user", "content", userMessage + " Please always answer in English.")
-                ),
+                "messages", formattedMessages,
                 "temperature", 0.7
         );
 
