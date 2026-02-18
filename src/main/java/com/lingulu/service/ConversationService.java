@@ -1,8 +1,17 @@
 package com.lingulu.service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+
+import com.lingulu.dto.response.conversation.ChatMessageResponse;
+import com.lingulu.dto.response.conversation.ConversationHistoryResponse;
+import com.lingulu.enums.ConversationRole;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,94 +28,171 @@ public class ConversationService {
     private final PollyService pollyService;
     private final S3StorageService s3StorageService;
     private final ConversationRepository conversationRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final CloudFrontSigner cloudFrontSigner;
+    private static final long CONVERSATION_TTL_HOURS = 24;
 
     public ConversationService(
             WhisperService whisperService,
             GroqService groqService,
             PollyService pollyService,
             S3StorageService s3StorageService,
-            ConversationRepository conversationRepository
+            ConversationRepository conversationRepository,
+            RedisTemplate<String, String> redisTemplate,
+            CloudFrontSigner cloudFrontSigner
     ) {
         this.whisperService = whisperService;
         this.groqService = groqService;
         this.pollyService = pollyService;
         this.s3StorageService = s3StorageService;
         this.conversationRepository = conversationRepository;
+        this.redisTemplate = redisTemplate;
+        this.cloudFrontSigner = cloudFrontSigner;
     }
 
     public AIConversationResponse process(
             MultipartFile audio,
-            String conversationId,
             String userId
     ) throws Exception {
-        Conversation conversation =
-                conversationRepository.findById(conversationId)
-                        .orElseGet(() -> {
-                            Conversation c = new Conversation();
-                            c.setId(conversationId);
-                            c.setUserId(userId);
-                            c.setCreatedAt(Instant.now());
-                            return c;
-                        });
+
+        String redisKey = "conversation:user:" + userId;
+
+        String conversationId =
+                redisTemplate.opsForValue().get(redisKey);
+
+        Conversation conversation;
+
+        if (conversationId == null) {
+
+            conversation = Conversation.builder()
+                    .userId(userId)
+                    .createdAt(Instant.now())
+                    .updatedAt(Instant.now())
+                    .messages(new ArrayList<>())
+                    .build();
+
+            conversationRepository.save(conversation);
+
+            conversationId = conversation.getId();
+
+            redisTemplate.opsForValue()
+                    .set(redisKey, conversationId, CONVERSATION_TTL_HOURS, TimeUnit.HOURS);
+
+        } else {
+
+            conversation = conversationRepository.findById(conversationId)
+                    .orElseThrow(() ->
+                            new RuntimeException("Conversation not found"));
+
+            if (conversation.getMessages() == null) {
+                conversation.setMessages(new ArrayList<>());
+            }
+
+            redisTemplate.opsForValue()
+                    .set(redisKey, conversationId, CONVERSATION_TTL_HOURS, TimeUnit.HOURS);
+        }
 
         String chatId = UUID.randomUUID().toString();
+        Instant now = Instant.now();
 
         String userText = whisperService.transcribe(audio);
 
         String userAudioKey =
-                "conversations/" + userId + "/" + conversationId + "/user/" + chatId + "/input-audio.wav";
+                "conversations/" + userId + "/" + conversationId +
+                        "/user/" + chatId + "/input.wav";
 
-        s3StorageService.uploadMultipartFile(
-                audio,
-                userAudioKey,
-                "chat"
+        s3StorageService.uploadMultipartFile(audio, userAudioKey, "chat");
+
+        conversation.getMessages().add(
+                new ConversationMessage(
+                        ConversationRole.USER,
+                        userAudioKey,
+                        userText,
+                        now
+                )
         );
-
-        String userAudioUrl =
-                s3StorageService.generatePresignedUrl(userAudioKey);
 
         String aiText = groqService.chat(userText);
 
         byte[] aiAudioBytes = pollyService.synthesize(aiText);
 
         String aiAudioKey =
-                "conversations/" + userId + "/" + conversationId + "/ai/" + chatId + "/response-audio.mp3";
+                "conversations/" + userId + "/" + conversationId +
+                        "/ai/" + chatId + "/response.mp3";
 
-        s3StorageService.uploadBytes(
-                aiAudioBytes,
-                "audio/mpeg",
-                aiAudioKey
-        );
-
-        String aiAudioUrl =
-                s3StorageService.generatePresignedUrl(aiAudioKey);
+        s3StorageService.uploadBytes(aiAudioBytes, "audio/mpeg", aiAudioKey);
 
         conversation.getMessages().add(
                 new ConversationMessage(
-                        "USER",
-                        userAudioUrl,
-                        userText,
-                        Instant.now()
-                )
-        );
-
-        conversation.getMessages().add(
-                new ConversationMessage(
-                        "AI",
-                        aiAudioUrl,
+                        ConversationRole.AI,
+                        aiAudioKey,
                         aiText,
-                        Instant.now()
+                        now
                 )
         );
 
-        conversation.setUpdatedAt(Instant.now());
+        conversation.setUpdatedAt(now);
         conversationRepository.save(conversation);
 
-        return new AIConversationResponse(
-                userText,
-                aiText,
-                userAudioUrl,
-                aiAudioUrl
-        );
+        String userAudioUrl =
+                cloudFrontSigner.generateSignedUrl(userAudioKey);
+
+        String aiAudioUrl =
+                cloudFrontSigner.generateSignedUrl(aiAudioKey);
+
+        return AIConversationResponse.builder()
+                .conversationId(conversationId)
+                .userText(userText)
+                .aiText(aiText)
+                .userAudioUrl(userAudioUrl)
+                .aiAudioUrl(aiAudioUrl)
+                .createdAt(now)
+                .build();
     }
+
+    public ConversationHistoryResponse loadHistory(String userId) {
+
+        String redisKey = "conversation:user:" + userId;
+
+        String conversationId =
+                redisTemplate.opsForValue().get(redisKey);
+
+        if (conversationId == null) {
+            return ConversationHistoryResponse.builder()
+                    .conversationId(null)
+                    .messages(Collections.emptyList())
+                    .build();
+        }
+
+        Conversation conversation =
+                conversationRepository.findById(conversationId)
+                        .orElseThrow(() ->
+                                new RuntimeException("Conversation not found"));
+
+        List<ConversationMessage> conversationMessages =
+                conversation.getMessages() == null
+                        ? Collections.emptyList()
+                        : conversation.getMessages();
+
+        List<ChatMessageResponse> messages =
+                conversationMessages.stream()
+                        .map(message -> ChatMessageResponse.builder()
+                                .role(message.getRole())
+                                .text(message.getTranscript())
+                                .audioUrl(
+                                        cloudFrontSigner.generateSignedUrl(
+                                                message.getAudioKey()
+                                        )
+                                )
+                                .createdAt(message.getCreatedAt())
+                                .build()
+                        )
+                        .toList();
+
+        return ConversationHistoryResponse.builder()
+                .conversationId(conversationId)
+                .messages(messages)
+                .build();
+    }
+
 }

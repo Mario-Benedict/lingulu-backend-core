@@ -1,5 +1,6 @@
 package com.lingulu.controller;
 
+import com.lingulu.dto.response.conversation.ConversationHistoryResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +16,7 @@ import jakarta.validation.Valid;
 
 @Validated
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/conversation")
 public class AIConversationController {
 
     private final ConversationService conversationService;
@@ -27,7 +28,6 @@ public class AIConversationController {
     }
 
     @PostMapping(
-        value = "/conversation",
         consumes = MediaType.MULTIPART_FORM_DATA_VALUE
     )
     public ResponseEntity<ApiResponse<AIConversationResponse>> conversation(
@@ -37,8 +37,33 @@ public class AIConversationController {
         String userId = (String) SecurityContextHolder.getContext()
                        .getAuthentication().getPrincipal();
 
+        AIConversationResponse response =
+                conversationService.process(
+                        request.getAudio(),
+                        userId
+                );
+
         return ResponseEntity.ok()
-                .body(new ApiResponse<> (true, "Chat reply successfully", conversationService.process(request.getAudio(), request.getConversationId(), userId))
+                .body(new ApiResponse<> (true, "Chat reply successfully", response)
+        );
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<ConversationHistoryResponse>> history() {
+
+        String userId = (String) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        ConversationHistoryResponse response =
+                conversationService.loadHistory(userId);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Conversation history loaded successfully",
+                        response
+                )
         );
     }
 }

@@ -1,6 +1,4 @@
-package com.lingulu.entity.conversation;
-
-import java.time.Instant;
+package com.lingulu.dto.response.conversation;
 
 import com.lingulu.enums.ConversationRole;
 import jakarta.persistence.EnumType;
@@ -10,15 +8,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConversationMessage {
+public class ChatMessageResponse {
 
     @Enumerated(EnumType.STRING)
     private ConversationRole role;
-    private String audioKey;
-    private String transcript;
+    private String text;
+    private String audioUrl;
     private Instant createdAt;
 }
+
