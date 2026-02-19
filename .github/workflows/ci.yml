@@ -58,6 +58,7 @@ jobs:
           AWS_CLOUDFRONT_KEYPAIR=${{ secrets.AWS_CLOUDFRONT_KEYPAIR }}
           AWS_CLOUDFRONT_PRIVATE_KEY_PATH=private_lingulu_cdn_key_pkcs8.der
           CDN_DOMAIN=${{ secrets.CDN_DOMAIN }}
+          FRONTEND_URL=${{ secrets.FRONTEND_URL }}
           EOF
 
       - name: Create CloudFront private key
