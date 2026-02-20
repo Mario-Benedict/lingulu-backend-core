@@ -39,11 +39,7 @@ jobs:
           POSTGRESQL_DB_NAME=${{ secrets.POSTGRESQL_DB_NAME }}
           POSTGRESQL_DB_USER=${{ secrets.POSTGRESQL_DB_USER }}
           POSTGRESQL_DB_PASSWORD=${{ secrets.POSTGRESQL_DB_PASSWORD }}
-          MONGO_DB_USER=${{ secrets.MONGO_DB_USER }}
-          MONGO_DB_PASSWORD=${{ secrets.MONGO_DB_PASSWORD }}
-          MONGO_DB_HOST=${{ secrets.MONGO_DB_HOST }}
-          MONGO_DB_PORT=${{ secrets.MONGO_DB_PORT }}
-          MONGO_DB_NAME=${{ secrets.MONGO_DB_NAME }}
+          MONGO_DB_URI=${{ secrets.MONGO_DB_URI }}
           REDIS_CLUSTER_NODES=${{ secrets.REDIS_CLUSTER_NODES }}
           REDIS_SSL_ENABLED=true
           GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}
