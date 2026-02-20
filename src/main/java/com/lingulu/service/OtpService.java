@@ -3,6 +3,7 @@ package com.lingulu.service;
 import java.time.Duration;
 
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class OtpService {
     private static final String OTP_KEY_PREFIX = "otp:email:";
     private static final Duration OTP_TTL = Duration.ofMinutes(10);
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
     private final PasswordEncoder passwordEncoder;
     private final OtpGenerator otpGenerator;
     private final EmailService emailService;
