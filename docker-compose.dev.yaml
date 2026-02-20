@@ -17,12 +17,15 @@ services:
       - spring-network
 
   redis:
-    image: redis:7
-    container_name: lingulu_redis_cache
+    image: grokzen/redis-cluster:7.0.10
+    container_name: lingulu_redis_cluster
     restart: always
     ports:
-      - "6379:6379"
-    command: ["redis-server", "--user", "lingulu", "on", ">lingulu", "~*", "allcommands"]
+      - "7000-7005:7000-7005"
+    environment:
+      - IP=0.0.0.0
+      - MASTERS=3
+      - REPLICAS=1
     volumes:
       - redis_cache_data:/data
     networks:

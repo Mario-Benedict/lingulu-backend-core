@@ -14,9 +14,6 @@ public class AwsPollyConfig {
     @Value("${aws.region}")
     private String region;
 
-    @Value("${aws.s3.bucket.chat.name}")
-    private String bucketName;
-
     @Value("${aws.access.key}")
     private String accessKey;
 
