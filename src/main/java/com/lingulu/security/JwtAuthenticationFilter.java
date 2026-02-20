@@ -55,20 +55,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             User user = userRepository.findById(UUID.fromString(userId)).orElse(null);
 
             if (user != null) {
-
-                // if (!user.isEmailVerified()) {
-                //     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                //     response.setContentType("application/json");
-                //     response.getWriter().write("""
-                //         {
-                //           "success": false,
-                //           "message": "Email not verified. Please verify your email to access this resource.",
-                //           "data": null
-                //         }
-                //     """);
-                //     return;
-                // }
-
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 user.getUserId().toString(), null, List.of()
