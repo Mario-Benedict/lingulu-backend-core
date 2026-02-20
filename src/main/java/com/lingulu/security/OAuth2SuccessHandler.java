@@ -28,6 +28,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Value("${spring.application.dev}")
     private Boolean isDev;
 
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, 
                                       HttpServletResponse response,
@@ -46,10 +49,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             tokenCookie.setMaxAge(7 * 24 * 60 * 60);
             response.addCookie(tokenCookie);
 
-            response.sendRedirect("http://localhost:5173/oauth2/success");
+            response.sendRedirect(frontendUrl+"/oauth2/success");
         } catch (Exception e) {
             String errorMessage = URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8);
-            response.sendRedirect("http://localhost:5173/oauth2/success?error=" + errorMessage);
+            response.sendRedirect(frontendUrl+"/oauth2/success?error=" + errorMessage);
         }
     }
 }
